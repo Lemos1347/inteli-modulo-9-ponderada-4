@@ -90,3 +90,6 @@ O projeto é composto por .
 - `internal`: codigos nao exportaveis do pacote golang
 
 ## 4. Demonstração do Funcionamento
+
+https://github.com/Lemos1347/inteli-modulo-9-ponderada-4/assets/99190347/808e1c1d-2e33-4273-ab54-84e04753cc79
+

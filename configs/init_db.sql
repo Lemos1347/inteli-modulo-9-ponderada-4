@@ -1,4 +1,21 @@
-CREATE EXTENSION IF NOT EXISTS citext;
+--
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
 --
 -- Name: action; Type: TABLE; Schema: public; Owner: user
 --
@@ -2862,7 +2879,7 @@ CREATE VIEW public.v_audit_log AS
         END AS entity_qualified_id,
     details
    FROM public.audit_log
-  WHERE ((topic)::text <> ALL ((ARRAY['card-read'::character varying, 'card-query'::character varying, 'dashboard-read'::character varying, 'dashboard-query'::character varying, 'table-read'::character varying])::text[]));
+  WHERE ((topic)::text <> ALL (ARRAY[('card-read'::character varying)::text, ('card-query'::character varying)::text, ('dashboard-read'::character varying)::text, ('dashboard-query'::character varying)::text, ('table-read'::character varying)::text]));
 
 
 ALTER VIEW public.v_audit_log OWNER TO "user";
@@ -3329,6 +3346,8 @@ COPY public.card_label (id, card_id, label_id) FROM stdin;
 
 COPY public.collection (id, name, description, archived, location, personal_owner_id, slug, namespace, authority_level, entity_id, created_at, type) FROM stdin;
 1	Nicola's Personal Collection	\N	f	/	1	nicola_s_personal_collection	\N	\N	hC8XDeQ5H4UGDzmCEazXm	2024-03-10 21:08:35.087966+00	\N
+2	Automatically Generated Dashboards	\N	f	/	\N	automatically_generated_dashboards	\N	\N	vX0A4VAOGwk-VP583UExW	2024-03-10 22:43:59.034193+00	\N
+3	A look at the Sensor ID fields	Automatically generated cards.	f	/2/	\N	a_look_at_the_sensor_id_fields	\N	\N	30KmF8qPLieLffrCtVLcu	2024-03-10 22:43:59.363601+00	\N
 \.
 
 
@@ -3362,6 +3381,8 @@ COPY public.connection_impersonations (id, db_id, group_id, attribute) FROM stdi
 
 COPY public.core_session (id, user_id, created_at, anti_csrf_token) FROM stdin;
 25c99dd7-b8ea-4ecd-8f76-ba69bc6c14f5	1	2024-03-10 21:08:22.956292+00	\N
+7a8f391d-e09f-473e-905c-48d31c8259a3	1	2024-03-10 21:56:57.730229+00	\N
+8b26f229-b660-4270-97dd-06bff4b3c530	1	2024-03-11 00:23:41.9296+00	\N
 \.
 
 
@@ -3370,7 +3391,7 @@ COPY public.core_session (id, user_id, created_at, anti_csrf_token) FROM stdin;
 --
 
 COPY public.core_user (id, email, first_name, last_name, password, password_salt, date_joined, last_login, is_superuser, is_active, reset_token, reset_triggered, is_qbnewb, login_attributes, updated_at, sso_source, locale, is_datasetnewb, settings) FROM stdin;
-1	supernicola@email.com	Nicola	\N	$2a$10$jDPU1x/h.8ckiibJCL7amO77cnk7ZQkqbX.I9DLIcfvmumTRq5ZAK	70951af4-d275-473b-b7df-eca148c4d23a	2024-03-10 21:08:22.956292+00	2024-03-10 21:08:25.565263+00	t	t	\N	\N	t	\N	2024-03-10 21:15:41.152547	\N	\N	t	{"last-acknowledged-version":"v0.48.8","dismissed-custom-dashboard-toast":"true"}
+1	supernicola@email.com	Nicola	\N	$2a$10$jDPU1x/h.8ckiibJCL7amO77cnk7ZQkqbX.I9DLIcfvmumTRq5ZAK	70951af4-d275-473b-b7df-eca148c4d23a	2024-03-10 21:08:22.956292+00	2024-03-11 00:23:42.214619+00	t	t	\N	\N	f	\N	2024-03-11 00:23:42.214619	\N	\N	t	{"last-acknowledged-version":"v0.48.8","dismissed-custom-dashboard-toast":"true"}
 \.
 
 
@@ -3411,16 +3432,7 @@ COPY public.dashboardcard_series (id, dashboardcard_id, card_id, "position") FRO
 --
 
 COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) FROM stdin;
-v00.00-000	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.281164	1	EXECUTED	8:a59595109e74e7a2678a1b0dfd25f74a	sqlFile path=initialization/metabase_postgres.sql; sqlFile path=initialization/metabase_mysql.sql; sqlFile path=initialization/metabase_h2.sql	Initialze metabase	\N	4.21.1	\N	\N	0104689968
 v45.00-001	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.350017	2	EXECUTED	8:da99b71a4ac7eb662f6a95e69585935e	createTable tableName=action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
-v45.00-002	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.37237	3	EXECUTED	8:6da7a6285edb138c404de0eeba209570	createTable tableName=query_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
-v45.00-003	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.389184	4	EXECUTED	8:512337d6d4af38016aa79585abbe03a1	addPrimaryKey constraintName=pk_query_action, tableName=query_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
-v45.00-011	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.401938	5	EXECUTED	8:dcf1cda9f20dca4b6ff8101b13b98c4a	addColumn tableName=report_card	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
-v45.00-012	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.437525	6	EXECUTED	8:aadf28229f585cff7c4b4c1918e558b2	createTable tableName=http_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
-v45.00-013	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.449539	7	EXECUTED	8:26dba276b14255d4346507a1a25d117b	addPrimaryKey constraintName=pk_http_action, tableName=http_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
-v45.00-022	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.486547	8	EXECUTED	8:d46fa24e4d75a11b2e92aecbf39c6ee1	createTable tableName=app	Added 0.45.0 - add app container	\N	4.21.1	\N	\N	0104689968
-v45.00-023	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.503132	9	EXECUTED	8:c6c1ff9ca3b62d4cda3a2d782dd86f2f	addForeignKeyConstraint baseTableName=app, constraintName=fk_app_ref_dashboard_id, referencedTableName=report_dashboard	Added 0.45.0 - add app container	\N	4.21.1	\N	\N	0104689968
-v45.00-025	metamben	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.531886	10	EXECUTED	8:50a43cea3123ecdb602123825f5a7dbf	addColumn tableName=report_dashboard	Added 0.45.0 - mark app pages	\N	4.21.1	\N	\N	0104689968
 v45.00-026	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.541277	11	EXECUTED	8:ae77d4086998911877e3207fcf90c9c7	addColumn tableName=report_dashboardcard	Added 0.45.0 - apps add action_id to report_dashboardcard	\N	4.21.1	\N	\N	0104689968
 v45.00-027	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.548407	12	EXECUTED	8:40c3c8391c1416a3bce09ca3c7237173	addForeignKeyConstraint baseTableName=report_dashboardcard, constraintName=fk_report_dashboardcard_ref_action_id, referencedTableName=action	Added 0.45.0 - apps add fk for action_id to report_dashboardcard	\N	4.21.1	\N	\N	0104689968
 v45.00-028	camsaul	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.557619	13	EXECUTED	8:f8f68f80627aeb2ef7f28f2af2b5a31b	renameColumn newColumnName=size_x, oldColumnName=sizeX, tableName=report_dashboardcard	Added 0.45.0 -- rename DashboardCard sizeX to size_x. See https://github.com/metabase/metabase/issues/16344	\N	4.21.1	\N	\N	0104689968
@@ -3446,6 +3458,9 @@ v45.00-050	camsaul	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.787
 v45.00-051	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.791114	33	MARK_RAN	8:2378c7031da6871dcf1c737bf323d211	modifyDataType columnName=after, tableName=collection_permission_graph_revision	Added 0.45.0 - modify type of collection_permission_graph_revision.after from text to text on mysql,mariadb	\N	4.21.1	\N	\N	0104689968
 v45.00-052	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.802806	34	MARK_RAN	8:b7343eb9556c3e636b6f8dd70708c0b3	modifyDataType columnName=before, tableName=collection_permission_graph_revision	Added 0.45.0 - modify type of collection_permission_graph_revision.before from text to text on mysql,mariadb	\N	4.21.1	\N	\N	0104689968
 v45.00-053	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.828203	35	MARK_RAN	8:fa552605d5a587c4fa74e0c6bd358097	modifyDataType columnName=remark, tableName=collection_permission_graph_revision	Added 0.45.0 - modify type of collection_permission_graph_revision.remark from text to text on mysql,mariadb	\N	4.21.1	\N	\N	0104689968
+v45.00-025	metamben	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.531886	10	EXECUTED	8:50a43cea3123ecdb602123825f5a7dbf	addColumn tableName=report_dashboard	Added 0.45.0 - mark app pages	\N	4.21.1	\N	\N	0104689968
+v46.00-059	tsmacdonald	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.511923	93	EXECUTED	8:6ddec7d622e9200e36bd5e2e2e0a48c2	addColumn tableName=action	Added 0.46.0 -- add actions.creator_id	\N	4.21.1	\N	\N	0104689968
+v48.00-023	piranha	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.862688	177	EXECUTED	8:f18e5e053b508aab0bdd8c4bf1d7de4b	customChange	Data migration migrate-remove-admin-from-group-mapping-if-needed	\N	4.21.1	\N	\N	0104689968
 v45.00-054	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.834308	36	MARK_RAN	8:60862c4ecf505727e839ac5e94f95528	modifyDataType columnName=after, tableName=permissions_revision	Added 0.45.0 - modify type of permissions_revision.after from text to text on mysql,mariadb	\N	4.21.1	\N	\N	0104689968
 v45.00-055	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.840335	37	MARK_RAN	8:717f0c266da5768098a2ead6168f3b18	modifyDataType columnName=before, tableName=permissions_revision	Added 0.45.0 - modify type of permissions_revision.before from text to text on mysql,mariadb	\N	4.21.1	\N	\N	0104689968
 v45.00-056	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.848983	38	MARK_RAN	8:a1f364d45a922c90b4fac741a22e66b3	modifyDataType columnName=remark, tableName=permissions_revision	Added 0.45.0 - modify type of permissions_revision.remark from text to text on mysql,mariadb	\N	4.21.1	\N	\N	0104689968
@@ -3503,7 +3518,6 @@ v46.00-055	calherries	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.
 v46.00-056	calherries	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.492677	90	EXECUTED	8:af93ab591b44b5d81d8d8a496600c1bc	createIndex indexName=idx_action_public_uuid, tableName=action	Added 0.46.0 -- add public_uuid and made_public_by_id to action. public_uuid is indexed	\N	4.21.1	\N	\N	0104689968
 v46.00-057	dpsutton	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.498674	91	EXECUTED	8:aff3b0e15dcfc36a4fd97faade0751c0	modifyDataType columnName=parameter_id, tableName=parameter_card	Added 0.46.0 -- parameter_card.parameter_id long enough to hold a uuid	\N	4.21.1	\N	\N	0104689968
 v46.00-058	calherries	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.505348	92	EXECUTED	8:11440c629413c7231e7f156347353761	addForeignKeyConstraint baseTableName=action, constraintName=fk_action_made_public_by_id, referencedTableName=core_user	Added 0.46.0 -- add FK constraint for action.made_public_by_id with core_user.id	\N	4.21.1	\N	\N	0104689968
-v46.00-059	tsmacdonald	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.511923	93	EXECUTED	8:6ddec7d622e9200e36bd5e2e2e0a48c2	addColumn tableName=action	Added 0.46.0 -- add actions.creator_id	\N	4.21.1	\N	\N	0104689968
 v46.00-060	tsmacdonald	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.517449	94	EXECUTED	8:fc1762a930726afb11131acf3a56312b	createIndex indexName=idx_action_creator_id, tableName=action	Added 0.46.0 -- action.creator_id index	\N	4.21.1	\N	\N	0104689968
 v46.00-061	tsmacdonald	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.522626	95	EXECUTED	8:d57393ae0e96a9b1a0bd7a66597cb485	addForeignKeyConstraint baseTableName=action, constraintName=fk_action_creator_id, referencedTableName=core_user	Added 0.46.0 -- action.creator_id index	\N	4.21.1	\N	\N	0104689968
 v46.00-062	tsmacdonald	migrations/001_update_migrations.yaml	2024-03-10 21:04:55.528493	96	EXECUTED	8:20efdbd79df3c76cbf77318d871a9836	addColumn tableName=action	Added 0.46.0 -- add actions.archived	\N	4.21.1	\N	\N	0104689968
@@ -3587,7 +3601,6 @@ v48.00-019	nemanjaglumac	migrations/001_update_migrations.yaml	2024-03-10 21:04:
 v48.00-020	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.479817	174	EXECUTED	8:2c410019e1834304131ff57278003d35	createIndex indexName=idx_recent_views_user_id, tableName=recent_views	Added 0.48.0 - Create recent_views.user_id index	\N	4.21.1	\N	\N	0104689968
 v48.00-021	piranha	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.490697	175	EXECUTED	8:a1543239e39c70dc9bab3bbc303242b1	addColumn tableName=report_card	Cards store Metabase version used to create them	\N	4.21.1	\N	\N	0104689968
 v48.00-022	johnswanson	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.53033	176	EXECUTED	8:0f034d06b1ad5336c3c81b0d22cde259	customChange	Migrate migrate-click-through to a custom migration	\N	4.21.1	\N	\N	0104689968
-v48.00-023	piranha	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.862688	177	EXECUTED	8:f18e5e053b508aab0bdd8c4bf1d7de4b	customChange	Data migration migrate-remove-admin-from-group-mapping-if-needed	\N	4.21.1	\N	\N	0104689968
 v48.00-024	piranha	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.873536	178	EXECUTED	8:fab2a51d73c66cea059d55a6fea8bb2f	dropTable tableName=data_migrations	All data migrations were transferred to custom_migrations!	\N	4.21.1	\N	\N	0104689968
 v48.00-025	piranha	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.88292	179	EXECUTED	8:a2fa9ab0913b9e4b97dff91f973344d6	addColumn tableName=revision	Revisions store Metabase version used to create them	\N	4.21.1	\N	\N	0104689968
 v48.00-026	lbrdnk	migrations/001_update_migrations.yaml	2024-03-10 21:04:59.888664	180	EXECUTED	8:7c8330e861c16997780a9b0881144b26	update tableName=metabase_field	Set semantic_type with value type/Number to null (#18754)	\N	4.21.1	\N	\N	0104689968
@@ -3607,9 +3620,17 @@ v48.00-039	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.36
 v48.00-040	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.375535	194	EXECUTED	8:b8842eac1c7cba6e997d4d288306e36c	sqlFile path=instance_analytics_views/view_log/v1/postgres-view_log.sql; sqlFile path=instance_analytics_views/view_log/v1/mysql-view_log.sql; sqlFile path=instance_analytics_views/view_log/v1/h2-view_log.sql	Added 0.48.0 - new view v_view_log	\N	4.21.1	\N	\N	0104689968
 v48.00-045	qwef	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.38741	195	EXECUTED	8:874f14ae26d742448d8dd2b47dc8aa3d	addColumn tableName=query_execution	Added 0.48.0 - add is_sandboxed to query_execution	\N	4.21.1	\N	\N	0104689968
 v48.00-046	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.444354	196	EXECUTED	8:4bb11295621890202e066cd15de93a52	sqlFile path=instance_analytics_views/indexes/v1/postgres-indexes.sql; sqlFile path=instance_analytics_views/indexes/v1/mysql-indexes.sql; sqlFile path=instance_analytics_views/indexes/v1/mariadb-indexes.sql; sqlFile path=instance_analytics_views/...	Added 0.48.0 - new indexes to optimize audit v2 queries	\N	4.21.1	\N	\N	0104689968
+v00.00-000	qnkhuat	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.281164	1	EXECUTED	8:a59595109e74e7a2678a1b0dfd25f74a	sqlFile path=initialization/metabase_postgres.sql; sqlFile path=initialization/metabase_mysql.sql; sqlFile path=initialization/metabase_h2.sql	Initialze metabase	\N	4.21.1	\N	\N	0104689968
+v45.00-002	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.37237	3	EXECUTED	8:6da7a6285edb138c404de0eeba209570	createTable tableName=query_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
+v45.00-003	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.389184	4	EXECUTED	8:512337d6d4af38016aa79585abbe03a1	addPrimaryKey constraintName=pk_query_action, tableName=query_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
+v45.00-011	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.401938	5	EXECUTED	8:dcf1cda9f20dca4b6ff8101b13b98c4a	addColumn tableName=report_card	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
+v45.00-012	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.437525	6	EXECUTED	8:aadf28229f585cff7c4b4c1918e558b2	createTable tableName=http_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
+v45.00-013	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.449539	7	EXECUTED	8:26dba276b14255d4346507a1a25d117b	addPrimaryKey constraintName=pk_http_action, tableName=http_action	Added 0.44.0 - writeback	\N	4.21.1	\N	\N	0104689968
+v45.00-022	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.486547	8	EXECUTED	8:d46fa24e4d75a11b2e92aecbf39c6ee1	createTable tableName=app	Added 0.45.0 - add app container	\N	4.21.1	\N	\N	0104689968
+v45.00-023	snoe	migrations/001_update_migrations.yaml	2024-03-10 21:04:54.503132	9	EXECUTED	8:c6c1ff9ca3b62d4cda3a2d782dd86f2f	addForeignKeyConstraint baseTableName=app, constraintName=fk_app_ref_dashboard_id, referencedTableName=report_dashboard	Added 0.45.0 - add app container	\N	4.21.1	\N	\N	0104689968
+v48.00-049	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.48877	199	EXECUTED	8:853f2a24c53470bf2d9e85b1246bab7b	sql; sql; sql	Migrate data from activity to audit_log	\N	4.21.1	\N	\N	0104689968
 v48.00-047	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.465771	197	EXECUTED	8:2b18bed0e1ae18dd7b26a0770dac54c0	dropForeignKeyConstraint baseTableName=recent_views, constraintName=fk_recent_views_ref_user_id	Drop foreign key on recent_views so that it can be recreated with onDelete policy	\N	4.21.1	\N	\N	0104689968
 v48.00-048	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.478752	198	EXECUTED	8:872e632a8ffa42eb2969f77823e8bfc8	addForeignKeyConstraint baseTableName=recent_views, constraintName=fk_recent_views_ref_user_id, referencedTableName=core_user	Add foreign key on recent_views with onDelete CASCADE	\N	4.21.1	\N	\N	0104689968
-v48.00-049	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.48877	199	EXECUTED	8:853f2a24c53470bf2d9e85b1246bab7b	sql; sql; sql	Migrate data from activity to audit_log	\N	4.21.1	\N	\N	0104689968
 v48.00-050	noahmoss	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.493316	200	EXECUTED	8:d41d8cd98f00b204e9800998ecf8427e	empty	Added 0.48.0 - no-op migration to remove audit DB and collection on downgrade	\N	4.21.1	\N	\N	0104689968
 v48.00-051	calherries	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.501937	201	EXECUTED	8:5f5d1fd5b6153a6613511fd8f765737d	sql; sql	Migrate metabase_field when the fk target field is inactive	\N	4.21.1	\N	\N	0104689968
 v48.00-053	johnswanson	migrations/001_update_migrations.yaml	2024-03-10 21:05:00.511858	202	EXECUTED	8:8b41162170f6d712871b2ee9221adc1a	modifyDataType columnName=model, tableName=activity	Increase length of `activity.model` to fit longer model names	\N	4.21.1	\N	\N	0104689968
@@ -3678,6 +3699,8 @@ COPY public.label (id, name, slug, icon) FROM stdin;
 --
 
 COPY public.login_history (id, "timestamp", user_id, session_id, device_id, device_description, ip_address) FROM stdin;
+1	2024-03-10 21:56:59.445302+00	1	7a8f391d-e09f-473e-905c-48d31c8259a3	cf562851-8f95-4d8e-82ad-f69c131c2bca	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36	192.168.65.1
+2	2024-03-11 00:23:42.268664+00	1	8b26f229-b660-4270-97dd-06bff4b3c530	4f641e57-c8e1-4f07-9d11-91297bfd2776	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15	192.168.65.1
 \.
 
 
@@ -3686,8 +3709,8 @@ COPY public.login_history (id, "timestamp", user_id, session_id, device_id, devi
 --
 
 COPY public.metabase_database (id, created_at, updated_at, name, description, details, engine, is_sample, is_full_sync, points_of_interest, caveats, metadata_sync_schedule, cache_field_values_schedule, timezone, is_on_demand, auto_run_queries, refingerprint, cache_ttl, initial_sync_status, creator_id, settings, dbms_version, is_audit) FROM stdin;
-2	2024-03-10 21:08:22.956292+00	2024-03-10 21:09:16.039181+00	Sensors	\N	{"ssl":false,"password":"password","port":5432,"advanced-options":false,"schema-filters-type":"all","dbname":"Ponderada-4","host":"db","tunnel-enabled":false,"user":"user"}	postgres	f	t	\N	\N	0 50 * * * ? *	0 50 0 * * ? *	GMT	f	t	\N	\N	complete	1	\N	{"flavor":"PostgreSQL","version":"16.2 (Debian 16.2-1.pgdg120+2)","semantic-version":[16,2]}	f
-1	2024-03-10 21:05:02.779126+00	2024-03-10 21:20:02.643269+00	Sample Database	Some example data for you to play around with as you embark on your Metabase journey.	{"db":"file:/plugins/sample-database.db;USER=GUEST;PASSWORD=guest"}	h2	t	t	You can find all sorts of different joinable tables ranging from products to people to reviews here.	You probably don't want to use this for your business-critical analyses, but hey, it's your world, we're just living in it.	0 20 * * * ? *	0 0 20 * * ? *	GMT	f	t	\N	\N	complete	\N	\N	{"flavor":"H2","version":"2.1.214 (2022-06-13)","semantic-version":[2,1]}	f
+2	2024-03-10 21:08:22.956292+00	2024-03-10 21:55:35.211771+00	Sensors	\N	{"ssl":false,"password":"password","port":5432,"advanced-options":false,"schema-filters-type":"all","dbname":"Ponderada-4","host":"db","tunnel-enabled":false,"user":"user"}	postgres	f	t	\N	\N	0 4 * * * ? *	0 0 22 * * ? *	GMT	f	t	\N	\N	complete	1	\N	{"flavor":"PostgreSQL","version":"16.2 (Debian 16.2-1.pgdg120+2)","semantic-version":[16,2]}	f
+1	2024-03-10 21:05:02.779126+00	2024-03-11 11:20:07.22233+00	Sample Database	Some example data for you to play around with as you embark on your Metabase journey.	{"db":"file:/plugins/sample-database.db;USER=GUEST;PASSWORD=guest"}	h2	t	t	You can find all sorts of different joinable tables ranging from products to people to reviews here.	You probably don't want to use this for your business-critical analyses, but hey, it's your world, we're just living in it.	0 20 * * * ? *	0 0 20 * * ? *	GMT	f	t	\N	\N	complete	\N	\N	{"flavor":"H2","version":"2.1.214 (2022-06-13)","semantic-version":[2,1]}	f
 \.
 
 
@@ -3709,7 +3732,6 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 83	2024-03-10 21:08:31.263594+00	2024-03-10 21:08:31.263594+00	created_at	type/DateTimeWithLocalTZ	\N	t	The timestamp of when the action was created	t	1	59	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 84	2024-03-10 21:08:31.263594+00	2024-03-10 21:08:31.263594+00	archived	type/Boolean	\N	t	Whether or not the action has been archived	t	13	59	\N	Archived	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	13	0	type/Boolean	\N	\N	f	f	f
 85	2024-03-10 21:08:31.263594+00	2024-03-10 21:08:31.263594+00	entity_id	type/Text	\N	t	Random NanoID tag for unique identity.	t	14	59	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	14	0	type/Text	\N	\N	f	f	f
-46	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.105756+00	ID	type/BigInteger	type/PK	t	A unique identifier given to each user.	t	0	5	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
 87	2024-03-10 21:08:31.614264+00	2024-03-10 21:08:31.614264+00	details	type/Text	\N	t	\N	t	9	87	\N	Details	normal	\N	\N	\N	\N	\N	0	text	\N	\N	9	0	type/Text	\N	\N	t	f	f
 88	2024-03-10 21:08:31.614264+00	2024-03-10 21:08:31.614264+00	topic	type/Text	\N	t	\N	t	1	87	\N	Topic	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
 20	2024-03-10 21:05:10.224299+00	2024-03-10 21:05:10.224299+00	ID	type/BigInteger	type/PK	t	\N	t	0	3	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	t	f	f
@@ -3744,9 +3766,6 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 110	2024-03-10 21:08:33.466046+00	2024-03-10 21:08:33.466046+00	id	type/Integer	type/PK	t	\N	t	0	81	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 112	2024-03-10 21:08:33.466046+00	2024-03-10 21:08:33.466046+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	3	81	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	3	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 115	2024-03-10 21:08:33.730671+00	2024-03-10 21:08:33.730671+00	id	type/Integer	type/PK	t	\N	t	0	10	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-50	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.019584+00	LONGITUDE	type/Float	type/Longitude	t	This is the longitude of the user on sign-up. It might be updated in the future to the last seen location.	t	6	5	\N	Longitude	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2491,"nil%":0.0},"type":{"type/Number":{"min":-166.5425726,"q1":-101.58350792373135,"q3":-84.65289348288829,"max":-67.96735199999999,"sd":15.399698968175663,"avg":-95.18741780363999}}}	5	DOUBLE PRECISION	\N	\N	6	0	type/Float	\N	\N	f	f	f
-62	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.234448+00	ID	type/BigInteger	type/PK	t	The numerical product number. Only used internally. All external communication should use the title or EAN.	t	0	1	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
-68	2024-03-10 21:05:13.36958+00	2024-03-10 21:20:02.363734+00	ID	type/BigInteger	type/PK	t	A unique internal identifier for the review. Should not be used externally.	t	0	8	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
 237	2024-03-10 21:08:43.665886+00	2024-03-10 21:08:43.665886+00	id	type/Integer	type/PK	t	\N	t	0	55	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 111	2024-03-10 21:08:33.466046+00	2024-03-10 21:09:08.579156+00	user_id	type/Integer	type/FK	t	\N	t	1	81	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 113	2024-03-10 21:08:33.466046+00	2024-03-10 21:09:08.616328+00	card_id	type/Integer	type/FK	t	\N	t	2	81	\N	Card ID	normal	518	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
@@ -3754,15 +3773,8 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 116	2024-03-10 21:08:33.730671+00	2024-03-10 21:09:08.732048+00	card_id	type/Integer	type/FK	t	\N	t	1	10	\N	Card ID	normal	518	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 231	2024-03-10 21:08:42.674394+00	2024-03-10 21:09:56.244246+00	caveats	type/Text	type/Category	t	\N	t	10	46	\N	Caveats	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.5},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":61.5}}}	5	text	auto-list	\N	10	0	type/Text	\N	\N	f	f	f
 247	2024-03-10 21:08:43.665886+00	2024-03-10 21:09:56.244246+00	table_id	type/Integer	type/FK	t	\N	t	10	55	\N	Table ID	normal	274	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":92,"nil%":0.0}}	5	int4	\N	\N	10	0	type/Integer	\N	\N	t	f	f
-40	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.76133+00	PRODUCT_ID	type/Integer	type/FK	t	The product ID. This is an internal identifier for the product, NOT the SKU.	t	2	2	\N	Product ID	normal	62	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0}}	5	INTEGER	\N	\N	2	0	type/Integer	\N	\N	f	f	f
 118	2024-03-10 21:08:34.330607+00	2024-03-10 21:08:34.330607+00	id	type/Integer	type/PK	t	\N	t	0	41	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-44	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.78367+00	SUBTOTAL	type/Float	\N	t	The raw, pre-tax cost of the order. Note that this might be different in the future from the product price due to promotions, credits, etc.	t	3	2	\N	Subtotal	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":340,"nil%":0.0},"type":{"type/Number":{"min":15.691943673970439,"q1":49.74894519060184,"q3":105.42965746993103,"max":148.22900526552291,"sd":32.53705013056317,"avg":77.01295465356547}}}	5	DOUBLE PRECISION	\N	\N	3	0	type/Float	\N	\N	f	f	f
-37	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.847278+00	ID	type/BigInteger	type/PK	t	This is a unique ID for the product. It is also called the “Invoice number” or “Confirmation number” in customer facing emails and screens.	t	0	2	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
-49	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.070198+00	BIRTH_DATE	type/Date	\N	t	The date of birth of the user	t	9	5	\N	Birth Date	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2308,"nil%":0.0},"type":{"type/DateTime":{"earliest":"1958-04-26","latest":"2000-04-03"}}}	5	DATE	\N	\N	9	0	type/Date	\N	\N	f	f	f
 27	2024-03-10 21:05:11.752845+00	2024-03-10 21:05:52.937921+00	BODY	type/Text	\N	t	\N	f	6	4	\N	Body	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":642,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":438.15264797507785}}}	5	CHARACTER LARGE OBJECT	\N	\N	6	0	type/Text	\N	\N	f	f	f
-59	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.249919+00	PRICE	type/Float	\N	t	The list price of the product. Note that this is not always the price the product sold for due to discounts, promotions, etc.	t	5	1	\N	Price	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":170,"nil%":0.0},"type":{"type/Number":{"min":15.691943673970439,"q1":37.25154462926434,"q3":75.45898071609447,"max":98.81933684368194,"sd":21.711481557852057,"avg":55.74639966792074}}}	5	DOUBLE PRECISION	\N	\N	5	0	type/Float	\N	\N	f	f	f
-71	2024-03-10 21:05:13.36958+00	2024-03-10 21:20:02.383022+00	PRODUCT_ID	type/Integer	type/FK	t	The product the review was for	t	1	8	\N	Product ID	normal	62	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":176,"nil%":0.0}}	5	INTEGER	\N	\N	1	0	type/Integer	\N	\N	f	f	f
-67	2024-03-10 21:05:13.36958+00	2024-03-10 21:20:02.611394+00	BODY	type/Text	type/Description	t	The review the user left. Limited to 2000 characters.	t	4	8	\N	Body	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1112,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":177.41996402877697}}}	5	CHARACTER VARYING	\N	\N	4	0	type/Text	\N	\N	f	f	f
 34	2024-03-10 21:05:12.170558+00	2024-03-10 21:05:45.912447+00	PAYMENT	type/Float	\N	t	\N	t	2	6	\N	Payment	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":707,"nil%":0.0},"type":{"type/Number":{"min":13.7,"q1":233.1870107122195,"q3":400.5965814842149,"max":33714.6,"sd":763.7961603932441,"avg":519.4153400000004}}}	5	DOUBLE PRECISION	\N	\N	2	0	type/Float	\N	\N	f	f	f
 10	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	LAST_NAME	type/Text	type/Name	t	\N	t	3	7	\N	Last Name	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":473,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.536673346693386}}}	5	CHARACTER VARYING	auto-list	\N	3	0	type/Text	\N	\N	f	f	f
 15	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	COUNTRY	type/Text	type/Country	t	\N	t	15	7	\N	Country	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":134,"nil%":8.016032064128256E-4},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.1130260521042084,"average-length":1.9983967935871743}}}	5	CHARACTER	auto-list	\N	15	0	type/Text	\N	\N	f	f	f
@@ -3776,11 +3788,13 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 130	2024-03-10 21:08:35.150825+00	2024-03-10 21:09:08.840732+00	user_id	type/Integer	type/FK	t	\N	t	1	96	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 131	2024-03-10 21:08:35.150825+00	2024-03-10 21:09:08.878625+00	collection_id	type/Integer	type/FK	t	\N	t	2	96	\N	Collection ID	normal	118	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
 133	2024-03-10 21:08:35.411449+00	2024-03-10 21:09:08.977223+00	db_id	type/Integer	type/FK	t	ID of the database this connection impersonation policy affects	t	1	85	\N	Db ID	normal	211	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
+62	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.798034+00	ID	type/BigInteger	type/PK	t	The numerical product number. Only used internally. All external communication should use the title or EAN.	t	0	1	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
+59	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.821411+00	PRICE	type/Float	\N	t	The list price of the product. Note that this is not always the price the product sold for due to discounts, promotions, etc.	t	5	1	\N	Price	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":170,"nil%":0.0},"type":{"type/Number":{"min":15.691943673970439,"q1":37.25154462926434,"q3":75.45898071609447,"max":98.81933684368194,"sd":21.711481557852057,"avg":55.74639966792074}}}	5	DOUBLE PRECISION	\N	\N	5	0	type/Float	\N	\N	f	f	f
+49	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.598199+00	BIRTH_DATE	type/Date	\N	t	The date of birth of the user	t	9	5	\N	Birth Date	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2308,"nil%":0.0},"type":{"type/DateTime":{"earliest":"1958-04-26","latest":"2000-04-03"}}}	5	DATE	\N	\N	9	0	type/Date	\N	\N	f	f	f
+71	2024-03-10 21:05:13.36958+00	2024-03-11 11:20:07.031737+00	PRODUCT_ID	type/Integer	type/FK	t	The product the review was for	t	1	8	\N	Product ID	normal	62	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":176,"nil%":0.0}}	5	INTEGER	\N	\N	1	0	type/Integer	\N	\N	f	f	f
+67	2024-03-10 21:05:13.36958+00	2024-03-11 11:20:07.137572+00	BODY	type/Text	type/Description	t	The review the user left. Limited to 2000 characters.	t	4	8	\N	Body	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1112,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":177.41996402877697}}}	5	CHARACTER VARYING	\N	\N	4	0	type/Text	\N	\N	f	f	f
+68	2024-03-10 21:05:13.36958+00	2024-03-11 11:20:06.988574+00	ID	type/BigInteger	type/PK	t	A unique internal identifier for the review. Should not be used externally.	t	0	8	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
 142	2024-03-10 21:08:37.045533+00	2024-03-10 21:09:56.244246+00	first_name	type/Text	type/Name	t	\N	t	2	53	\N	First Name	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.0}}}	5	varchar	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
-39	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.886038+00	QUANTITY	type/Integer	type/Quantity	t	Number of products bought.	t	8	2	\N	Quantity	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":62,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":1.755882607764982,"q3":4.882654507928044,"max":100.0,"sd":4.214258386403798,"avg":3.7015}}}	5	INTEGER	auto-list	\N	8	0	type/Integer	\N	\N	f	f	f
-41	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.919929+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The date and time an order was submitted.	t	7	2	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":10001,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-04-30T18:56:13.352Z","latest":"2026-04-19T14:07:15.657Z"}}}	5	TIMESTAMP	\N	\N	7	0	type/DateTime	\N	\N	f	f	f
-51	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:01.956549+00	EMAIL	type/Text	type/Email	t	The contact email for the account.	t	2	5	\N	Email	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2500,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":1.0,"percent-state":0.0,"average-length":24.1824}}}	5	CHARACTER VARYING	\N	\N	2	0	type/Text	\N	\N	f	f	f
-47	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:01.983578+00	NAME	type/Text	type/Name	t	The name of the user who owns an account	t	4	5	\N	Name	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2499,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":13.532}}}	5	CHARACTER VARYING	\N	\N	4	0	type/Text	\N	\N	f	f	f
 160	2024-03-10 21:08:37.386618+00	2024-03-10 21:08:37.386618+00	id	type/Integer	type/PK	t	\N	t	0	64	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 162	2024-03-10 21:08:37.386618+00	2024-03-10 21:08:37.386618+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	3	64	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	3	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 4	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	PLAN	type/Text	type/Category	t	\N	t	4	7	\N	Plan	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.1062124248497}}}	5	CHARACTER VARYING	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
@@ -3806,10 +3820,12 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 151	2024-03-10 21:08:37.045533+00	2024-03-10 21:09:56.244246+00	is_qbnewb	type/Boolean	type/Category	t	\N	t	12	53	\N	Is Qbnewb	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	12	0	type/Boolean	\N	\N	f	f	f
 16	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	LONGITUDE	type/Float	type/Longitude	t	\N	t	14	7	\N	Longitude	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2484,"nil%":4.008016032064128E-4},"type":{"type/Number":{"min":-175.06667,"q1":-55.495929410727236,"q3":28.627359769389155,"max":176.21667,"sd":68.51011002740533,"avg":2.6042336031796345}}}	5	DOUBLE PRECISION	\N	\N	14	0	type/Float	\N	\N	f	f	f
 18	2024-03-10 21:05:10.224299+00	2024-03-10 21:05:45.912447+00	PAGE_URL	type/Text	type/URL	t	\N	t	4	3	\N	Page URL	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":6,"nil%":0.1302},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":22.2674}}}	5	CHARACTER VARYING	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
-53	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:01.967786+00	PASSWORD	type/Text	\N	t	This is the salted password of the user. It should not be visible	t	3	5	\N	Password	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2500,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":36.0}}}	5	CHARACTER VARYING	\N	\N	3	0	type/Text	\N	\N	f	f	f
 22	2024-03-10 21:05:10.224299+00	2024-03-10 21:05:45.912447+00	TIMESTAMP	type/DateTime	\N	t	\N	t	3	3	\N	Timestamp	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":8576,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-03-15T00:18:25Z","latest":"2022-04-11T20:24:02Z"}}}	5	TIMESTAMP	\N	\N	3	0	type/DateTime	\N	\N	f	f	f
 25	2024-03-10 21:05:11.752845+00	2024-03-10 21:05:45.912447+00	ACCOUNT_ID	type/BigInteger	type/FK	t	\N	t	1	4	\N	Account ID	normal	7	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":642,"nil%":0.0}}	5	BIGINT	\N	\N	1	0	type/BigInteger	\N	\N	f	f	f
 29	2024-03-10 21:05:11.752845+00	2024-03-10 21:05:45.912447+00	DATE_RECEIVED	type/DateTime	\N	t	\N	t	3	4	\N	Date Received	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":576,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2020-11-20T00:00:00Z","latest":"2031-12-01T00:00:00Z"}}}	5	TIMESTAMP	\N	\N	3	0	type/DateTime	\N	\N	f	f	f
+491	2024-03-10 21:08:54.862303+00	2024-03-10 21:09:13.493044+00	database_id	type/Integer	type/FK	t	The associated database	t	1	13	\N	Database ID	normal	211	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
+47	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.46414+00	NAME	type/Text	type/Name	t	The name of the user who owns an account	t	4	5	\N	Name	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2499,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":13.532}}}	5	CHARACTER VARYING	\N	\N	4	0	type/Text	\N	\N	f	f	f
+51	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.397462+00	EMAIL	type/Text	type/Email	t	The contact email for the account.	t	2	5	\N	Email	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2500,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":1.0,"percent-state":0.0,"average-length":24.1824}}}	5	CHARACTER VARYING	\N	\N	2	0	type/Text	\N	\N	f	f	f
 32	2024-03-10 21:05:12.170558+00	2024-03-10 21:05:45.912447+00	ACCOUNT_ID	type/BigInteger	type/FK	t	\N	t	1	6	\N	Account ID	normal	7	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1449,"nil%":0.0}}	5	BIGINT	\N	\N	1	0	type/BigInteger	\N	\N	f	f	f
 9	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	FIRST_NAME	type/Text	type/Name	t	\N	t	2	7	\N	First Name	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1687,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.001603206412825651,"average-length":5.997595190380761}}}	5	CHARACTER VARYING	\N	\N	2	0	type/Text	\N	\N	f	f	f
 11	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	SOURCE	type/Text	type/Source	t	\N	t	5	7	\N	Source	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.3346693386773547},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":4.4705410821643286}}}	5	CHARACTER VARYING	auto-list	\N	5	0	type/Text	\N	\N	f	f	f
@@ -3817,14 +3833,6 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 3	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	CANCELED_AT	type/DateTime	type/CancelationTimestamp	t	\N	t	9	7	\N	Canceled At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2021,"nil%":0.1859719438877756},"type":{"type/DateTime":{"earliest":"2020-10-01T15:43:40Z","latest":"2032-06-03T14:01:15Z"}}}	5	TIMESTAMP	\N	\N	9	0	type/DateTime	\N	\N	f	f	f
 13	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	\N	t	7	7	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2495,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2020-09-15T16:11:50Z","latest":"2031-10-10T19:14:48Z"}}}	5	TIMESTAMP	\N	\N	7	0	type/DateTime	\N	\N	f	f	f
 178	2024-03-10 21:08:40.785898+00	2024-03-10 21:08:40.785898+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	5	73	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	5	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-58	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.183198+00	CATEGORY	type/Text	type/Category	t	The type of product, valid values include: Doohicky, Gadget, Gizmo and Widget	t	3	1	\N	Category	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":4,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.375}}}	5	CHARACTER VARYING	auto-list	\N	3	0	type/Text	\N	\N	f	f	f
-64	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.196084+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The date the product was added to our catalog.	t	7	1	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-04-26T19:29:55.147Z","latest":"2025-04-15T13:34:19.931Z"}}}	5	TIMESTAMP	\N	\N	7	0	type/DateTime	\N	\N	f	f	f
-61	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.262626+00	RATING	type/Float	type/Score	t	The average rating users have given the product. This ranges from 1 - 5	t	6	1	\N	Rating	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":23,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":3.5120465053408525,"q3":4.216124969497314,"max":5.0,"sd":1.3605488657451452,"avg":3.4715}}}	5	DOUBLE PRECISION	\N	\N	6	0	type/Float	\N	\N	f	f	f
-60	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.300295+00	VENDOR	type/Text	type/Company	t	The source of the product.	t	4	1	\N	Vendor	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":20.6}}}	5	CHARACTER VARYING	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
-69	2024-03-10 21:05:13.36958+00	2024-03-10 21:20:02.348097+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The day and time a review was written by a user.	t	5	8	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1112,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-06-03T00:37:05.818Z","latest":"2026-04-19T14:15:25.677Z"}}}	5	TIMESTAMP	\N	\N	5	0	type/DateTime	\N	\N	f	f	f
-66	2024-03-10 21:05:13.36958+00	2024-03-10 21:20:02.555173+00	RATING	type/Integer	type/Score	t	The rating (on a scale of 1-5) the user left.	t	3	8	\N	Rating	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":3.54744353181696,"q3":4.764807071650455,"max":5.0,"sd":1.0443899855660577,"avg":3.987410071942446}}}	5	SMALLINT	auto-list	\N	3	0	type/Integer	\N	\N	f	f	f
-70	2024-03-10 21:05:13.36958+00	2024-03-10 21:20:02.57873+00	REVIEWER	type/Text	\N	t	The user who left the review	t	2	8	\N	Reviewer	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1076,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.001798561151079137,"average-length":9.972122302158274}}}	5	CHARACTER VARYING	\N	\N	2	0	type/Text	\N	\N	f	f	f
-54	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.595262+00	ZIP	type/Text	type/ZipCode	t	The postal code of the account’s billing address	t	10	5	\N	Zip	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2234,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.0}}}	5	CHARACTER	\N	\N	10	0	type/Text	\N	\N	f	f	f
 23	2024-03-10 21:05:11.752845+00	2024-03-10 21:05:45.912447+00	RATING	type/Integer	type/Score	t	\N	t	4	4	\N	Rating	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":2.7545289729206877,"q3":4.004191340512663,"max":5.0,"sd":0.8137255616667736,"avg":3.3629283489096573}}}	5	SMALLINT	auto-list	\N	4	0	type/Integer	\N	\N	f	f	f
 26	2024-03-10 21:05:11.752845+00	2024-03-10 21:05:45.912447+00	EMAIL	type/Text	type/Email	t	\N	t	2	4	\N	Email	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":642,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":1.0,"percent-state":0.0,"average-length":28.327102803738317}}}	5	CHARACTER VARYING	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
 6	2024-03-10 21:05:09.646225+00	2024-03-10 21:05:45.912447+00	LATITUDE	type/Float	type/Latitude	t	\N	t	13	7	\N	Latitude	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2472,"nil%":4.008016032064128E-4},"type":{"type/Number":{"min":-48.75,"q1":19.430679334308675,"q3":47.24585743676113,"max":69.23111,"sd":23.492041679980137,"avg":31.35760681046913}}}	5	DOUBLE PRECISION	\N	\N	13	0	type/Float	\N	\N	f	f	f
@@ -3833,25 +3841,19 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 30	2024-03-10 21:05:12.170558+00	2024-03-10 21:05:45.912447+00	PLAN	type/Text	type/Category	t	\N	t	4	6	\N	Plan	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.2931}}}	5	CHARACTER VARYING	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
 179	2024-03-10 21:08:40.785898+00	2024-03-10 21:08:40.785898+00	model	type/Text	\N	t	\N	t	1	73	\N	Model	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
 180	2024-03-10 21:08:40.785898+00	2024-03-10 21:08:40.785898+00	id	type/Integer	type/PK	t	\N	t	0	73	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-38	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.80022+00	TAX	type/Float	\N	t	This is the amount of local and federal taxes that are collected on the purchase. Note that other governmental fees on some products are not included here, but instead are accounted for in the subtotal.	t	4	2	\N	Tax	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":797,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":2.273340386603857,"q3":5.337275338216307,"max":11.12,"sd":2.3206651358900316,"avg":3.8722100000000004}}}	5	DOUBLE PRECISION	\N	\N	4	0	type/Float	\N	\N	f	f	f
-42	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.822789+00	TOTAL	type/Float	\N	t	The total billed amount.	t	5	2	\N	Total	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":4426,"nil%":0.0},"type":{"type/Number":{"min":8.93914247937167,"q1":51.34535490743823,"q3":110.29428389265787,"max":159.34900526552292,"sd":34.26469575709948,"avg":80.35871658771228}}}	5	DOUBLE PRECISION	\N	\N	5	0	type/Float	\N	\N	f	f	f
-43	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.869047+00	USER_ID	type/Integer	type/FK	t	The id of the user who made this order. Note that in some cases where an order was created on behalf of a customer who phoned the order in, this might be the employee who handled the request.	t	1	2	\N	User ID	normal	46	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":929,"nil%":0.0}}	5	INTEGER	\N	\N	1	0	type/Integer	\N	\N	f	f	f
-36	2024-03-10 21:05:12.451102+00	2024-03-10 21:20:01.906645+00	DISCOUNT	type/Float	type/Discount	t	Discount amount.	t	6	2	\N	Discount	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":701,"nil%":0.898},"type":{"type/Number":{"min":0.17088996672584322,"q1":2.9786226681458743,"q3":7.338187788658235,"max":61.69684269960571,"sd":3.053663125001991,"avg":5.161255547580326}}}	5	DOUBLE PRECISION	\N	\N	6	0	type/Float	\N	\N	f	f	f
-52	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:01.945437+00	ADDRESS	type/Text	\N	t	The street address of the account’s billing address	t	1	5	\N	Address	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2490,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":20.85}}}	5	CHARACTER VARYING	\N	\N	1	0	type/Text	\N	\N	f	f	f
-55	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:01.998135+00	CITY	type/Text	type/City	t	The city of the account’s billing address	t	5	5	\N	City	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1966,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.002,"average-length":8.284}}}	5	CHARACTER VARYING	\N	\N	5	0	type/Text	\N	\N	f	f	f
-48	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.03914+00	STATE	type/Text	type/State	t	The state or province of the account’s billing address	t	7	5	\N	State	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":49,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":1.0,"average-length":2.0}}}	5	CHARACTER	auto-list	\N	7	0	type/Text	\N	\N	f	f	f
-45	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.057776+00	SOURCE	type/Text	type/Source	t	The channel through which we acquired this user. Valid values include: Affiliate, Facebook, Google, Organic and Twitter	t	8	5	\N	Source	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.4084}}}	5	CHARACTER VARYING	auto-list	\N	8	0	type/Text	\N	\N	f	f	f
-56	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.154195+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The date the user record was created. Also referred to as the user’s "join date"	t	12	5	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2500,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-04-19T21:35:18.752Z","latest":"2025-04-19T14:06:27.3Z"}}}	5	TIMESTAMP	\N	\N	12	0	type/DateTime	\N	\N	f	f	f
-63	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.218241+00	EAN	type/Text	\N	t	The international article number. A 13 digit number uniquely identifying the product.	t	1	1	\N	Ean	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":13.0}}}	5	CHARACTER	auto-list	\N	1	0	type/Text	\N	\N	f	f	f
-65	2024-03-10 21:05:13.154461+00	2024-03-10 21:20:02.276623+00	TITLE	type/Text	type/Title	t	The name of the product as it should be displayed to customers.	t	2	1	\N	Title	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":199,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":21.495}}}	5	CHARACTER VARYING	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
 181	2024-03-10 21:08:40.785898+00	2024-03-10 21:08:40.785898+00	dependent_on_model	type/Text	\N	t	\N	t	3	73	\N	Dependent On Model	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	t	f	f
+61	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.840094+00	RATING	type/Float	type/Score	t	The average rating users have given the product. This ranges from 1 - 5	t	6	1	\N	Rating	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":23,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":3.5120465053408525,"q3":4.216124969497314,"max":5.0,"sd":1.3605488657451452,"avg":3.4715}}}	5	DOUBLE PRECISION	\N	\N	6	0	type/Float	\N	\N	f	f	f
+60	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.893027+00	VENDOR	type/Text	type/Company	t	The source of the product.	t	4	1	\N	Vendor	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":20.6}}}	5	CHARACTER VARYING	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
+69	2024-03-10 21:05:13.36958+00	2024-03-11 11:20:06.966789+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The day and time a review was written by a user.	t	5	8	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1112,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-06-03T00:37:05.818Z","latest":"2026-04-19T14:15:25.677Z"}}}	5	TIMESTAMP	\N	\N	5	0	type/DateTime	\N	\N	f	f	f
+66	2024-03-10 21:05:13.36958+00	2024-03-11 11:20:07.059462+00	RATING	type/Integer	type/Score	t	The rating (on a scale of 1-5) the user left.	t	3	8	\N	Rating	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":3.54744353181696,"q3":4.764807071650455,"max":5.0,"sd":1.0443899855660577,"avg":3.987410071942446}}}	5	SMALLINT	auto-list	\N	3	0	type/Integer	\N	\N	f	f	f
+70	2024-03-10 21:05:13.36958+00	2024-03-11 11:20:07.083732+00	REVIEWER	type/Text	\N	t	The user who left the review	t	2	8	\N	Reviewer	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1076,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.001798561151079137,"average-length":9.972122302158274}}}	5	CHARACTER VARYING	\N	\N	2	0	type/Text	\N	\N	f	f	f
+64	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.755099+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The date the product was added to our catalog.	t	7	1	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-04-26T19:29:55.147Z","latest":"2025-04-15T13:34:19.931Z"}}}	5	TIMESTAMP	\N	\N	7	0	type/DateTime	\N	\N	f	f	f
 182	2024-03-10 21:08:40.785898+00	2024-03-10 21:08:40.785898+00	model_id	type/Integer	\N	t	\N	t	2	73	\N	Model ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
 183	2024-03-10 21:08:40.785898+00	2024-03-10 21:08:40.785898+00	dependent_on_id	type/Integer	\N	t	\N	t	4	73	\N	Dependent On ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	t	f	f
 184	2024-03-10 21:08:41.066218+00	2024-03-10 21:08:41.066218+00	entity_id	type/Text	\N	t	\N	t	7	75	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	7	0	type/Text	\N	\N	f	f	f
 185	2024-03-10 21:08:41.066218+00	2024-03-10 21:08:41.066218+00	name	type/Text	\N	t	\N	t	2	75	\N	Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
 186	2024-03-10 21:08:41.066218+00	2024-03-10 21:08:41.066218+00	type	type/Text	\N	t	\N	t	3	75	\N	Type	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	t	f	f
 187	2024-03-10 21:08:41.066218+00	2024-03-10 21:08:41.066218+00	id	type/Integer	type/PK	t	\N	t	0	75	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-57	2024-03-10 21:05:12.884175+00	2024-03-10 21:20:02.137897+00	LATITUDE	type/Float	type/Latitude	t	This is the latitude of the user on sign-up. It might be updated in the future to the last seen location.	t	11	5	\N	Latitude	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2491,"nil%":0.0},"type":{"type/Number":{"min":25.775827,"q1":35.302705923023126,"q3":43.773802584662,"max":70.6355001,"sd":6.390832341883712,"avg":39.87934670484002}}}	5	DOUBLE PRECISION	\N	\N	11	0	type/Float	\N	\N	f	f	f
 190	2024-03-10 21:08:41.066218+00	2024-03-10 21:08:41.066218+00	created_at	type/DateTime	\N	t	\N	t	5	75	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamp	\N	\N	5	0	type/DateTime	\N	\N	t	f	f
 191	2024-03-10 21:08:41.066218+00	2024-03-10 21:08:41.066218+00	updated_at	type/DateTime	\N	t	\N	t	6	75	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamp	\N	\N	6	0	type/DateTime	\N	\N	t	f	f
 192	2024-03-10 21:08:41.332847+00	2024-03-10 21:08:41.332847+00	error_handle	type/Text	\N	t	A program to take an api response to determine if an error occurred	t	3	68	\N	Error Handle	normal	\N	\N	\N	\N	\N	0	text	\N	\N	3	0	type/Text	\N	\N	f	f	f
@@ -3862,16 +3864,20 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 199	2024-03-10 21:08:41.75406+00	2024-03-10 21:08:41.75406+00	id	type/Integer	type/PK	t	\N	t	0	92	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 200	2024-03-10 21:08:41.75406+00	2024-03-10 21:08:41.75406+00	icon	type/Text	\N	t	\N	t	3	92	\N	Icon	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	f	f	f
 201	2024-03-10 21:08:41.75406+00	2024-03-10 21:08:41.75406+00	slug	type/Text	\N	t	\N	t	2	92	\N	Slug	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
-202	2024-03-10 21:08:42.082099+00	2024-03-10 21:08:42.082099+00	device_id	type/Text	\N	t	\N	t	4	79	\N	Device ID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	4	0	type/Text	\N	\N	t	f	f
-203	2024-03-10 21:08:42.082099+00	2024-03-10 21:08:42.082099+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	1	79	\N	Timestamp	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 204	2024-03-10 21:08:42.082099+00	2024-03-10 21:08:42.082099+00	id	type/Integer	type/PK	t	\N	t	0	79	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-207	2024-03-10 21:08:42.082099+00	2024-03-10 21:08:42.082099+00	device_description	type/Text	\N	t	\N	t	5	79	\N	Device Description	normal	\N	\N	\N	\N	\N	0	text	\N	\N	5	0	type/Text	\N	\N	t	f	f
-208	2024-03-10 21:08:42.082099+00	2024-03-10 21:08:42.082099+00	ip_address	type/Text	\N	t	\N	t	6	79	\N	IP Address	normal	\N	\N	\N	\N	\N	0	text	\N	\N	6	0	type/Text	\N	\N	t	f	f
 211	2024-03-10 21:08:42.674394+00	2024-03-10 21:08:42.674394+00	id	type/Integer	type/PK	t	\N	t	0	46	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 188	2024-03-10 21:08:41.066218+00	2024-03-10 21:09:09.529659+00	field_id	type/Integer	type/FK	t	\N	t	1	75	\N	Field ID	normal	237	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
+36	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.282192+00	DISCOUNT	type/Float	type/Discount	t	Discount amount.	t	6	2	\N	Discount	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":701,"nil%":0.898},"type":{"type/Number":{"min":0.17088996672584322,"q1":2.9786226681458743,"q3":7.338187788658235,"max":61.69684269960571,"sd":3.053663125001991,"avg":5.161255547580326}}}	5	DOUBLE PRECISION	\N	\N	6	0	type/Float	\N	\N	f	f	f
+52	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.371498+00	ADDRESS	type/Text	\N	t	The street address of the account’s billing address	t	1	5	\N	Address	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2490,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":20.85}}}	5	CHARACTER VARYING	\N	\N	1	0	type/Text	\N	\N	f	f	f
+55	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.497198+00	CITY	type/Text	type/City	t	The city of the account’s billing address	t	5	5	\N	City	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":1966,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.002,"average-length":8.284}}}	5	CHARACTER VARYING	\N	\N	5	0	type/Text	\N	\N	f	f	f
+48	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.556365+00	STATE	type/Text	type/State	t	The state or province of the account’s billing address	t	7	5	\N	State	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":49,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":1.0,"average-length":2.0}}}	5	CHARACTER	auto-list	\N	7	0	type/Text	\N	\N	f	f	f
+45	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.57842+00	SOURCE	type/Text	type/Source	t	The channel through which we acquired this user. Valid values include: Affiliate, Facebook, Google, Organic and Twitter	t	8	5	\N	Source	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.4084}}}	5	CHARACTER VARYING	auto-list	\N	8	0	type/Text	\N	\N	f	f	f
+57	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.676479+00	LATITUDE	type/Float	type/Latitude	t	This is the latitude of the user on sign-up. It might be updated in the future to the last seen location.	t	11	5	\N	Latitude	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2491,"nil%":0.0},"type":{"type/Number":{"min":25.775827,"q1":35.302705923023126,"q3":43.773802584662,"max":70.6355001,"sd":6.390832341883712,"avg":39.87934670484002}}}	5	DOUBLE PRECISION	\N	\N	11	0	type/Float	\N	\N	f	f	f
+56	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.695308+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The date the user record was created. Also referred to as the user’s "join date"	t	12	5	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2500,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-04-19T21:35:18.752Z","latest":"2025-04-19T14:06:27.3Z"}}}	5	TIMESTAMP	\N	\N	12	0	type/DateTime	\N	\N	f	f	f
+63	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.776157+00	EAN	type/Text	\N	t	The international article number. A 13 digit number uniquely identifying the product.	t	1	1	\N	Ean	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":13.0}}}	5	CHARACTER	auto-list	\N	1	0	type/Text	\N	\N	f	f	f
+65	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.862696+00	TITLE	type/Text	type/Title	t	The name of the product as it should be displayed to customers.	t	2	1	\N	Title	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":199,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":21.495}}}	5	CHARACTER VARYING	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
+42	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.179137+00	TOTAL	type/Float	\N	t	The total billed amount.	t	5	2	\N	Total	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":4426,"nil%":0.0},"type":{"type/Number":{"min":8.93914247937167,"q1":51.34535490743823,"q3":110.29428389265787,"max":159.34900526552292,"sd":34.26469575709948,"avg":80.35871658771228}}}	5	DOUBLE PRECISION	\N	\N	5	0	type/Float	\N	\N	f	f	f
 196	2024-03-10 21:08:41.471503+00	2024-03-10 21:09:09.759984+00	action_id	type/Integer	type/FK	t	The associated action	t	0	56	\N	Action ID	normal	75	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	t	f	f
-206	2024-03-10 21:08:42.082099+00	2024-03-10 21:09:09.897042+00	user_id	type/Integer	type/FK	t	\N	t	2	79	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
-205	2024-03-10 21:08:42.082099+00	2024-03-10 21:09:09.965709+00	session_id	type/Text	type/FK	t	\N	t	3	79	\N	Session ID	normal	139	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	f	f	f
 212	2024-03-10 21:08:42.674394+00	2024-03-10 21:09:56.244246+00	is_audit	type/Boolean	type/Category	t	Only the app db, visible to admins via auditing should have this set true.	t	22	46	\N	Is Audit	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	22	0	type/Boolean	\N	\N	f	f	f
 264	2024-03-10 21:08:44.312645+00	2024-03-10 21:08:44.312645+00	id	type/Integer	type/PK	t	\N	t	0	84	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 274	2024-03-10 21:08:44.87435+00	2024-03-10 21:08:44.87435+00	id	type/Integer	type/PK	t	\N	t	0	86	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
@@ -3896,6 +3902,8 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 297	2024-03-10 21:08:45.356534+00	2024-03-10 21:09:10.744335+00	table_id	type/Integer	type/FK	t	\N	t	1	82	\N	Table ID	normal	274	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 306	2024-03-10 21:08:45.594343+00	2024-03-10 21:09:10.803513+00	metric_id	type/Integer	type/FK	t	\N	t	1	89	\N	Metric ID	normal	291	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 305	2024-03-10 21:08:45.594343+00	2024-03-10 21:09:10.8606+00	field_id	type/Integer	type/FK	t	\N	t	2	89	\N	Field ID	normal	237	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
+206	2024-03-10 21:08:42.082099+00	2024-03-10 22:05:00.742876+00	user_id	type/Integer	type/FK	t	\N	t	2	79	\N	User ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
+205	2024-03-10 21:08:42.082099+00	2024-03-10 22:05:00.742876+00	session_id	type/Text	type/FK	t	\N	t	3	79	\N	Session ID	normal	139	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	varchar	\N	\N	3	0	type/Text	\N	\N	f	f	f
 269	2024-03-10 21:08:44.312645+00	2024-03-10 21:09:56.244246+00	hash_key	type/Text	\N	t	\N	t	8	84	\N	Hash Key	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	8	0	type/Text	\N	\N	f	f	f
 312	2024-03-10 21:08:45.918918+00	2024-03-10 21:08:45.918918+00	indexed_at	type/DateTimeWithLocalTZ	\N	t	When the status changed	t	6	45	\N	Indexed At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	6	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 314	2024-03-10 21:08:45.918918+00	2024-03-10 21:08:45.918918+00	schedule	type/Text	\N	t	The cron schedule for when value syncing should happen.	t	4	45	\N	Schedule	normal	\N	\N	\N	\N	\N	0	text	\N	\N	4	0	type/Text	\N	\N	t	f	f
@@ -3992,19 +4000,8 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 412	2024-03-10 21:08:51.337927+00	2024-03-10 21:08:51.337927+00	calendar	type/*	\N	t	\N	t	2	48	\N	Calendar	normal	\N	\N	\N	\N	\N	0	bytea	\N	\N	2	0	type/*	\N	\N	t	f	f
 413	2024-03-10 21:08:51.337927+00	2024-03-10 21:08:51.337927+00	sched_name	type/Text	type/PK	t	\N	t	0	48	\N	Sched Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
 414	2024-03-10 21:08:51.337927+00	2024-03-10 21:08:51.337927+00	calendar_name	type/Text	type/PK	t	\N	t	1	48	\N	Calendar Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
-420	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	trigger_name	type/Text	\N	t	\N	t	2	54	\N	Trigger Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
-421	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	sched_time	type/BigInteger	\N	t	\N	t	6	54	\N	Sched Time	normal	\N	\N	\N	\N	\N	0	int8	\N	\N	6	0	type/BigInteger	\N	\N	f	f	f
-422	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	job_group	type/Text	\N	t	\N	t	10	54	\N	Job Group	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	10	0	type/Text	\N	\N	f	f	f
-423	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	instance_name	type/Text	\N	t	\N	t	4	54	\N	Instance Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	4	0	type/Text	\N	\N	t	f	f
-424	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	fired_time	type/BigInteger	\N	t	\N	t	5	54	\N	Fired Time	normal	\N	\N	\N	\N	\N	0	int8	\N	\N	5	0	type/BigInteger	\N	\N	t	f	f
-425	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	trigger_group	type/Text	\N	t	\N	t	3	54	\N	Trigger Group	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	t	f	f
 426	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	entry_id	type/Text	type/PK	t	\N	t	1	54	\N	Entry ID	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
-427	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	is_nonconcurrent	type/Boolean	\N	t	\N	t	11	54	\N	Is Nonconcurrent	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	11	0	type/Boolean	\N	\N	f	f	f
 428	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	sched_name	type/Text	type/PK	t	\N	t	0	54	\N	Sched Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
-429	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	job_name	type/Text	\N	t	\N	t	9	54	\N	Job Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	9	0	type/Text	\N	\N	f	f	f
-430	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	state	type/Text	\N	t	\N	t	8	54	\N	State	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	8	0	type/Text	\N	\N	t	f	f
-431	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	priority	type/Integer	\N	t	\N	t	7	54	\N	Priority	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	7	0	type/Integer	\N	\N	t	f	f
-432	2024-03-10 21:08:51.862653+00	2024-03-10 21:08:51.862653+00	requests_recovery	type/Boolean	\N	t	\N	t	12	54	\N	Requests Recovery	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	12	0	type/Boolean	\N	\N	f	f	f
 445	2024-03-10 21:08:52.808851+00	2024-03-10 21:08:52.808851+00	sched_name	type/Text	type/PK	t	\N	t	0	34	\N	Sched Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
 446	2024-03-10 21:08:52.808851+00	2024-03-10 21:08:52.808851+00	trigger_group	type/Text	type/PK	t	\N	t	1	34	\N	Trigger Group	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
 448	2024-03-10 21:08:52.939617+00	2024-03-10 21:08:52.939617+00	sched_name	type/Text	type/PK	t	\N	t	0	36	\N	Sched Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
@@ -4013,9 +4010,7 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 453	2024-03-10 21:08:53.091096+00	2024-03-10 21:08:53.091096+00	repeat_interval	type/BigInteger	\N	t	\N	t	4	19	\N	Repeat Interval	normal	\N	\N	\N	\N	\N	0	int8	\N	\N	4	0	type/BigInteger	\N	\N	t	f	f
 455	2024-03-10 21:08:53.091096+00	2024-03-10 21:08:53.091096+00	repeat_count	type/BigInteger	\N	t	\N	t	3	19	\N	Repeat Count	normal	\N	\N	\N	\N	\N	0	int8	\N	\N	3	0	type/BigInteger	\N	\N	t	f	f
 490	2024-03-10 21:08:54.862303+00	2024-03-10 21:08:54.862303+00	dataset_query	type/Text	\N	t	The MBQL writeback query	t	2	13	\N	Dataset Query	normal	\N	\N	\N	\N	\N	0	text	\N	\N	2	0	type/Text	\N	\N	t	f	f
-493	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	native	type/Boolean	\N	t	\N	t	5	27	\N	Native	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	5	0	type/Boolean	\N	\N	t	f	f
 494	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	id	type/Integer	type/PK	t	\N	t	0	27	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-495	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	database_id	type/Integer	\N	t	\N	t	12	27	\N	Database ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	12	0	type/Integer	\N	\N	f	f	f
 403	2024-03-10 21:08:50.591634+00	2024-03-10 21:09:12.47113+00	pulse_id	type/Integer	type/FK	t	\N	t	1	28	\N	Pulse ID	normal	371	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 405	2024-03-10 21:08:50.750535+00	2024-03-10 21:09:12.573463+00	pulse_channel_id	type/Integer	type/FK	t	\N	t	1	42	\N	Pulse Channel ID	normal	394	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 410	2024-03-10 21:08:50.902658+00	2024-03-10 21:09:12.630815+00	trigger_group	type/Text	type/FK	t	\N	t	2	60	\N	Trigger Group	normal	483	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
@@ -4024,7 +4019,6 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 456	2024-03-10 21:08:53.091096+00	2024-03-10 21:09:13.099029+00	trigger_group	type/Text	type/FK	t	\N	t	2	19	\N	Trigger Group	normal	483	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
 454	2024-03-10 21:08:53.091096+00	2024-03-10 21:09:13.134287+00	sched_name	type/Text	type/FK	t	\N	t	0	19	\N	Sched Name	normal	478	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
 451	2024-03-10 21:08:53.091096+00	2024-03-10 21:09:13.16386+00	trigger_name	type/Text	type/FK	t	\N	t	1	19	\N	Trigger Name	normal	473	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
-491	2024-03-10 21:08:54.862303+00	2024-03-10 21:09:13.493044+00	database_id	type/Integer	type/FK	t	The associated database	t	1	13	\N	Database ID	normal	211	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 492	2024-03-10 21:08:54.862303+00	2024-03-10 21:09:13.53699+00	action_id	type/Integer	type/FK	t	The related action	t	0	13	\N	Action ID	normal	75	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	t	f	f
 449	2024-03-10 21:08:52.939617+00	2024-03-10 21:09:56.244246+00	checkin_interval	type/BigInteger	type/Category	t	\N	t	3	36	\N	Checkin Interval	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":7500.0,"q1":7500.0,"q3":7500.0,"max":7500.0,"sd":null,"avg":7500.0}}}	5	int8	auto-list	\N	3	0	type/BigInteger	\N	\N	t	f	f
 416	2024-03-10 21:08:51.541809+00	2024-03-10 21:09:56.244246+00	sched_name	type/Text	type/FK	t	\N	t	0	69	\N	Sched Name	normal	478	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
@@ -4042,122 +4036,39 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 469	2024-03-10 21:08:53.815674+00	2024-03-10 21:08:53.815674+00	int_prop_2	type/Integer	\N	t	\N	t	7	98	\N	Int Prop 2	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	7	0	type/Integer	\N	\N	f	f	f
 473	2024-03-10 21:08:54.350975+00	2024-03-10 21:08:54.350975+00	trigger_name	type/Text	type/PK	t	\N	t	1	72	\N	Trigger Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
 483	2024-03-10 21:08:54.350975+00	2024-03-10 21:08:54.350975+00	trigger_group	type/Text	type/PK	t	\N	t	2	72	\N	Trigger Group	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
-487	2024-03-10 21:08:54.641751+00	2024-03-10 21:08:54.641751+00	average_execution_time	type/Integer	\N	t	\N	t	1	97	\N	Average Execution Time	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
-488	2024-03-10 21:08:54.641751+00	2024-03-10 21:08:54.641751+00	query	type/Text	\N	t	\N	t	2	97	\N	Query	normal	\N	\N	\N	\N	\N	0	text	\N	\N	2	0	type/Text	\N	\N	f	f	f
 489	2024-03-10 21:08:54.641751+00	2024-03-10 21:08:54.641751+00	query_hash	type/*	type/PK	t	\N	t	0	97	\N	Query Hash	normal	\N	\N	\N	\N	\N	0	bytea	\N	\N	0	0	type/*	\N	\N	t	f	f
 510	2024-03-10 21:08:55.684907+00	2024-03-10 21:08:55.684907+00	id	type/Integer	type/PK	t	\N	t	0	21	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-511	2024-03-10 21:08:55.684907+00	2024-03-10 21:08:55.684907+00	model	type/Text	\N	t	The name of the model that was viewed	t	2	21	\N	Model	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
-512	2024-03-10 21:08:55.684907+00	2024-03-10 21:08:55.684907+00	timestamp	type/DateTime	\N	t	The time a view was recorded	t	4	21	\N	Timestamp	normal	\N	\N	\N	\N	\N	0	timestamp	\N	\N	4	0	type/DateTime	\N	\N	t	f	f
-513	2024-03-10 21:08:55.684907+00	2024-03-10 21:08:55.684907+00	model_id	type/Integer	\N	t	The ID of the model that was viewed	t	3	21	\N	Model ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
-515	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	public_uuid	type/Text	\N	t	\N	t	14	57	\N	Public UUID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	14	0	type/Text	\N	\N	f	f	f
-516	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	collection_preview	type/Boolean	\N	t	\N	t	25	57	\N	Collection Preview	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	25	0	type/Boolean	\N	\N	f	f	f
+427	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	is_nonconcurrent	type/Boolean	type/Category	t	\N	t	11	54	\N	Is Nonconcurrent	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	11	0	type/Boolean	\N	\N	f	f	f
 518	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	id	type/Integer	type/PK	t	\N	t	0	57	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-519	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	cache_ttl	type/Integer	\N	t	\N	t	18	57	\N	Cache Ttl	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	18	0	type/Integer	\N	\N	f	f	f
-520	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	dataset_query	type/Text	\N	t	\N	t	6	57	\N	Dataset Query	normal	\N	\N	\N	\N	\N	0	text	\N	\N	6	0	type/Text	\N	\N	t	f	f
-521	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	dataset	type/Boolean	\N	t	\N	t	21	57	\N	Dataset	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	21	0	type/Boolean	\N	\N	f	f	f
-522	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	archived	type/Boolean	\N	t	\N	t	12	57	\N	Archived	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	12	0	type/Boolean	\N	\N	f	f	f
-523	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	1	57	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-526	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	2	57	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
 463	2024-03-10 21:08:53.815674+00	2024-03-10 21:09:13.256902+00	sched_name	type/Text	type/FK	t	\N	t	0	98	\N	Sched Name	normal	478	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
 458	2024-03-10 21:08:53.815674+00	2024-03-10 21:09:13.285751+00	trigger_name	type/Text	type/FK	t	\N	t	1	98	\N	Trigger Name	normal	473	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
-524	2024-03-10 21:08:56.316551+00	2024-03-10 21:09:13.729568+00	database_id	type/Integer	type/FK	t	\N	t	9	57	\N	Database ID	normal	211	\N	\N	\N	\N	0	int4	\N	\N	9	0	type/Integer	\N	\N	t	f	f
-525	2024-03-10 21:08:56.316551+00	2024-03-10 21:09:13.759951+00	collection_id	type/Integer	type/FK	t	\N	t	13	57	\N	Collection ID	normal	118	\N	\N	\N	\N	0	int4	\N	\N	13	0	type/Integer	\N	\N	f	f	f
-517	2024-03-10 21:08:56.316551+00	2024-03-10 21:09:13.895906+00	table_id	type/Integer	type/FK	t	\N	t	10	57	\N	Table ID	normal	274	\N	\N	\N	\N	0	int4	\N	\N	10	0	type/Integer	\N	\N	f	f	f
 484	2024-03-10 21:08:54.350975+00	2024-03-10 21:09:56.244246+00	trigger_state	type/Text	type/Category	t	\N	t	9	72	\N	Trigger State	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.0}}}	5	varchar	auto-list	\N	9	0	type/Text	\N	\N	t	f	f
 479	2024-03-10 21:08:54.350975+00	2024-03-10 21:09:56.244246+00	job_name	type/Text	type/FK	t	\N	t	3	72	\N	Job Name	normal	442	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":9,"nil%":0.0}}	5	varchar	\N	\N	3	0	type/Text	\N	\N	t	f	f
-496	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	started_at	type/DateTimeWithLocalTZ	\N	t	\N	t	2	27	\N	Started At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-497	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	is_sandboxed	type/Boolean	\N	t	Is query from a sandboxed user	t	15	27	\N	Is Sandboxed	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	15	0	type/Boolean	\N	\N	f	f	f
-498	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	hash	type/*	\N	t	\N	t	1	27	\N	Hash	normal	\N	\N	\N	\N	\N	0	bytea	\N	\N	1	0	type/*	\N	\N	t	f	f
-499	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	error	type/Text	\N	t	\N	t	7	27	\N	Error	normal	\N	\N	\N	\N	\N	0	text	\N	\N	7	0	type/Text	\N	\N	f	f	f
-500	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	result_rows	type/Integer	\N	t	\N	t	4	27	\N	Result Rows	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	t	f	f
-501	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	executor_id	type/Integer	\N	t	\N	t	8	27	\N	Executor ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	8	0	type/Integer	\N	\N	f	f	f
-502	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	cache_hash	type/*	\N	t	Hash of normalized query, calculated in middleware.cache	t	16	27	\N	Cache Hash	normal	\N	\N	\N	\N	\N	0	bytea	\N	\N	16	0	type/*	\N	\N	f	f	f
-503	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	running_time	type/Integer	\N	t	\N	t	3	27	\N	Running Time	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
-504	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	cache_hit	type/Boolean	\N	t	\N	t	13	27	\N	Cache Hit	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	13	0	type/Boolean	\N	\N	f	f	f
-505	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	pulse_id	type/Integer	\N	t	\N	t	11	27	\N	Pulse ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	11	0	type/Integer	\N	\N	f	f	f
-506	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	card_id	type/Integer	\N	t	\N	t	9	27	\N	Card ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	9	0	type/Integer	\N	\N	f	f	f
-507	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	action_id	type/Integer	\N	t	The ID of the action associated with this query execution, if any.	t	14	27	\N	Action ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	14	0	type/Integer	\N	\N	f	f	f
-508	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	context	type/Text	\N	t	\N	t	6	27	\N	Context	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	6	0	type/Text	\N	\N	f	f	f
-509	2024-03-10 21:08:55.429378+00	2024-03-10 21:08:55.429378+00	dashboard_id	type/Integer	\N	t	\N	t	10	27	\N	Dashboard ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	10	0	type/Integer	\N	\N	f	f	f
 568	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	id	type/Integer	type/PK	t	\N	t	0	31	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-569	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	size_x	type/Integer	\N	t	\N	t	3	31	\N	Size X	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
-570	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	row	type/Integer	\N	t	\N	t	5	31	\N	Row	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	5	0	type/Integer	\N	\N	t	f	f
-572	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	size_y	type/Integer	\N	t	\N	t	4	31	\N	Size Y	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	t	f	f
-574	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	entity_id	type/Text	\N	t	\N	t	11	31	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	11	0	type/Text	\N	\N	f	f	f
-575	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	1	31	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
-576	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	2	31	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
-577	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	parameter_mappings	type/Text	\N	t	\N	t	9	31	\N	Parameter Mappings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	9	0	type/Text	\N	\N	t	f	f
-578	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	col	type/Integer	\N	t	\N	t	6	31	\N	Col	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	6	0	type/Integer	\N	\N	t	f	f
-581	2024-03-10 21:08:57.695873+00	2024-03-10 21:08:57.695873+00	visualization_settings	type/Text	\N	t	\N	t	10	31	\N	Visualization Settings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	10	0	type/Text	\N	\N	t	f	f
-583	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	most_recent	type/Boolean	\N	t	Whether a revision is the most recent one	t	9	24	\N	Most Recent	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	9	0	type/Boolean	\N	\N	f	f	f
-584	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	4	24	\N	Timestamp	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	4	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-585	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	model	type/Text	\N	t	\N	t	1	24	\N	Model	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	t	f	f
 586	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	id	type/Integer	type/PK	t	\N	t	0	24	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-587	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	object	type/Text	\N	t	\N	t	5	24	\N	Object	normal	\N	\N	\N	\N	\N	0	text	\N	\N	5	0	type/Text	\N	\N	t	f	f
-588	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	is_creation	type/Boolean	\N	t	\N	t	7	24	\N	Is Creation	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	7	0	type/Boolean	\N	\N	f	f	f
-589	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	is_reversion	type/Boolean	\N	t	\N	t	6	24	\N	Is Reversion	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	6	0	type/Boolean	\N	\N	f	f	f
-590	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	metabase_version	type/Text	\N	t	Metabase version used to create the revision.	t	10	24	\N	Metabase Version	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	10	0	type/Text	\N	\N	f	f	f
-591	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	model_id	type/Integer	\N	t	\N	t	2	24	\N	Model ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
-592	2024-03-10 21:08:58.021434+00	2024-03-10 21:08:58.021434+00	message	type/Text	\N	t	\N	t	8	24	\N	Message	normal	\N	\N	\N	\N	\N	0	text	\N	\N	8	0	type/Text	\N	\N	f	f	f
+575	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	created_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	1	31	\N	Created At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:15:26.817798Z","latest":"2024-03-10T22:02:19.129725Z"}}}	5	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 595	2024-03-10 21:08:58.227516+00	2024-03-10 21:08:58.227516+00	id	type/Integer	type/PK	t	\N	t	0	80	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 596	2024-03-10 21:08:58.227516+00	2024-03-10 21:08:58.227516+00	attribute_remappings	type/Text	\N	t	\N	t	4	80	\N	Attribute Remappings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	4	0	type/Text	\N	\N	f	f	f
 599	2024-03-10 21:08:58.505825+00	2024-03-10 21:08:58.505825+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	4	32	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	4	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 600	2024-03-10 21:08:58.505825+00	2024-03-10 21:08:58.505825+00	kind	type/Text	\N	t	\N	t	6	32	\N	Kind	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	6	0	type/Text	\N	\N	t	f	f
 601	2024-03-10 21:08:58.505825+00	2024-03-10 21:08:58.505825+00	id	type/Integer	type/PK	t	\N	t	0	32	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 602	2024-03-10 21:08:58.505825+00	2024-03-10 21:08:58.505825+00	version	type/Integer	type/PK	t	\N	t	1	32	\N	Version	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	f	f	f
-580	2024-03-10 21:08:57.695873+00	2024-03-10 21:09:14.239149+00	dashboard_id	type/Integer	type/FK	t	\N	t	8	31	\N	Dashboard ID	normal	551	\N	\N	\N	\N	0	int4	\N	\N	8	0	type/Integer	\N	\N	t	f	f
-579	2024-03-10 21:08:57.695873+00	2024-03-10 21:09:14.2694+00	action_id	type/Integer	type/FK	t	The related action	t	12	31	\N	Action ID	normal	75	\N	\N	\N	\N	0	int4	\N	\N	12	0	type/Integer	\N	\N	f	f	f
-573	2024-03-10 21:08:57.695873+00	2024-03-10 21:09:14.304168+00	card_id	type/Integer	type/FK	t	\N	t	7	31	\N	Card ID	normal	518	\N	\N	\N	\N	0	int4	\N	\N	7	0	type/Integer	\N	\N	f	f	f
-582	2024-03-10 21:08:58.021434+00	2024-03-10 21:09:14.423267+00	user_id	type/Integer	type/FK	t	\N	t	3	24	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
 598	2024-03-10 21:08:58.227516+00	2024-03-10 21:09:14.504597+00	group_id	type/Integer	type/FK	t	\N	t	1	80	\N	Group ID	normal	350	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 597	2024-03-10 21:08:58.227516+00	2024-03-10 21:09:14.552365+00	card_id	type/Integer	type/FK	t	\N	t	3	80	\N	Card ID	normal	518	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	f	f	f
 593	2024-03-10 21:08:58.227516+00	2024-03-10 21:09:14.607525+00	table_id	type/Integer	type/FK	t	\N	t	2	80	\N	Table ID	normal	274	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
 594	2024-03-10 21:08:58.227516+00	2024-03-10 21:09:14.647508+00	permission_id	type/Integer	type/FK	t	The ID of the corresponding permissions path for this sandbox	t	5	80	\N	Permission ID	normal	346	\N	\N	\N	\N	0	int4	\N	\N	5	0	type/Integer	\N	\N	f	f	f
 603	2024-03-10 21:08:58.505825+00	2024-03-10 21:09:14.730919+00	creator_id	type/Integer	type/FK	t	\N	t	2	32	\N	Creator ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	f	f	f
-527	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	name	type/Text	\N	t	\N	t	3	57	\N	Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	t	f	f
-528	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	query_type	type/Text	\N	t	\N	t	11	57	\N	Query Type	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	11	0	type/Text	\N	\N	f	f	f
-529	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	entity_id	type/Text	\N	t	\N	t	22	57	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	22	0	type/Text	\N	\N	f	f	f
-530	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	display	type/Text	\N	t	\N	t	5	57	\N	Display	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	5	0	type/Text	\N	\N	t	f	f
-531	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	description	type/Text	\N	t	\N	t	4	57	\N	Description	normal	\N	\N	\N	\N	\N	0	text	\N	\N	4	0	type/Text	\N	\N	f	f	f
-534	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	metabase_version	type/Text	\N	t	Metabase version used to create the card.	t	26	57	\N	Metabase Version	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	26	0	type/Text	\N	\N	f	f	f
-535	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	parameters	type/Text	\N	t	\N	t	23	57	\N	Parameters	normal	\N	\N	\N	\N	\N	0	text	\N	\N	23	0	type/Text	\N	\N	f	f	f
-536	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	parameter_mappings	type/Text	\N	t	\N	t	24	57	\N	Parameter Mappings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	24	0	type/Text	\N	\N	f	f	f
-537	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	result_metadata	type/Text	\N	t	\N	t	19	57	\N	Result Metadata	normal	\N	\N	\N	\N	\N	0	text	\N	\N	19	0	type/Text	\N	\N	f	f	f
-538	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	visualization_settings	type/Text	\N	t	\N	t	7	57	\N	Visualization Settings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	7	0	type/Text	\N	\N	t	f	f
-539	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	embedding_params	type/Text	\N	t	\N	t	17	57	\N	Embedding Params	normal	\N	\N	\N	\N	\N	0	text	\N	\N	17	0	type/Text	\N	\N	f	f	f
-540	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	enable_embedding	type/Boolean	\N	t	\N	t	16	57	\N	Enable Embedding	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	16	0	type/Boolean	\N	\N	f	f	f
-541	2024-03-10 21:08:56.316551+00	2024-03-10 21:08:56.316551+00	collection_position	type/Integer	\N	t	\N	t	20	57	\N	Collection Position	normal	\N	\N	\N	\N	\N	0	int2	\N	\N	20	0	type/Integer	\N	\N	f	f	f
 543	2024-03-10 21:08:56.654933+00	2024-03-10 21:08:56.654933+00	id	type/Integer	type/PK	t	\N	t	0	49	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
+46	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.652428+00	ID	type/BigInteger	type/PK	t	A unique identifier given to each user.	t	0	5	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
+53	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.424481+00	PASSWORD	type/Text	\N	t	This is the salted password of the user. It should not be visible	t	3	5	\N	Password	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2500,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":36.0}}}	5	CHARACTER VARYING	\N	\N	3	0	type/Text	\N	\N	f	f	f
 545	2024-03-10 21:08:56.654933+00	2024-03-10 21:08:56.654933+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	1	49	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
 546	2024-03-10 21:08:56.654933+00	2024-03-10 21:08:56.654933+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	2	49	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-548	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	entity_id	type/Text	\N	t	\N	t	19	40	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	19	0	type/Text	\N	\N	f	f	f
-549	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	collection_position	type/Integer	\N	t	\N	t	17	40	\N	Collection Position	normal	\N	\N	\N	\N	\N	0	int2	\N	\N	17	0	type/Integer	\N	\N	f	f	f
-550	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	caveats	type/Text	\N	t	\N	t	8	40	\N	Caveats	normal	\N	\N	\N	\N	\N	0	text	\N	\N	8	0	type/Text	\N	\N	f	f	f
 551	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	id	type/Integer	type/PK	t	\N	t	0	40	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-552	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	points_of_interest	type/Text	\N	t	\N	t	7	40	\N	Points Of Interest	normal	\N	\N	\N	\N	\N	0	text	\N	\N	7	0	type/Text	\N	\N	f	f	f
-554	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	parameters	type/Text	\N	t	\N	t	6	40	\N	Parameters	normal	\N	\N	\N	\N	\N	0	text	\N	\N	6	0	type/Text	\N	\N	t	f	f
-555	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	auto_apply_filters	type/Boolean	\N	t	Whether or not to auto-apply filters on a dashboard	t	20	40	\N	Auto Apply Filters	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	20	0	type/Boolean	\N	\N	f	f	f
-556	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	cache_ttl	type/Integer	\N	t	\N	t	18	40	\N	Cache Ttl	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	18	0	type/Integer	\N	\N	f	f	f
-557	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	1	40	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-558	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	2	40	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
-559	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	name	type/Text	\N	t	\N	t	3	40	\N	Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	t	f	f
-560	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	show_in_getting_started	type/Boolean	\N	t	\N	t	9	40	\N	Show In Getting Started	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	9	0	type/Boolean	\N	\N	f	f	f
-561	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	position	type/Integer	\N	t	\N	t	15	40	\N	Position	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	15	0	type/Integer	\N	\N	f	f	f
-562	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	description	type/Text	\N	t	\N	t	4	40	\N	Description	normal	\N	\N	\N	\N	\N	0	text	\N	\N	4	0	type/Text	\N	\N	f	f	f
-563	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	public_uuid	type/Text	\N	t	\N	t	10	40	\N	Public UUID	normal	\N	\N	\N	\N	\N	0	bpchar	\N	\N	10	0	type/Text	\N	\N	f	f	f
-564	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	enable_embedding	type/Boolean	\N	t	\N	t	12	40	\N	Enable Embedding	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	12	0	type/Boolean	\N	\N	f	f	f
-565	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	embedding_params	type/Text	\N	t	\N	t	13	40	\N	Embedding Params	normal	\N	\N	\N	\N	\N	0	text	\N	\N	13	0	type/Text	\N	\N	f	f	f
-566	2024-03-10 21:08:57.264414+00	2024-03-10 21:08:57.264414+00	archived	type/Boolean	\N	t	\N	t	14	40	\N	Archived	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	14	0	type/Boolean	\N	\N	f	f	f
-627	2024-03-10 21:08:59.465957+00	2024-03-10 21:08:59.465957+00	coords_y	type/Float	\N	t	\N	t	3	50	\N	Coords Y	normal	\N	\N	\N	\N	\N	0	float8	\N	\N	3	0	type/Float	\N	\N	f	f	f
+573	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	card_id	type/Integer	type/FK	t	\N	t	7	31	\N	Card ID	normal	518	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0}}	5	int4	\N	\N	7	0	type/Integer	\N	\N	f	f	f
+560	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	show_in_getting_started	type/Boolean	type/Category	t	\N	t	9	40	\N	Show In Getting Started	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	9	0	type/Boolean	\N	\N	f	f	f
 628	2024-03-10 21:08:59.465957+00	2024-03-10 21:08:59.465957+00	id	type/Text	type/PK	t	\N	t	0	50	\N	ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	0	0	type/Text	\N	\N	t	f	f
-629	2024-03-10 21:08:59.465957+00	2024-03-10 21:08:59.465957+00	name	type/Text	\N	t	\N	t	1	50	\N	Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	1	0	type/Text	\N	\N	f	f	f
-630	2024-03-10 21:08:59.465957+00	2024-03-10 21:08:59.465957+00	coords_x	type/Float	\N	t	\N	t	2	50	\N	Coords X	normal	\N	\N	\N	\N	\N	0	float8	\N	\N	2	0	type/Float	\N	\N	f	f	f
-532	2024-03-10 21:08:56.316551+00	2024-03-10 21:09:13.860762+00	creator_id	type/Integer	type/FK	t	\N	t	8	57	\N	Creator ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	8	0	type/Integer	\N	\N	t	f	f
 542	2024-03-10 21:08:56.654933+00	2024-03-10 21:09:13.969058+00	owner_id	type/Integer	type/FK	t	\N	t	4	49	\N	Owner ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	t	f	f
 544	2024-03-10 21:08:56.654933+00	2024-03-10 21:09:14.012412+00	card_id	type/Integer	type/FK	t	\N	t	3	49	\N	Card ID	normal	518	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
-547	2024-03-10 21:08:57.264414+00	2024-03-10 21:09:14.063431+00	made_public_by_id	type/Integer	type/FK	t	\N	t	11	40	\N	Made Public By ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	11	0	type/Integer	\N	\N	f	f	f
-553	2024-03-10 21:08:57.264414+00	2024-03-10 21:09:14.093681+00	collection_id	type/Integer	type/FK	t	\N	t	16	40	\N	Collection ID	normal	118	\N	\N	\N	\N	0	int4	\N	\N	16	0	type/Integer	\N	\N	f	f	f
-567	2024-03-10 21:08:57.264414+00	2024-03-10 21:09:14.126822+00	creator_id	type/Integer	type/FK	t	\N	t	5	40	\N	Creator ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	5	0	type/Integer	\N	\N	t	f	f
 633	2024-03-10 21:08:59.89475+00	2024-03-10 21:09:56.244246+00	delete	type/Boolean	type/Category	t	Privilege to delete records from the table	t	5	35	\N	Delete	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	5	0	type/Boolean	\N	\N	f	f	f
 604	2024-03-10 21:08:58.505825+00	2024-03-10 21:08:58.505825+00	name	type/Text	\N	t	\N	t	5	32	\N	Name	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	5	0	type/Text	\N	\N	t	f	f
 605	2024-03-10 21:08:58.505825+00	2024-03-10 21:08:58.505825+00	source	type/Text	\N	t	\N	t	7	32	\N	Source	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	7	0	type/Text	\N	\N	f	f	f
@@ -4175,8 +4086,6 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 619	2024-03-10 21:08:58.935687+00	2024-03-10 21:08:58.935687+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	7	29	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	7	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
 620	2024-03-10 21:08:58.935687+00	2024-03-10 21:08:58.935687+00	caveats	type/Text	\N	t	\N	t	10	29	\N	Caveats	normal	\N	\N	\N	\N	\N	0	text	\N	\N	10	0	type/Text	\N	\N	f	f	f
 621	2024-03-10 21:08:59.09915+00	2024-03-10 21:08:59.09915+00	key	type/Text	type/PK	t	\N	t	0	61	\N	Key	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	0	0	type/Text	\N	\N	t	f	f
-623	2024-03-10 21:08:59.278432+00	2024-03-10 21:08:59.278432+00	data	type/Text	\N	t	\N	t	3	94	\N	Data	normal	\N	\N	\N	\N	\N	0	text	\N	\N	3	0	type/Text	\N	\N	f	f	f
-624	2024-03-10 21:08:59.278432+00	2024-03-10 21:08:59.278432+00	created_at	type/DateTime	\N	t	\N	t	2	94	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamp	\N	\N	2	0	type/DateTime	\N	\N	f	f	f
 625	2024-03-10 21:08:59.278432+00	2024-03-10 21:08:59.278432+00	id	type/Text	type/PK	t	\N	t	0	94	\N	ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	0	0	type/Text	\N	\N	t	f	f
 637	2024-03-10 21:09:00.233551+00	2024-03-10 21:09:00.233551+00	id	type/Integer	type/PK	t	\N	t	0	95	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 644	2024-03-10 21:09:00.523346+00	2024-03-10 21:09:00.523346+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	8	23	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	8	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
@@ -4196,6 +4105,7 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 660	2024-03-10 21:09:01.342632+00	2024-03-10 21:09:01.342632+00	timezone	type/Text	\N	t	\N	t	6	88	\N	Timezone	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	6	0	type/Text	\N	\N	t	f	f
 661	2024-03-10 21:09:01.342632+00	2024-03-10 21:09:01.342632+00	id	type/Integer	type/PK	t	\N	t	0	88	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
 662	2024-03-10 21:09:01.342632+00	2024-03-10 21:09:01.342632+00	archived	type/Boolean	\N	t	\N	t	8	88	\N	Archived	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	8	0	type/Boolean	\N	\N	f	f	f
+623	2024-03-10 21:08:59.278432+00	2024-03-10 22:05:00.742876+00	data	type/Text	type/Category	t	\N	t	3	94	\N	Data	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":10,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":14.848192771084337}}}	5	text	auto-list	\N	3	0	type/Text	\N	\N	f	f	f
 664	2024-03-10 21:09:01.342632+00	2024-03-10 21:09:01.342632+00	description	type/Text	\N	t	\N	t	3	88	\N	Description	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	f	f	f
 666	2024-03-10 21:09:01.342632+00	2024-03-10 21:09:01.342632+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	10	88	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	10	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 616	2024-03-10 21:08:58.935687+00	2024-03-10 21:09:14.89291+00	table_id	type/Integer	type/FK	t	\N	t	1	29	\N	Table ID	normal	274	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
@@ -4227,66 +4137,27 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 687	2024-03-10 21:09:02.940951+00	2024-03-10 21:09:02.940951+00	user_id	type/Integer	\N	t	\N	t	4	9	\N	User ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	f	f	f
 688	2024-03-10 21:09:02.940951+00	2024-03-10 21:09:02.940951+00	entity_id	type/Integer	\N	t	\N	t	6	9	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	6	0	type/Integer	\N	\N	f	f	f
 690	2024-03-10 21:09:02.940951+00	2024-03-10 21:09:02.940951+00	details	type/Text	\N	t	\N	t	8	9	\N	Details	normal	\N	\N	\N	\N	\N	0	text	\N	\N	8	0	type/Text	\N	\N	f	f	f
-711	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	dashboard_qualified_id	type/Text	\N	t	\N	t	2	83	\N	Dashboard Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	2	0	type/Text	\N	\N	f	f	f
-712	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	dashboardtab_id	type/Text	\N	t	\N	t	3	83	\N	Dashboardtab ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	3	0	type/Text	\N	\N	f	f	f
-713	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	card_qualified_id	type/Text	\N	t	\N	t	4	83	\N	Card Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	4	0	type/Text	\N	\N	f	f	f
-714	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	entity_qualified_id	type/Text	\N	t	\N	t	1	83	\N	Entity Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	1	0	type/Text	\N	\N	f	f	f
-715	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	visualization_settings	type/Text	\N	t	\N	t	9	83	\N	Visualization Settings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	9	0	type/Text	\N	\N	f	f	f
 693	2024-03-10 21:09:03.395804+00	2024-03-10 21:09:56.244246+00	collection_is_personal	type/Boolean	type/Category	t	\N	t	15	30	\N	Collection Is Personal	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	15	0	type/Boolean	\N	\N	f	f	f
 695	2024-03-10 21:09:03.395804+00	2024-03-10 21:09:56.244246+00	collection_is_official	type/Boolean	type/Category	t	\N	t	14	30	\N	Collection Is Official	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	14	0	type/Boolean	\N	\N	f	f	f
-716	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	entity_id	type/Integer	\N	t	\N	t	0	83	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	f
-717	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	6	83	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	6	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
-718	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	size_y	type/Integer	\N	t	\N	t	8	83	\N	Size Y	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	8	0	type/Integer	\N	\N	f	f	f
-719	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	created_at	type/DateTimeWithLocalTZ	\N	t	\N	t	5	83	\N	Created At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	5	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
-720	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	size_x	type/Integer	\N	t	\N	t	7	83	\N	Size X	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	7	0	type/Integer	\N	\N	f	f	f
-721	2024-03-10 21:09:03.69621+00	2024-03-10 21:09:03.69621+00	parameter_mappings	type/Text	\N	t	\N	t	10	83	\N	Parameter Mappings	normal	\N	\N	\N	\N	\N	0	text	\N	\N	10	0	type/Text	\N	\N	f	f	f
 106	2024-03-10 21:08:33.259744+00	2024-03-10 21:09:08.521763+00	user_id	type/Integer	type/FK	t	\N	t	1	33	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 161	2024-03-10 21:08:37.386618+00	2024-03-10 21:09:09.099775+00	user_id	type/Integer	type/FK	t	\N	t	1	64	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
 163	2024-03-10 21:08:37.386618+00	2024-03-10 21:09:09.14589+00	dashboard_id	type/Integer	type/FK	t	\N	t	2	64	\N	Dashboard ID	normal	551	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
 177	2024-03-10 21:08:40.270413+00	2024-03-10 21:09:09.4092+00	dashboard_id	type/Integer	type/FK	t	The dashboard that a tab is on	t	1	58	\N	Dashboard ID	normal	551	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
+715	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	visualization_settings	type/Text	type/SerializedJSON	t	\N	t	9	83	\N	Visualization Settings	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	9	0	type/Text	\N	\N	f	f	f
 189	2024-03-10 21:08:41.066218+00	2024-03-10 21:09:09.495998+00	human_readable_field_id	type/Integer	type/FK	t	\N	t	4	75	\N	Human Readable Field ID	normal	237	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	f	f	f
 193	2024-03-10 21:08:41.332847+00	2024-03-10 21:09:09.636243+00	action_id	type/Integer	type/FK	t	The related action	t	0	68	\N	Action ID	normal	75	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	t	f	f
 310	2024-03-10 21:08:45.918918+00	2024-03-10 21:09:11.303301+00	model_id	type/Integer	type/FK	t	The ID of the indexed model.	t	1	45	\N	Model ID	normal	518	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	f	f	f
 378	2024-03-10 21:08:49.995312+00	2024-03-10 21:09:12.187351+00	collection_id	type/Integer	type/FK	t	\N	t	9	17	\N	Collection ID	normal	118	\N	\N	\N	\N	0	int4	\N	\N	9	0	type/Integer	\N	\N	f	f	f
 470	2024-03-10 21:08:53.815674+00	2024-03-10 21:09:13.226832+00	trigger_group	type/Text	type/FK	t	\N	t	2	98	\N	Trigger Group	normal	483	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
-571	2024-03-10 21:08:57.695873+00	2024-03-10 21:09:14.209066+00	dashboard_tab_id	type/Integer	type/FK	t	The referenced tab id that dashcard is on, it's nullable for dashboard with no tab	t	13	31	\N	Dashboard Tab ID	normal	173	\N	\N	\N	\N	0	int4	\N	\N	13	0	type/Integer	\N	\N	f	f	f
 123	2024-03-10 21:08:34.330607+00	2024-03-10 21:09:56.244246+00	personal_owner_id	type/Integer	type/FK	t	\N	t	5	41	\N	Personal Owner ID	normal	145	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	5	0	type/Integer	\N	\N	f	f	f
-824	2024-03-10 21:09:08.038321+00	2024-03-10 21:09:08.038321+00	entity_type	type/Text	\N	t	\N	t	3	20	\N	Entity Type	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	3	0	type/Text	\N	\N	f	f	f
-825	2024-03-10 21:09:08.038321+00	2024-03-10 21:09:08.038321+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	1	20	\N	Timestamp	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
-826	2024-03-10 21:09:08.038321+00	2024-03-10 21:09:08.038321+00	entity_id	type/Integer	\N	t	\N	t	4	20	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	4	0	type/Integer	\N	\N	f	f	f
-827	2024-03-10 21:09:08.038321+00	2024-03-10 21:09:08.038321+00	user_id	type/Integer	\N	t	\N	t	2	20	\N	User ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	f	f	f
-828	2024-03-10 21:09:08.038321+00	2024-03-10 21:09:08.038321+00	entity_qualified_id	type/Text	\N	t	\N	t	5	20	\N	Entity Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	5	0	type/Text	\N	\N	f	f	f
 86	2024-03-10 21:08:31.263594+00	2024-03-10 21:09:08.276007+00	made_public_by_id	type/Integer	type/FK	t	The ID of the User who first publically shared this Action.	t	11	59	\N	Made Public By ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	11	0	type/Integer	\N	\N	f	f	f
 135	2024-03-10 21:08:35.411449+00	2024-03-10 21:09:08.945837+00	group_id	type/Integer	type/FK	t	ID of the permissions group this connection impersonation policy affects	t	2	85	\N	Group ID	normal	350	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
 752	2024-03-10 21:09:04.873166+00	2024-03-10 21:09:56.244246+00	group_name	type/Text	type/Category	t	\N	t	2	18	\N	Group Name	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":11.5}}}	5	varchar	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
 811	2024-03-10 21:09:07.722742+00	2024-03-10 21:09:56.244246+00	email	type/Text	type/Email	t	\N	t	2	12	\N	Email	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":1.0,"percent-state":0.0,"average-length":21.0}}}	5	citext	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
 815	2024-03-10 21:09:07.722742+00	2024-03-10 21:09:56.244246+00	entity_qualified_id	type/Text	type/Category	t	\N	t	1	12	\N	Entity Qualified ID	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.0}}}	5	text	auto-list	\N	1	0	type/Text	\N	\N	f	f	f
 816	2024-03-10 21:09:07.722742+00	2024-03-10 21:09:56.244246+00	updated_at	type/DateTime	type/UpdatedTimestamp	t	\N	t	8	12	\N	Updated At	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:08:25.565263Z","latest":"2024-03-10T21:08:25.565263Z"}}}	5	timestamp	\N	\N	8	0	type/DateTime	\N	\N	f	f	f
-753	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	4	39	\N	Timestamp	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	4	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
 754	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	id	type/Integer	type/PK	t	\N	t	0	39	\N	ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	t
-755	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	model	type/Text	\N	t	\N	t	2	39	\N	Model	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	2	0	type/Text	\N	\N	t	f	f
-756	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	has_access	type/Boolean	\N	t	Whether the user who initiated the view had read access to the item being viewed.	t	6	39	\N	Has Access	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	6	0	type/Boolean	\N	\N	f	f	f
-758	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	context	type/Text	\N	t	The context of the view, can be collection, question, or dashboard. Only for cards.	t	7	39	\N	Context	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	7	0	type/Text	\N	\N	f	f	f
-759	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	model_id	type/Integer	\N	t	\N	t	3	39	\N	Model ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
-760	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:05.139777+00	metadata	type/Text	\N	t	\N	t	5	39	\N	Metadata	normal	\N	\N	\N	\N	\N	0	text	\N	\N	5	0	type/Text	\N	\N	f	f	f
-761	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	started_at	type/DateTimeWithLocalTZ	\N	t	\N	t	1	66	\N	Started At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
-762	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	is_native	type/Boolean	\N	t	\N	t	4	66	\N	Is Native	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	4	0	type/Boolean	\N	\N	f	f	f
-763	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	query_source	type/Text	\N	t	\N	t	5	66	\N	Query Source	normal	\N	\N	\N	\N	\N	0	varchar	\N	\N	5	0	type/Text	\N	\N	f	f	f
-764	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	user_id	type/Integer	\N	t	\N	t	7	66	\N	User ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	7	0	type/Integer	\N	\N	f	f	f
-765	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	database_qualified_id	type/Text	\N	t	\N	t	14	66	\N	Database Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	14	0	type/Text	\N	\N	f	f	f
-766	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	pulse_id	type/Integer	\N	t	\N	t	12	66	\N	Pulse ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	12	0	type/Integer	\N	\N	f	f	f
-767	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	action_qualified_id	type/Text	\N	t	\N	t	17	66	\N	Action Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	17	0	type/Text	\N	\N	f	f	f
-768	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	card_id	type/Integer	\N	t	\N	t	8	66	\N	Card ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	8	0	type/Integer	\N	\N	f	f	f
-769	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	entity_id	type/Integer	\N	t	\N	t	0	66	\N	Entity ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	0	0	type/Integer	\N	\N	f	f	f
-770	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	dashboard_qualified_id	type/Text	\N	t	\N	t	11	66	\N	Dashboard Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	11	0	type/Text	\N	\N	f	f	f
-771	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	result_rows	type/Integer	\N	t	\N	t	3	66	\N	Result Rows	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	3	0	type/Integer	\N	\N	f	f	f
-772	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	card_qualified_id	type/Text	\N	t	\N	t	9	66	\N	Card Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	9	0	type/Text	\N	\N	f	f	f
-773	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	action_id	type/Integer	\N	t	\N	t	16	66	\N	Action ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	16	0	type/Integer	\N	\N	f	f	f
-774	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	running_time_seconds	type/Float	\N	t	\N	t	2	66	\N	Running Time Seconds	normal	\N	\N	\N	\N	\N	0	float8	\N	\N	2	0	type/Float	\N	\N	f	f	f
-775	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	cache_hit	type/Boolean	\N	t	\N	t	15	66	\N	Cache Hit	normal	\N	\N	\N	\N	\N	0	bool	\N	\N	15	0	type/Boolean	\N	\N	f	f	f
-776	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	database_id	type/Integer	\N	t	\N	t	13	66	\N	Database ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	13	0	type/Integer	\N	\N	f	f	f
-777	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	error	type/Text	\N	t	\N	t	6	66	\N	Error	normal	\N	\N	\N	\N	\N	0	text	\N	\N	6	0	type/Text	\N	\N	f	f	f
-778	2024-03-10 21:09:05.520157+00	2024-03-10 21:09:05.520157+00	dashboard_id	type/Integer	\N	t	\N	t	10	66	\N	Dashboard ID	normal	\N	\N	\N	\N	\N	0	int4	\N	\N	10	0	type/Integer	\N	\N	f	f	f
+753	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	4	39	\N	Timestamp	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":53,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:10:03.030217Z","latest":"2024-03-10T22:04:33.412441Z"}}}	5	timestamptz	\N	\N	4	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
 779	2024-03-10 21:09:05.890812+00	2024-03-10 21:09:05.890812+00	updated_at	type/DateTimeWithLocalTZ	\N	t	\N	t	3	44	\N	Updated At	normal	\N	\N	\N	\N	\N	0	timestamptz	\N	\N	3	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 780	2024-03-10 21:09:05.890812+00	2024-03-10 21:09:05.890812+00	recipients	type/Text	\N	t	\N	t	11	44	\N	Recipients	normal	\N	\N	\N	\N	\N	0	text	\N	\N	11	0	type/Text	\N	\N	f	f	f
 781	2024-03-10 21:09:05.890812+00	2024-03-10 21:09:05.890812+00	entity_qualified_id	type/Text	\N	t	\N	t	1	44	\N	Entity Qualified ID	normal	\N	\N	\N	\N	\N	0	text	\N	\N	1	0	type/Text	\N	\N	f	f	f
@@ -4305,11 +4176,7 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 796	2024-03-10 21:09:06.148339+00	2024-03-10 21:09:56.244246+00	active	type/Boolean	type/Category	t	\N	t	7	26	\N	Active	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	7	0	type/Boolean	\N	\N	f	f	f
 313	2024-03-10 21:08:45.918918+00	2024-03-10 21:09:11.367426+00	creator_id	type/Integer	type/FK	t	ID of the user who created the event	t	9	45	\N	Creator ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	9	0	type/Integer	\N	\N	t	f	f
 407	2024-03-10 21:08:50.750535+00	2024-03-10 21:09:12.52716+00	user_id	type/Integer	type/FK	t	\N	t	2	42	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
-514	2024-03-10 21:08:55.684907+00	2024-03-10 21:09:13.607313+00	user_id	type/Integer	type/FK	t	The user associated with this view	t	1	21	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
-533	2024-03-10 21:08:56.316551+00	2024-03-10 21:09:13.67758+00	made_public_by_id	type/Integer	type/FK	t	\N	t	15	57	\N	Made Public By ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	15	0	type/Integer	\N	\N	f	f	f
 618	2024-03-10 21:08:58.935687+00	2024-03-10 21:09:14.855263+00	creator_id	type/Integer	type/FK	t	\N	t	2	29	\N	Creator ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	2	0	type/Integer	\N	\N	t	f	f
-626	2024-03-10 21:08:59.278432+00	2024-03-10 21:09:14.968146+00	sensor_id	type/Text	type/FK	t	\N	t	1	94	\N	Sensor ID	normal	628	\N	\N	\N	\N	0	text	\N	\N	1	0	type/Text	\N	\N	f	f	f
-757	2024-03-10 21:09:05.139777+00	2024-03-10 21:09:15.609984+00	user_id	type/Integer	type/FK	t	\N	t	1	39	\N	User ID	normal	145	\N	\N	\N	\N	0	int4	\N	\N	1	0	type/Integer	\N	\N	f	f	f
 148	2024-03-10 21:08:37.045533+00	2024-03-10 21:09:56.244246+00	last_login	type/DateTimeWithLocalTZ	\N	t	\N	t	7	53	\N	Last Login	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:08:25.565263Z","latest":"2024-03-10T21:08:25.565263Z"}}}	5	timestamptz	\N	\N	7	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 228	2024-03-10 21:08:42.674394+00	2024-03-10 21:09:56.244246+00	creator_id	type/Integer	type/FK	t	\N	t	19	46	\N	Creator ID	normal	145	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.5}}	5	int4	\N	\N	19	0	type/Integer	\N	\N	f	f	f
 352	2024-03-10 21:08:49.211929+00	2024-03-10 21:09:56.244246+00	user_id	type/Integer	type/FK	t	\N	t	1	77	\N	User ID	normal	145	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
@@ -4323,6 +4190,7 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 692	2024-03-10 21:09:03.395804+00	2024-03-10 21:09:56.244246+00	collection_id	type/Integer	\N	t	\N	t	8	30	\N	Collection ID	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	8	0	type/Integer	\N	\N	f	f	f
 709	2024-03-10 21:09:03.395804+00	2024-03-10 21:09:56.244246+00	name	type/Text	type/Name	t	\N	t	6	30	\N	Name	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":28.0}}}	5	varchar	auto-list	\N	6	0	type/Text	\N	\N	f	f	f
 727	2024-03-10 21:09:04.023428+00	2024-03-10 21:09:56.244246+00	timezone	type/Text	type/Category	t	\N	t	9	47	\N	Timezone	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":3.0}}}	5	varchar	auto-list	\N	9	0	type/Text	\N	\N	f	f	f
+626	2024-03-10 21:08:59.278432+00	2024-03-10 22:05:00.742876+00	sensor_id	type/Text	type/FK	t	\N	t	1	94	\N	Sensor ID	normal	628	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	text	\N	\N	1	0	type/Text	\N	\N	f	f	f
 735	2024-03-10 21:09:04.023428+00	2024-03-10 21:09:56.244246+00	created_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	2	47	\N	Created At	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:05:02.779126Z","latest":"2024-03-10T21:08:22.956292Z"}}}	5	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 801	2024-03-10 21:09:06.148339+00	2024-03-10 21:09:56.244246+00	created_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	2	26	\N	Created At	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":98,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:05:08.308555Z","latest":"2024-03-10T21:08:30.085707Z"}}}	5	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
 250	2024-03-10 21:08:43.665886+00	2024-03-10 21:09:56.244246+00	name	type/Text	type/Name	t	\N	t	3	55	\N	Name	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":337,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.07720144752714113,"average-length":9.775633293124246}}}	5	varchar	auto-list	\N	3	0	type/Text	\N	\N	t	f	f
@@ -4525,6 +4393,161 @@ COPY public.metabase_field (id, created_at, updated_at, name, base_type, semanti
 808	2024-03-10 21:09:06.375279+00	2024-03-10 21:09:56.244246+00	database_qualified_id	type/Text	type/Category	t	\N	t	2	62	\N	Database Qualified ID	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":10.0}}}	5	text	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
 694	2024-03-10 21:09:03.395804+00	2024-03-10 21:09:56.244246+00	entity_type	type/Text	type/Category	t	\N	t	2	30	\N	Entity Type	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":10.0}}}	5	text	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
 797	2024-03-10 21:09:06.148339+00	2024-03-10 21:09:56.244246+00	entity_qualified_id	type/Text	\N	t	\N	t	1	26	\N	Entity Qualified ID	normal	\N	2024-03-10 21:09:56.244246+00	\N	\N	{"global":{"distinct-count":98,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.908163265306122}}}	5	text	auto-list	\N	1	0	type/Text	\N	\N	f	f	f
+557	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	created_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	1	40	\N	Created At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:15:16.410467Z","latest":"2024-03-10T21:15:16.410467Z"}}}	5	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
+580	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	dashboard_id	type/Integer	type/FK	t	\N	t	8	31	\N	Dashboard ID	normal	551	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	8	0	type/Integer	\N	\N	t	f	f
+532	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	creator_id	type/Integer	type/FK	t	\N	t	8	57	\N	Creator ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	8	0	type/Integer	\N	\N	t	f	f
+533	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	made_public_by_id	type/Integer	type/FK	t	\N	t	15	57	\N	Made Public By ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	int4	\N	\N	15	0	type/Integer	\N	\N	f	f	f
+208	2024-03-10 21:08:42.082099+00	2024-03-10 22:05:00.742876+00	ip_address	type/Text	type/Category	t	\N	t	6	79	\N	IP Address	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":12.0}}}	5	text	auto-list	\N	6	0	type/Text	\N	\N	t	f	f
+421	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	sched_time	type/BigInteger	type/Category	t	\N	t	6	54	\N	Sched Time	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.71010824E12,"q1":1.71010824E12,"q3":1.71010824E12,"max":1.71010824E12,"sd":null,"avg":1.71010824E12}}}	5	int8	auto-list	\N	6	0	type/BigInteger	\N	\N	f	f	f
+487	2024-03-10 21:08:54.641751+00	2024-03-10 22:05:00.742876+00	average_execution_time	type/Integer	type/Category	t	\N	t	1	97	\N	Average Execution Time	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":23,"nil%":0.0},"type":{"type/Number":{"min":103.0,"q1":225.0,"q3":699.0,"max":1459.0,"sd":410.8830411659582,"avg":531.3478260869565}}}	5	int4	auto-list	\N	1	0	type/Integer	\N	\N	t	f	f
+539	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	embedding_params	type/Text	\N	t	\N	t	17	57	\N	Embedding Params	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	17	0	type/Text	\N	\N	f	f	f
+624	2024-03-10 21:08:59.278432+00	2024-03-10 22:05:00.742876+00	created_at	type/DateTime	type/CreationTimestamp	t	\N	t	2	94	\N	Created At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":415,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T18:10:23.493319Z","latest":"2024-03-10T18:17:18.5672Z"}}}	5	timestamp	\N	\N	2	0	type/DateTime	\N	\N	f	f	f
+514	2024-03-10 21:08:55.684907+00	2024-03-10 22:05:00.742876+00	user_id	type/Integer	type/FK	t	The user associated with this view	t	1	21	\N	User ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	1	0	type/Integer	\N	\N	t	f	f
+627	2024-03-10 21:08:59.465957+00	2024-03-10 22:05:00.742876+00	coords_y	type/Float	\N	t	\N	t	3	50	\N	Coords Y	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":-23.60237950291104,"q1":-23.60237950291104,"q3":-23.60237950291104,"max":-23.60237950291104,"sd":null,"avg":-23.60237950291104}}}	5	float8	\N	\N	3	0	type/Float	\N	\N	f	f	f
+574	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	entity_id	type/Text	type/Category	t	\N	t	11	31	\N	Entity ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":21.0}}}	5	bpchar	auto-list	\N	11	0	type/Text	\N	\N	f	f	f
+548	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	entity_id	type/Text	type/Category	t	\N	t	19	40	\N	Entity ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":21.0}}}	5	bpchar	auto-list	\N	19	0	type/Text	\N	\N	f	f	f
+500	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	result_rows	type/Integer	type/Category	t	\N	t	4	27	\N	Result Rows	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":0.7001683306103877,"q3":138.5991080457684,"max":415.0,"sd":86.28633329288778,"avg":19.377777777777776}}}	5	int4	auto-list	\N	4	0	type/Integer	\N	\N	t	f	f
+420	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	trigger_name	type/Text	type/Category	t	\N	t	2	54	\N	Trigger Name	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":40.0}}}	5	varchar	auto-list	\N	2	0	type/Text	\N	\N	t	f	f
+429	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	job_name	type/Text	type/Category	t	\N	t	9	54	\N	Job Name	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":34.0}}}	5	varchar	auto-list	\N	9	0	type/Text	\N	\N	f	f	f
+431	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	priority	type/Integer	type/Category	t	\N	t	7	54	\N	Priority	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":5.0,"q1":5.0,"q3":5.0,"max":5.0,"sd":null,"avg":5.0}}}	5	int4	auto-list	\N	7	0	type/Integer	\N	\N	t	f	f
+520	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	dataset_query	type/Text	type/SerializedJSON	t	\N	t	6	57	\N	Dataset Query	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":118.66666666666667}}}	5	text	auto-list	\N	6	0	type/Text	\N	\N	t	f	f
+523	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	created_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	1	57	\N	Created At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:14:46.777697Z","latest":"2024-03-10T22:01:33.154967Z"}}}	5	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
+528	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	query_type	type/Text	type/Category	t	\N	t	11	57	\N	Query Type	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.0}}}	5	varchar	auto-list	\N	11	0	type/Text	\N	\N	f	f	f
+529	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	entity_id	type/Text	type/Category	t	\N	t	22	57	\N	Entity ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":21.0}}}	5	bpchar	auto-list	\N	22	0	type/Text	\N	\N	f	f	f
+531	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	description	type/Text	type/Description	t	\N	t	4	57	\N	Description	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
+535	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	parameters	type/Text	type/SerializedJSON	t	\N	t	23	57	\N	Parameters	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	23	0	type/Text	\N	\N	f	f	f
+711	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	dashboard_qualified_id	type/Text	type/Category	t	\N	t	2	83	\N	Dashboard Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":11.0}}}	5	text	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
+525	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	collection_id	type/Integer	type/FK	t	\N	t	13	57	\N	Collection ID	normal	118	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	int4	\N	\N	13	0	type/Integer	\N	\N	f	f	f
+515	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	public_uuid	type/Text	\N	t	\N	t	14	57	\N	Public UUID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	bpchar	auto-list	\N	14	0	type/Text	\N	\N	f	f	f
+712	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	dashboardtab_id	type/Text	type/Category	t	\N	t	3	83	\N	Dashboardtab ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":13.0}}}	5	text	auto-list	\N	3	0	type/Text	\N	\N	f	f	f
+714	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	entity_qualified_id	type/Text	type/Category	t	\N	t	1	83	\N	Entity Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":15.0}}}	5	text	auto-list	\N	1	0	type/Text	\N	\N	f	f	f
+767	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	action_qualified_id	type/Text	\N	t	\N	t	17	66	\N	Action Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	17	0	type/Text	\N	\N	f	f	f
+769	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	entity_id	type/Integer	\N	t	\N	t	0	66	\N	Entity ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":47,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":12.25,"q3":35.75,"max":47.0,"sd":13.711309200802088,"avg":24.0}}}	5	int4	auto-list	\N	0	0	type/Integer	\N	\N	f	f	f
+772	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	card_qualified_id	type/Text	type/Category	t	\N	t	9	66	\N	Card Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":4,"nil%":0.7021276595744681},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":1.7872340425531914}}}	5	text	auto-list	\N	9	0	type/Text	\N	\N	f	f	f
+777	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	error	type/Text	\N	t	\N	t	6	66	\N	Error	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	6	0	type/Text	\N	\N	f	f	f
+630	2024-03-10 21:08:59.465957+00	2024-03-10 22:05:00.742876+00	coords_x	type/Float	\N	t	\N	t	2	50	\N	Coords X	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":-46.61275574620269,"q1":-46.61275574620269,"q3":-46.61275574620269,"max":-46.61275574620269,"sd":null,"avg":-46.61275574620269}}}	5	float8	\N	\N	2	0	type/Float	\N	\N	f	f	f
+570	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	row	type/Integer	type/Category	t	\N	t	5	31	\N	Row	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":0.0,"q3":2.325765385825233,"max":3.0,"sd":1.7320508075688772,"avg":1.0}}}	5	int4	auto-list	\N	5	0	type/Integer	\N	\N	t	f	f
+425	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	trigger_group	type/Text	type/Category	t	\N	t	3	54	\N	Trigger Group	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.0}}}	5	varchar	auto-list	\N	3	0	type/Text	\N	\N	t	f	f
+207	2024-03-10 21:08:42.082099+00	2024-03-10 22:05:00.742876+00	device_description	type/Text	type/Description	t	\N	t	5	79	\N	Device Description	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":117.0}}}	5	text	auto-list	\N	5	0	type/Text	\N	\N	t	f	f
+430	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	state	type/Text	type/Category	t	\N	t	8	54	\N	State	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":9.0}}}	5	varchar	auto-list	\N	8	0	type/Text	\N	\N	t	f	f
+432	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	requests_recovery	type/Boolean	type/Category	t	\N	t	12	54	\N	Requests Recovery	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	12	0	type/Boolean	\N	\N	f	f	f
+488	2024-03-10 21:08:54.641751+00	2024-03-10 22:05:00.742876+00	query	type/Text	type/SerializedJSON	t	\N	t	2	97	\N	Query	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":23,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":230.82608695652175}}}	5	text	auto-list	\N	2	0	type/Text	\N	\N	f	f	f
+577	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	parameter_mappings	type/Text	type/SerializedJSON	t	\N	t	9	31	\N	Parameter Mappings	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	9	0	type/Text	\N	\N	t	f	f
+581	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	visualization_settings	type/Text	type/SerializedJSON	t	\N	t	10	31	\N	Visualization Settings	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	10	0	type/Text	\N	\N	t	f	f
+497	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	is_sandboxed	type/Boolean	type/Category	t	Is query from a sandboxed user	t	15	27	\N	Is Sandboxed	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	15	0	type/Boolean	\N	\N	f	f	f
+498	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	hash	type/*	type/Category	t	\N	t	1	27	\N	Hash	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":23,"nil%":0.0}}	5	bytea	auto-list	\N	1	0	type/*	\N	\N	t	f	f
+502	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	cache_hash	type/*	\N	t	Hash of normalized query, calculated in middleware.cache	t	16	27	\N	Cache Hash	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	bytea	auto-list	\N	16	0	type/*	\N	\N	f	f	f
+503	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	running_time	type/Integer	\N	t	\N	t	3	27	\N	Running Time	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":44,"nil%":0.0},"type":{"type/Number":{"min":102.0,"q1":204.25,"q3":723.75,"max":1740.0,"sd":431.36010174068883,"avg":504.31111111111113}}}	5	int4	auto-list	\N	3	0	type/Integer	\N	\N	t	f	f
+505	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	pulse_id	type/Integer	\N	t	\N	t	11	27	\N	Pulse ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	11	0	type/Integer	\N	\N	f	f	f
+508	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	context	type/Text	type/Category	t	\N	t	6	27	\N	Context	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.844444444444444}}}	5	varchar	auto-list	\N	6	0	type/Text	\N	\N	f	f	f
+509	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	dashboard_id	type/Integer	type/Category	t	\N	t	10	27	\N	Dashboard ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.7111111111111111},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":0.0,"avg":1.0}}}	5	int4	auto-list	\N	10	0	type/Integer	\N	\N	f	f	f
+587	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	object	type/Text	type/SerializedJSON	t	\N	t	5	24	\N	Object	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":7,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":517.7142857142857}}}	5	text	auto-list	\N	5	0	type/Text	\N	\N	t	f	f
+516	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	collection_preview	type/Boolean	type/Category	t	\N	t	25	57	\N	Collection Preview	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	25	0	type/Boolean	\N	\N	f	f	f
+584	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	4	24	\N	Timestamp	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":7,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:14:47.153386Z","latest":"2024-03-10T22:02:19.470656Z"}}}	5	timestamptz	\N	\N	4	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
+519	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	cache_ttl	type/Integer	\N	t	\N	t	18	57	\N	Cache Ttl	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	18	0	type/Integer	\N	\N	f	f	f
+521	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	dataset	type/Boolean	type/Category	t	\N	t	21	57	\N	Dataset	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	21	0	type/Boolean	\N	\N	f	f	f
+522	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	archived	type/Boolean	type/Category	t	\N	t	12	57	\N	Archived	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	12	0	type/Boolean	\N	\N	f	f	f
+526	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	updated_at	type/DateTimeWithLocalTZ	type/UpdatedTimestamp	t	\N	t	2	57	\N	Updated At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T22:01:39.048004Z","latest":"2024-03-10T22:02:56.135961Z"}}}	5	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
+524	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	database_id	type/Integer	type/FK	t	\N	t	9	57	\N	Database ID	normal	211	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	9	0	type/Integer	\N	\N	t	f	f
+517	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	table_id	type/Integer	type/FK	t	\N	t	10	57	\N	Table ID	normal	274	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0}}	5	int4	\N	\N	10	0	type/Integer	\N	\N	f	f	f
+512	2024-03-10 21:08:55.684907+00	2024-03-10 22:05:00.742876+00	timestamp	type/DateTime	\N	t	The time a view was recorded	t	4	21	\N	Timestamp	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":30,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:15:27.689735Z","latest":"2024-03-10T22:04:47.823296Z"}}}	5	timestamp	\N	\N	4	0	type/DateTime	\N	\N	t	f	f
+572	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	size_y	type/Integer	type/Category	t	\N	t	4	31	\N	Size Y	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Number":{"min":3.0,"q1":3.0,"q3":7.651530771650466,"max":9.0,"sd":3.4641016151377544,"avg":5.0}}}	5	int4	auto-list	\N	4	0	type/Integer	\N	\N	t	f	f
+550	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	caveats	type/Text	\N	t	\N	t	8	40	\N	Caveats	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	8	0	type/Text	\N	\N	f	f	f
+554	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	parameters	type/Text	type/SerializedJSON	t	\N	t	6	40	\N	Parameters	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	6	0	type/Text	\N	\N	t	f	f
+556	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	cache_ttl	type/Integer	\N	t	\N	t	18	40	\N	Cache Ttl	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	18	0	type/Integer	\N	\N	f	f	f
+558	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	updated_at	type/DateTimeWithLocalTZ	type/UpdatedTimestamp	t	\N	t	2	40	\N	Updated At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T22:02:19.129725Z","latest":"2024-03-10T22:02:19.129725Z"}}}	5	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
+561	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	position	type/Integer	\N	t	\N	t	15	40	\N	Position	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	15	0	type/Integer	\N	\N	f	f	f
+588	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	is_creation	type/Boolean	type/Category	t	\N	t	7	24	\N	Is Creation	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0}}	5	bool	auto-list	\N	7	0	type/Boolean	\N	\N	f	f	f
+589	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	is_reversion	type/Boolean	type/Category	t	\N	t	6	24	\N	Is Reversion	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	6	0	type/Boolean	\N	\N	f	f	f
+527	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	name	type/Text	type/Name	t	\N	t	3	57	\N	Name	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":19.666666666666668}}}	5	varchar	auto-list	\N	3	0	type/Text	\N	\N	t	f	f
+530	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	display	type/Text	type/Category	t	\N	t	5	57	\N	Display	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.0}}}	5	varchar	auto-list	\N	5	0	type/Text	\N	\N	t	f	f
+582	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	user_id	type/Integer	type/FK	t	\N	t	3	24	\N	User ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	3	0	type/Integer	\N	\N	t	f	f
+534	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	metabase_version	type/Text	type/Category	t	Metabase version used to create the card.	t	26	57	\N	Metabase Version	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":17.0}}}	5	varchar	auto-list	\N	26	0	type/Text	\N	\N	f	f	f
+536	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	parameter_mappings	type/Text	type/SerializedJSON	t	\N	t	24	57	\N	Parameter Mappings	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	24	0	type/Text	\N	\N	f	f	f
+538	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	visualization_settings	type/Text	type/SerializedJSON	t	\N	t	7	57	\N	Visualization Settings	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":37.0}}}	5	text	auto-list	\N	7	0	type/Text	\N	\N	t	f	f
+540	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	enable_embedding	type/Boolean	type/Category	t	\N	t	16	57	\N	Enable Embedding	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	16	0	type/Boolean	\N	\N	f	f	f
+541	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	collection_position	type/Integer	\N	t	\N	t	20	57	\N	Collection Position	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int2	auto-list	\N	20	0	type/Integer	\N	\N	f	f	f
+547	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	made_public_by_id	type/Integer	type/FK	t	\N	t	11	40	\N	Made Public By ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	int4	\N	\N	11	0	type/Integer	\N	\N	f	f	f
+553	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	collection_id	type/Integer	type/FK	t	\N	t	16	40	\N	Collection ID	normal	118	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	int4	\N	\N	16	0	type/Integer	\N	\N	f	f	f
+567	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	creator_id	type/Integer	type/FK	t	\N	t	5	40	\N	Creator ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	5	0	type/Integer	\N	\N	t	f	f
+629	2024-03-10 21:08:59.465957+00	2024-03-10 22:05:00.742876+00	name	type/Text	type/Name	t	\N	t	1	50	\N	Name	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":15.0}}}	5	varchar	auto-list	\N	1	0	type/Text	\N	\N	f	f	f
+565	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	embedding_params	type/Text	\N	t	\N	t	13	40	\N	Embedding Params	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	13	0	type/Text	\N	\N	f	f	f
+717	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	updated_at	type/DateTimeWithLocalTZ	type/UpdatedTimestamp	t	\N	t	6	83	\N	Updated At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T22:02:19.129725Z","latest":"2024-03-10T22:02:19.129725Z"}}}	5	timestamptz	\N	\N	6	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
+720	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	size_x	type/Integer	type/Category	t	\N	t	7	83	\N	Size X	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Number":{"min":4.0,"q1":4.0,"q3":10.202041028867288,"max":12.0,"sd":4.618802153517007,"avg":6.666666666666667}}}	5	int4	auto-list	\N	7	0	type/Integer	\N	\N	f	f	f
+721	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	parameter_mappings	type/Text	type/SerializedJSON	t	\N	t	10	83	\N	Parameter Mappings	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.0}}}	5	text	auto-list	\N	10	0	type/Text	\N	\N	f	f	f
+760	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	metadata	type/Text	\N	t	\N	t	5	39	\N	Metadata	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	5	0	type/Text	\N	\N	f	f	f
+827	2024-03-10 21:09:08.038321+00	2024-03-10 22:05:00.742876+00	user_id	type/Integer	type/Category	t	\N	t	2	20	\N	User ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":0.0,"avg":1.0}}}	5	int4	auto-list	\N	2	0	type/Integer	\N	\N	f	f	f
+761	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	started_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	1	66	\N	Started At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":47,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:10:03.240637Z","latest":"2024-03-10T22:04:48.000881Z"}}}	5	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
+825	2024-03-10 21:09:08.038321+00	2024-03-10 22:05:00.742876+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	1	20	\N	Timestamp	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":53,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:10:03.030217Z","latest":"2024-03-10T22:04:33.412441Z"}}}	5	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
+762	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	is_native	type/Boolean	type/Category	t	\N	t	4	66	\N	Is Native	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	4	0	type/Boolean	\N	\N	f	f	f
+764	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	user_id	type/Integer	type/Category	t	\N	t	7	66	\N	User ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":0.0,"avg":1.0}}}	5	int4	auto-list	\N	7	0	type/Integer	\N	\N	f	f	f
+766	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	pulse_id	type/Integer	\N	t	\N	t	12	66	\N	Pulse ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	12	0	type/Integer	\N	\N	f	f	f
+768	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	card_id	type/Integer	type/Category	t	\N	t	8	66	\N	Card ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":4,"nil%":0.7021276595744681},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.7434526395267544,"max":3.0,"sd":0.6333236937766509,"avg":1.3571428571428572}}}	5	int4	auto-list	\N	8	0	type/Integer	\N	\N	f	f	f
+771	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	result_rows	type/Integer	type/Category	t	\N	t	3	66	\N	Result Rows	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":0.7168083609279388,"q3":158.825156433168,"max":415.0,"sd":116.77811293035381,"avg":36.212765957446805}}}	5	int4	auto-list	\N	3	0	type/Integer	\N	\N	f	f	f
+773	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	action_id	type/Integer	\N	t	\N	t	16	66	\N	Action ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	16	0	type/Integer	\N	\N	f	f	f
+776	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	database_id	type/Integer	type/Category	t	\N	t	13	66	\N	Database ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":2.0,"q1":2.0,"q3":2.0,"max":2.0,"sd":0.0,"avg":2.0}}}	5	int4	auto-list	\N	13	0	type/Integer	\N	\N	f	f	f
+774	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	running_time_seconds	type/Float	\N	t	\N	t	2	66	\N	Running Time Seconds	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":46,"nil%":0.0},"type":{"type/Number":{"min":0.102,"q1":0.20575,"q3":0.819,"max":1.74,"sd":0.4464708451188785,"avg":0.5319574468085106}}}	5	float8	\N	\N	2	0	type/Float	\N	\N	f	f	f
+756	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	has_access	type/Boolean	type/Category	t	Whether the user who initiated the view had read access to the item being viewed.	t	6	39	\N	Has Access	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	6	0	type/Boolean	\N	\N	f	f	f
+569	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	size_x	type/Integer	type/Category	t	\N	t	3	31	\N	Size X	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Number":{"min":4.0,"q1":4.0,"q3":10.202041028867288,"max":12.0,"sd":4.618802153517007,"avg":6.666666666666667}}}	5	int4	auto-list	\N	3	0	type/Integer	\N	\N	t	f	f
+778	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	dashboard_id	type/Integer	type/Category	t	\N	t	10	66	\N	Dashboard ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.7234042553191489},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":0.0,"avg":1.0}}}	5	int4	auto-list	\N	10	0	type/Integer	\N	\N	f	f	f
+562	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	description	type/Text	type/Description	t	\N	t	4	40	\N	Description	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
+563	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	public_uuid	type/Text	\N	t	\N	t	10	40	\N	Public UUID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	bpchar	auto-list	\N	10	0	type/Text	\N	\N	f	f	f
+564	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	enable_embedding	type/Boolean	type/Category	t	\N	t	12	40	\N	Enable Embedding	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	12	0	type/Boolean	\N	\N	f	f	f
+566	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	archived	type/Boolean	type/Category	t	\N	t	14	40	\N	Archived	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	14	0	type/Boolean	\N	\N	f	f	f
+493	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	native	type/Boolean	type/Category	t	\N	t	5	27	\N	Native	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	5	0	type/Boolean	\N	\N	t	f	f
+495	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	database_id	type/Integer	type/Category	t	\N	t	12	27	\N	Database ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":2.0,"q1":2.0,"q3":2.0,"max":2.0,"sd":0.0,"avg":2.0}}}	5	int4	auto-list	\N	12	0	type/Integer	\N	\N	f	f	f
+499	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	error	type/Text	\N	t	\N	t	7	27	\N	Error	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	7	0	type/Text	\N	\N	f	f	f
+501	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	executor_id	type/Integer	type/Category	t	\N	t	8	27	\N	Executor ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":0.0,"avg":1.0}}}	5	int4	auto-list	\N	8	0	type/Integer	\N	\N	f	f	f
+504	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	cache_hit	type/Boolean	type/Category	t	\N	t	13	27	\N	Cache Hit	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	13	0	type/Boolean	\N	\N	f	f	f
+590	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	metabase_version	type/Text	type/Category	t	Metabase version used to create the revision.	t	10	24	\N	Metabase Version	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":17.0}}}	5	varchar	auto-list	\N	10	0	type/Text	\N	\N	f	f	f
+826	2024-03-10 21:09:08.038321+00	2024-03-10 22:05:00.742876+00	entity_id	type/Integer	type/Category	t	\N	t	4	20	\N	Entity ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0139756978355514,"q3":52.809810888081685,"max":94.0,"sd":32.39224154186658,"avg":27.054054054054053}}}	5	int4	auto-list	\N	4	0	type/Integer	\N	\N	f	f	f
+828	2024-03-10 21:09:08.038321+00	2024-03-10 22:05:00.742876+00	entity_qualified_id	type/Text	type/Category	t	\N	t	5	20	\N	Entity Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":6,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":8.08108108108108}}}	5	text	auto-list	\N	5	0	type/Text	\N	\N	f	f	f
+422	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	job_group	type/Text	type/Category	t	\N	t	10	54	\N	Job Group	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.0}}}	5	varchar	auto-list	\N	10	0	type/Text	\N	\N	f	f	f
+423	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	instance_name	type/Text	type/Category	t	\N	t	4	54	\N	Instance Name	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":25.0}}}	5	varchar	auto-list	\N	4	0	type/Text	\N	\N	t	f	f
+579	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	action_id	type/Integer	type/FK	t	The related action	t	12	31	\N	Action ID	normal	75	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	int4	\N	\N	12	0	type/Integer	\N	\N	f	f	f
+571	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	dashboard_tab_id	type/Integer	type/FK	t	The referenced tab id that dashcard is on, it's nullable for dashboard with no tab	t	13	31	\N	Dashboard Tab ID	normal	173	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0}}	5	int4	\N	\N	13	0	type/Integer	\N	\N	f	f	f
+757	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	user_id	type/Integer	type/FK	t	\N	t	1	39	\N	User ID	normal	145	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	int4	\N	\N	1	0	type/Integer	\N	\N	f	f	f
+203	2024-03-10 21:08:42.082099+00	2024-03-10 22:05:00.742876+00	timestamp	type/DateTimeWithLocalTZ	\N	t	\N	t	1	79	\N	Timestamp	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:56:59.445302Z","latest":"2024-03-10T21:56:59.445302Z"}}}	5	timestamptz	\N	\N	1	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
+576	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	updated_at	type/DateTimeWithLocalTZ	type/UpdatedTimestamp	t	\N	t	2	31	\N	Updated At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T22:02:19.129725Z","latest":"2024-03-10T22:02:19.129725Z"}}}	5	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
+578	2024-03-10 21:08:57.695873+00	2024-03-10 22:05:00.742876+00	col	type/Integer	type/Category	t	\N	t	6	31	\N	Col	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":0.5,"q3":5.0,"max":6.0,"sd":3.0550504633038935,"avg":2.6666666666666665}}}	5	int4	auto-list	\N	6	0	type/Integer	\N	\N	t	f	f
+549	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	collection_position	type/Integer	\N	t	\N	t	17	40	\N	Collection Position	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int2	auto-list	\N	17	0	type/Integer	\N	\N	f	f	f
+552	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	points_of_interest	type/Text	\N	t	\N	t	7	40	\N	Points Of Interest	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	7	0	type/Text	\N	\N	f	f	f
+555	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	auto_apply_filters	type/Boolean	type/Category	t	Whether or not to auto-apply filters on a dashboard	t	20	40	\N	Auto Apply Filters	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	20	0	type/Boolean	\N	\N	f	f	f
+559	2024-03-10 21:08:57.264414+00	2024-03-10 22:05:00.742876+00	name	type/Text	type/Name	t	\N	t	3	40	\N	Name	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":13.0}}}	5	varchar	auto-list	\N	3	0	type/Text	\N	\N	t	f	f
+506	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	card_id	type/Integer	type/Category	t	\N	t	9	27	\N	Card ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":4,"nil%":0.6888888888888889},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.7434526395267544,"max":3.0,"sd":0.6333236937766509,"avg":1.3571428571428572}}}	5	int4	auto-list	\N	9	0	type/Integer	\N	\N	f	f	f
+583	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	most_recent	type/Boolean	type/Category	t	Whether a revision is the most recent one	t	9	24	\N	Most Recent	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0}}	5	bool	auto-list	\N	9	0	type/Boolean	\N	\N	f	f	f
+585	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	model	type/Text	type/Category	t	\N	t	1	24	\N	Model	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.857142857142857}}}	5	varchar	auto-list	\N	1	0	type/Text	\N	\N	t	f	f
+592	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	message	type/Text	\N	t	\N	t	8	24	\N	Message	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":0.0}}}	5	text	auto-list	\N	8	0	type/Text	\N	\N	f	f	f
+755	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	model	type/Text	type/Category	t	\N	t	2	39	\N	Model	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.648648648648648}}}	5	varchar	auto-list	\N	2	0	type/Text	\N	\N	t	f	f
+758	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	context	type/Text	type/Category	t	The context of the view, can be collection, question, or dashboard. Only for cards.	t	7	39	\N	Context	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.6756756756756757},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":2.8783783783783785}}}	5	varchar	auto-list	\N	7	0	type/Text	\N	\N	f	f	f
+824	2024-03-10 21:09:08.038321+00	2024-03-10 22:05:00.742876+00	entity_type	type/Text	type/Category	t	\N	t	3	20	\N	Entity Type	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.648648648648648}}}	5	varchar	auto-list	\N	3	0	type/Text	\N	\N	f	f	f
+202	2024-03-10 21:08:42.082099+00	2024-03-10 22:05:00.742876+00	device_id	type/Text	type/Category	t	\N	t	4	79	\N	Device ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":36.0}}}	5	bpchar	auto-list	\N	4	0	type/Text	\N	\N	t	f	f
+424	2024-03-10 21:08:51.862653+00	2024-03-10 22:05:00.742876+00	fired_time	type/BigInteger	type/Category	t	\N	t	5	54	\N	Fired Time	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.710108240019E12,"q1":1.710108240019E12,"q3":1.710108240019E12,"max":1.710108240019E12,"sd":null,"avg":1.710108240019E12}}}	5	int8	auto-list	\N	5	0	type/BigInteger	\N	\N	t	f	f
+713	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	card_qualified_id	type/Text	type/Category	t	\N	t	4	83	\N	Card Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.0}}}	5	text	auto-list	\N	4	0	type/Text	\N	\N	f	f	f
+716	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	entity_id	type/Integer	type/Category	t	\N	t	0	83	\N	Entity ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.25,"q3":2.75,"max":3.0,"sd":1.0,"avg":2.0}}}	5	int4	auto-list	\N	0	0	type/Integer	\N	\N	f	f	f
+718	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	size_y	type/Integer	type/Category	t	\N	t	8	83	\N	Size Y	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.0},"type":{"type/Number":{"min":3.0,"q1":3.0,"q3":7.651530771650466,"max":9.0,"sd":3.4641016151377544,"avg":5.0}}}	5	int4	auto-list	\N	8	0	type/Integer	\N	\N	f	f	f
+719	2024-03-10 21:09:03.69621+00	2024-03-10 22:05:00.742876+00	created_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	5	83	\N	Created At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:15:26.817798Z","latest":"2024-03-10T22:02:19.129725Z"}}}	5	timestamptz	\N	\N	5	0	type/DateTimeWithLocalTZ	\N	\N	f	f	f
+763	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	query_source	type/Text	type/Source	t	\N	t	5	66	\N	Query Source	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.808510638297872}}}	5	varchar	auto-list	\N	5	0	type/Text	\N	\N	f	f	f
+765	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	database_qualified_id	type/Text	type/Category	t	\N	t	14	66	\N	Database Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":10.0}}}	5	text	auto-list	\N	14	0	type/Text	\N	\N	f	f	f
+770	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	dashboard_qualified_id	type/Text	type/Category	t	\N	t	11	66	\N	Dashboard Qualified ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":2,"nil%":0.7234042553191489},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":3.0425531914893615}}}	5	text	auto-list	\N	11	0	type/Text	\N	\N	f	f	f
+775	2024-03-10 21:09:05.520157+00	2024-03-10 22:05:00.742876+00	cache_hit	type/Boolean	type/Category	t	\N	t	15	66	\N	Cache Hit	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":0.0}}	5	bool	auto-list	\N	15	0	type/Boolean	\N	\N	f	f	f
+511	2024-03-10 21:08:55.684907+00	2024-03-10 22:05:00.742876+00	model	type/Text	type/Category	t	The name of the model that was viewed	t	2	21	\N	Model	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":7.166666666666667}}}	5	varchar	auto-list	\N	2	0	type/Text	\N	\N	t	f	f
+513	2024-03-10 21:08:55.684907+00	2024-03-10 22:05:00.742876+00	model_id	type/Integer	type/Category	t	The ID of the model that was viewed	t	3	21	\N	Model ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":62.35416188179427,"max":94.0,"sd":39.96199343801845,"avg":27.733333333333334}}}	5	int4	auto-list	\N	3	0	type/Integer	\N	\N	t	f	f
+507	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	action_id	type/Integer	\N	t	The ID of the action associated with this query execution, if any.	t	14	27	\N	Action ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":1,"nil%":1.0},"type":{"type/Number":{"min":null,"q1":null,"q3":null,"max":null,"sd":null,"avg":null}}}	5	int4	auto-list	\N	14	0	type/Integer	\N	\N	f	f	f
+496	2024-03-10 21:08:55.429378+00	2024-03-10 22:05:00.742876+00	started_at	type/DateTimeWithLocalTZ	type/CreationTimestamp	t	\N	t	2	27	\N	Started At	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":45,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2024-03-10T21:10:03.240637Z","latest":"2024-03-10T22:04:05.600596Z"}}}	5	timestamptz	\N	\N	2	0	type/DateTimeWithLocalTZ	\N	\N	t	f	f
+591	2024-03-10 21:08:58.021434+00	2024-03-10 22:05:00.742876+00	model_id	type/Integer	type/Category	t	\N	t	2	24	\N	Model ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.8169872981077808,"max":3.0,"sd":0.7867957924694432,"avg":1.4285714285714286}}}	5	int4	auto-list	\N	2	0	type/Integer	\N	\N	t	f	f
+759	2024-03-10 21:09:05.139777+00	2024-03-10 22:05:00.742876+00	model_id	type/Integer	type/Category	t	\N	t	3	39	\N	Model ID	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":5,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0139756978355514,"q3":52.809810888081685,"max":94.0,"sd":32.39224154186658,"avg":27.054054054054053}}}	5	int4	auto-list	\N	3	0	type/Integer	\N	\N	t	f	f
+537	2024-03-10 21:08:56.316551+00	2024-03-10 22:05:00.742876+00	result_metadata	type/Text	type/SerializedJSON	t	\N	t	19	57	\N	Result Metadata	normal	\N	2024-03-10 22:05:00.742876+00	\N	\N	{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Text":{"percent-json":1.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":620.0}}}	5	text	auto-list	\N	19	0	type/Text	\N	\N	f	f	f
+44	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.105126+00	SUBTOTAL	type/Float	\N	t	The raw, pre-tax cost of the order. Note that this might be different in the future from the product price due to promotions, credits, etc.	t	3	2	\N	Subtotal	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":340,"nil%":0.0},"type":{"type/Number":{"min":15.691943673970439,"q1":49.74894519060184,"q3":105.42965746993103,"max":148.22900526552291,"sd":32.53705013056317,"avg":77.01295465356547}}}	5	DOUBLE PRECISION	\N	\N	3	0	type/Float	\N	\N	f	f	f
+38	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.140493+00	TAX	type/Float	\N	t	This is the amount of local and federal taxes that are collected on the purchase. Note that other governmental fees on some products are not included here, but instead are accounted for in the subtotal.	t	4	2	\N	Tax	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":797,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":2.273340386603857,"q3":5.337275338216307,"max":11.12,"sd":2.3206651358900316,"avg":3.8722100000000004}}}	5	DOUBLE PRECISION	\N	\N	4	0	type/Float	\N	\N	f	f	f
+41	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.30512+00	CREATED_AT	type/DateTime	type/CreationTimestamp	t	The date and time an order was submitted.	t	7	2	\N	Created At	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":10001,"nil%":0.0},"type":{"type/DateTime":{"earliest":"2022-04-30T18:56:13.352Z","latest":"2026-04-19T14:07:15.657Z"}}}	5	TIMESTAMP	\N	\N	7	0	type/DateTime	\N	\N	f	f	f
+50	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:06.533794+00	LONGITUDE	type/Float	type/Longitude	t	This is the longitude of the user on sign-up. It might be updated in the future to the last seen location.	t	6	5	\N	Longitude	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2491,"nil%":0.0},"type":{"type/Number":{"min":-166.5425726,"q1":-101.58350792373135,"q3":-84.65289348288829,"max":-67.96735199999999,"sd":15.399698968175663,"avg":-95.18741780363999}}}	5	DOUBLE PRECISION	\N	\N	6	0	type/Float	\N	\N	f	f	f
+37	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.206065+00	ID	type/BigInteger	type/PK	t	This is a unique ID for the product. It is also called the “Invoice number” or “Confirmation number” in customer facing emails and screens.	t	0	2	\N	ID	normal	\N	\N	\N	\N	\N	0	BIGINT	\N	\N	0	0	type/BigInteger	\N	\N	f	f	t
+43	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.234934+00	USER_ID	type/Integer	type/FK	t	The id of the user who made this order. Note that in some cases where an order was created on behalf of a customer who phoned the order in, this might be the employee who handled the request.	t	1	2	\N	User ID	normal	46	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":929,"nil%":0.0}}	5	INTEGER	\N	\N	1	0	type/Integer	\N	\N	f	f	f
+39	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.260973+00	QUANTITY	type/Integer	type/Quantity	t	Number of products bought.	t	8	2	\N	Quantity	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":62,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":1.755882607764982,"q3":4.882654507928044,"max":100.0,"sd":4.214258386403798,"avg":3.7015}}}	5	INTEGER	auto-list	\N	8	0	type/Integer	\N	\N	f	f	f
+58	2024-03-10 21:05:13.154461+00	2024-03-11 11:20:06.734025+00	CATEGORY	type/Text	type/Category	t	The type of product, valid values include: Doohicky, Gadget, Gizmo and Widget	t	3	1	\N	Category	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":4,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":6.375}}}	5	CHARACTER VARYING	auto-list	\N	3	0	type/Text	\N	\N	f	f	f
+54	2024-03-10 21:05:12.884175+00	2024-03-11 11:20:07.104027+00	ZIP	type/Text	type/ZipCode	t	The postal code of the account’s billing address	t	10	5	\N	Zip	normal	\N	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":2234,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":5.0}}}	5	CHARACTER	\N	\N	10	0	type/Text	\N	\N	f	f	f
+40	2024-03-10 21:05:12.451102+00	2024-03-11 11:20:06.039196+00	PRODUCT_ID	type/Integer	type/FK	t	The product ID. This is an internal identifier for the product, NOT the SKU.	t	2	2	\N	Product ID	normal	62	2024-03-10 21:05:45.912447+00	\N	\N	{"global":{"distinct-count":200,"nil%":0.0}}	5	INTEGER	\N	\N	2	0	type/Integer	\N	\N	f	f	f
 \.
 
 
@@ -4580,30 +4603,16 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 45	2024-03-10 21:10:10.629516+00	2024-03-10 21:10:10.629516+00	["You can find all sorts of different joinable tables ranging from products to people to reviews here.",null]	\N	210	f	full	\N	2024-03-10 21:10:10.629516+00
 46	2024-03-10 21:10:10.695909+00	2024-03-10 21:10:10.695909+00	["Sample Database","Sensors"]	\N	221	f	full	\N	2024-03-10 21:10:10.695909+00
 47	2024-03-10 21:10:10.765797+00	2024-03-10 21:10:10.765797+00	["complete"]	\N	223	f	full	\N	2024-03-10 21:10:10.765797+00
-48	2024-03-10 21:10:10.861163+00	2024-03-10 21:10:10.861163+00	["0 20 * * * ? *","0 50 * * * ? *"]	\N	218	f	full	\N	2024-03-10 21:10:10.861163+00
 49	2024-03-10 21:10:10.937673+00	2024-03-10 21:10:10.937673+00	["h2","postgres"]	\N	229	f	full	\N	2024-03-10 21:10:10.937673+00
 50	2024-03-10 21:10:11.006516+00	2024-03-10 21:10:11.006516+00	[null]	\N	217	f	full	\N	2024-03-10 21:10:11.006516+00
-51	2024-03-10 21:10:11.108558+00	2024-03-10 21:10:11.108558+00	["0 0 20 * * ? *","0 50 0 * * ? *"]	\N	216	f	full	\N	2024-03-10 21:10:11.108558+00
 52	2024-03-10 21:10:11.210107+00	2024-03-10 21:10:11.210107+00	["GMT"]	\N	227	f	full	\N	2024-03-10 21:10:11.210107+00
 53	2024-03-10 21:10:11.403407+00	2024-03-10 21:10:11.403407+00	[7500]	\N	449	f	full	\N	2024-03-10 21:10:11.403407+00
-54	2024-03-10 21:10:11.505084+00	2024-03-10 21:10:11.505084+00	[1710105007191]	\N	447	f	full	\N	2024-03-10 21:10:11.505084+00
-55	2024-03-10 21:10:12.618319+00	2024-03-10 21:10:12.618319+00	[true]	\N	693	f	full	\N	2024-03-10 21:10:12.618319+00
-56	2024-03-10 21:10:12.688532+00	2024-03-10 21:10:12.688532+00	[false]	\N	695	f	full	\N	2024-03-10 21:10:12.688532+00
 57	2024-03-10 21:10:12.77426+00	2024-03-10 21:10:12.77426+00	[null]	\N	692	f	full	\N	2024-03-10 21:10:12.77426+00
-58	2024-03-10 21:10:12.841137+00	2024-03-10 21:10:12.841137+00	["Nicola's Personal Collection"]	\N	709	f	full	\N	2024-03-10 21:10:12.841137+00
-59	2024-03-10 21:10:12.908637+00	2024-03-10 21:10:12.908637+00	["collection_1"]	\N	696	f	full	\N	2024-03-10 21:10:12.908637+00
-60	2024-03-10 21:10:12.99679+00	2024-03-10 21:10:12.99679+00	[null]	\N	698	f	full	\N	2024-03-10 21:10:12.99679+00
-61	2024-03-10 21:10:13.072807+00	2024-03-10 21:10:13.072807+00	[1]	\N	700	f	full	\N	2024-03-10 21:10:13.072807+00
-62	2024-03-10 21:10:13.157011+00	2024-03-10 21:10:13.157011+00	[null]	\N	702	f	full	\N	2024-03-10 21:10:13.157011+00
 63	2024-03-10 21:10:13.258557+00	2024-03-10 21:10:13.258557+00	[false]	\N	704	f	full	\N	2024-03-10 21:10:13.258557+00
 64	2024-03-10 21:10:13.354316+00	2024-03-10 21:10:13.354316+00	[null]	\N	706	f	full	\N	2024-03-10 21:10:13.354316+00
-65	2024-03-10 21:10:13.429047+00	2024-03-10 21:10:13.429047+00	[null]	\N	708	f	full	\N	2024-03-10 21:10:13.429047+00
 66	2024-03-10 21:10:13.75694+00	2024-03-10 21:10:13.75694+00	[null]	\N	710	f	full	\N	2024-03-10 21:10:13.75694+00
-67	2024-03-10 21:10:13.946392+00	2024-03-10 21:10:13.946392+00	[null]	\N	699	f	full	\N	2024-03-10 21:10:13.946392+00
 68	2024-03-10 21:10:14.013688+00	2024-03-10 21:10:14.013688+00	[null]	\N	705	f	full	\N	2024-03-10 21:10:14.013688+00
 69	2024-03-10 21:10:14.079806+00	2024-03-10 21:10:14.079806+00	[null]	\N	697	f	full	\N	2024-03-10 21:10:14.079806+00
-70	2024-03-10 21:10:14.184923+00	2024-03-10 21:10:14.184923+00	[null]	\N	701	f	full	\N	2024-03-10 21:10:14.184923+00
-71	2024-03-10 21:10:14.269283+00	2024-03-10 21:10:14.269283+00	["collection"]	\N	694	f	full	\N	2024-03-10 21:10:14.269283+00
 72	2024-03-10 21:10:14.371878+00	2024-03-10 21:10:14.371878+00	["GMT"]	\N	727	f	full	\N	2024-03-10 21:10:14.371878+00
 73	2024-03-10 21:10:14.474841+00	2024-03-10 21:10:14.474841+00	["h2","postgres"]	\N	724	f	full	\N	2024-03-10 21:10:14.474841+00
 74	2024-03-10 21:10:14.574077+00	2024-03-10 21:10:14.574077+00	[1,2]	\N	728	f	full	\N	2024-03-10 21:10:14.574077+00
@@ -4612,11 +4621,9 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 77	2024-03-10 21:10:14.889333+00	2024-03-10 21:10:14.889333+00	[null]	\N	734	f	full	\N	2024-03-10 21:10:14.889333+00
 78	2024-03-10 21:10:14.96076+00	2024-03-10 21:10:14.96076+00	["{\\"flavor\\":\\"H2\\",\\"version\\":\\"2.1.214 (2022-06-13)\\",\\"semantic-version\\":[2,1]}","{\\"flavor\\":\\"PostgreSQL\\",\\"version\\":\\"16.2 (Debian 16.2-1.pgdg120+2)\\",\\"semantic-version\\":[16,2]}"]	\N	736	f	full	\N	2024-03-10 21:10:14.96076+00
 79	2024-03-10 21:10:15.057763+00	2024-03-10 21:10:15.057763+00	[true]	\N	723	f	full	\N	2024-03-10 21:10:15.057763+00
-80	2024-03-10 21:10:15.129346+00	2024-03-10 21:10:15.129346+00	["0 0 20 * * ? *","0 50 0 * * ? *"]	\N	726	f	full	\N	2024-03-10 21:10:15.129346+00
 81	2024-03-10 21:10:15.189519+00	2024-03-10 21:10:15.189519+00	["Sample Database","Sensors"]	\N	729	f	full	\N	2024-03-10 21:10:15.189519+00
 82	2024-03-10 21:10:15.288606+00	2024-03-10 21:10:15.288606+00	["database_1","database_2"]	\N	725	f	full	\N	2024-03-10 21:10:15.288606+00
 83	2024-03-10 21:10:15.369235+00	2024-03-10 21:10:15.369235+00	["Some example data for you to play around with as you embark on your Metabase journey.",null]	\N	731	f	full	\N	2024-03-10 21:10:15.369235+00
-84	2024-03-10 21:10:15.441339+00	2024-03-10 21:10:15.441339+00	["0 20 * * * ? *","0 50 * * * ? *"]	\N	733	f	full	\N	2024-03-10 21:10:15.441339+00
 85	2024-03-10 21:10:15.54876+00	2024-03-10 21:10:15.54876+00	[7,46,62,75,118,139,145,173,199,211,237,274,291,308,346,350,371,394,437,441,442,473,478,483,518,551,568,628,647,null]	\N	738	f	full	\N	2024-03-10 21:10:15.54876+00
 86	2024-03-10 21:10:15.634794+00	2024-03-10 21:10:15.634794+00	["auto-list",null]	\N	740	f	full	\N	2024-03-10 21:10:15.634794+00
 87	2024-03-10 21:10:15.761976+00	2024-03-10 21:10:15.761976+00	["field_1","field_10","field_100","field_101","field_102","field_103","field_104","field_105","field_106","field_107","field_108","field_109","field_11","field_110","field_111","field_112","field_113","field_114","field_115","field_116","field_117","field_118","field_119","field_12","field_120","field_121","field_122","field_123","field_124","field_125","field_126","field_127","field_128","field_129","field_13","field_130","field_131","field_132","field_133","field_134","field_135","field_136","field_137","field_138","field_139","field_14","field_140","field_141","field_142","field_143","field_144","field_145","field_146","field_147","field_148","field_149","field_15","field_150","field_151","field_152","field_153","field_154","field_155","field_156","field_157","field_158","field_159","field_16","field_160","field_161","field_162","field_163","field_164","field_165","field_166","field_167","field_168","field_169","field_17","field_170","field_171","field_172","field_173","field_174","field_175","field_176","field_177","field_178","field_179","field_18","field_180","field_181","field_182","field_183","field_184","field_185","field_186","field_187","field_188","field_189","field_19","field_190","field_191","field_192","field_193","field_194","field_195","field_196","field_197","field_198","field_199","field_2","field_20","field_200","field_201","field_202","field_203","field_204","field_205","field_206","field_207","field_208","field_209","field_21","field_210","field_211","field_212","field_213","field_214","field_215","field_216","field_217","field_218","field_219","field_22","field_220","field_221","field_222","field_223","field_224","field_225","field_226","field_227","field_228","field_229","field_23","field_230","field_231","field_232","field_233","field_234","field_235","field_236","field_237","field_238","field_239","field_24","field_240","field_241","field_242","field_243","field_244","field_245","field_246","field_247","field_248","field_249","field_25","field_250","field_251","field_252","field_253","field_254","field_255","field_256","field_257","field_258","field_259","field_26","field_260","field_261","field_262","field_263","field_264","field_265","field_266","field_267","field_268","field_269","field_27","field_270","field_271","field_272","field_273","field_274","field_275","field_276","field_277","field_278","field_279","field_28","field_280","field_281","field_282","field_283","field_284","field_285","field_286","field_287","field_288","field_289","field_29","field_290","field_291","field_292","field_293","field_294","field_295","field_296","field_297","field_298","field_299","field_3","field_30","field_300","field_301","field_302","field_303","field_304","field_305","field_306","field_307","field_308","field_309","field_31","field_310","field_311","field_312","field_313","field_314","field_315","field_316","field_317","field_318","field_319","field_32","field_320","field_321","field_322","field_323","field_324","field_325","field_326","field_327","field_328","field_329","field_33","field_330","field_331","field_332","field_333","field_334","field_335","field_336","field_337","field_338","field_339","field_34","field_340","field_341","field_342","field_343","field_344","field_345","field_346","field_347","field_348","field_349","field_35","field_350","field_351","field_352","field_353","field_354","field_355","field_356","field_357","field_358","field_359","field_36","field_360","field_361","field_362","field_363","field_364","field_365","field_366","field_367","field_368","field_369","field_37","field_370","field_371","field_372","field_373","field_374","field_375","field_376","field_377","field_378","field_379","field_38","field_380","field_381","field_382","field_383","field_384","field_385","field_386","field_387","field_388","field_389","field_39","field_390","field_391","field_392","field_393","field_394","field_395","field_396","field_397","field_398","field_399","field_4","field_40","field_400","field_401","field_402","field_403","field_404","field_405","field_406","field_407","field_408","field_409","field_41","field_410","field_411","field_412","field_413","field_414","field_415","field_416","field_417","field_418","field_419","field_42","field_420","field_421","field_422","field_423","field_424","field_425","field_426","field_427","field_428","field_429","field_43","field_430","field_431","field_432","field_433","field_434","field_435","field_436","field_437","field_438","field_439","field_44","field_440","field_441","field_442","field_443","field_444","field_445","field_446","field_447","field_448","field_449","field_45","field_450","field_451","field_452","field_453","field_454","field_455","field_456","field_457","field_458","field_459","field_46","field_460","field_461","field_462","field_463","field_464","field_465","field_466","field_467","field_468","field_469","field_47","field_470","field_471","field_472","field_473","field_474","field_475","field_476","field_477","field_478","field_479","field_48","field_480","field_481","field_482","field_483","field_484","field_485","field_486","field_487","field_488","field_489","field_49","field_490","field_491","field_492","field_493","field_494","field_495","field_496","field_497","field_498","field_499","field_5","field_50","field_500","field_501","field_502","field_503","field_504","field_505","field_506","field_507","field_508","field_509","field_51","field_510","field_511","field_512","field_513","field_514","field_515","field_516","field_517","field_518","field_519","field_52","field_520","field_521","field_522","field_523","field_524","field_525","field_526","field_527","field_528","field_529","field_53","field_530","field_531","field_532","field_533","field_534","field_535","field_536","field_537","field_538","field_539","field_54","field_540","field_541","field_542","field_543","field_544","field_545","field_546","field_547","field_548","field_549","field_55","field_550","field_551","field_552","field_553","field_554","field_555","field_556","field_557","field_558","field_559","field_56","field_560","field_561","field_562","field_563","field_564","field_565","field_566","field_567","field_568","field_569","field_57","field_570","field_571","field_572","field_573","field_574","field_575","field_576","field_577","field_578","field_579","field_58","field_580","field_581","field_582","field_583","field_584","field_585","field_586","field_587","field_588","field_589","field_59","field_590","field_591","field_592","field_593","field_594","field_595","field_596","field_597","field_598","field_599","field_6","field_60","field_600","field_601","field_602","field_603","field_604","field_605","field_606","field_607","field_608","field_609","field_61","field_610","field_611","field_612","field_613","field_614","field_615","field_616","field_617","field_618","field_619","field_62","field_620","field_621","field_622","field_623","field_624","field_625","field_626","field_627","field_628","field_629","field_63","field_630","field_631","field_632","field_633","field_634","field_635","field_636","field_637","field_638","field_639","field_64","field_640","field_641","field_642","field_643","field_644","field_645","field_646","field_647","field_648","field_649","field_65","field_650","field_651","field_652","field_653","field_654","field_655","field_656","field_657","field_658","field_659","field_66","field_660","field_661","field_662","field_663","field_664","field_665","field_666","field_667","field_668","field_669","field_67","field_670","field_671","field_672","field_673","field_674","field_675","field_676","field_677","field_678","field_679","field_68","field_680","field_681","field_682","field_683","field_684","field_685","field_686","field_687","field_688","field_689","field_69","field_690","field_691","field_692","field_693","field_694","field_695","field_696","field_697","field_698","field_699","field_7","field_70","field_700","field_701","field_702","field_703","field_704","field_705","field_706","field_707","field_708","field_709","field_71","field_710","field_711","field_712","field_713","field_714","field_715","field_716","field_717","field_718","field_719","field_72","field_720","field_721","field_722","field_723","field_724","field_725","field_726","field_727","field_728","field_729","field_73","field_730","field_731","field_732","field_733","field_734","field_735","field_736","field_737","field_738","field_739","field_74","field_740","field_741","field_742","field_743","field_744","field_745","field_746","field_747","field_748","field_749","field_75","field_750","field_751","field_752","field_753","field_754","field_755","field_756","field_757","field_758","field_759","field_76","field_760","field_761","field_762","field_763","field_764","field_765","field_766","field_767","field_768","field_769","field_77","field_770","field_771","field_772","field_773","field_774","field_775","field_776","field_777","field_778","field_779","field_78","field_780","field_781","field_782","field_783","field_784","field_785","field_786","field_787","field_788","field_789","field_79","field_790","field_791","field_792","field_793","field_794","field_795","field_796","field_797","field_798","field_799","field_8","field_80","field_800","field_801","field_802","field_803","field_804","field_805","field_806","field_807","field_808","field_809","field_81","field_810","field_811","field_812","field_813","field_814","field_815","field_816","field_817","field_818","field_819","field_82","field_820","field_821","field_822","field_823","field_824","field_825","field_826","field_827","field_828","field_829","field_83","field_84","field_85","field_86","field_87","field_88","field_89","field_9","field_90","field_91","field_92","field_93","field_94","field_95","field_96","field_97","field_98","field_99"]	\N	742	f	full	\N	2024-03-10 21:10:15.761976+00
@@ -4634,7 +4641,6 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 99	2024-03-10 21:10:16.846405+00	2024-03-10 21:10:16.846405+00	[1,2]	\N	793	f	full	\N	2024-03-10 21:10:16.846405+00
 124	2024-03-10 21:10:18.954884+00	2024-03-10 21:10:18.954884+00	[null]	\N	150	f	full	\N	2024-03-10 21:10:18.954884+00
 125	2024-03-10 21:10:19.070786+00	2024-03-10 21:10:19.070786+00	[null]	\N	154	f	full	\N	2024-03-10 21:10:19.070786+00
-126	2024-03-10 21:10:19.163291+00	2024-03-10 21:10:19.163291+00	["{\\"last-acknowledged-version\\":\\"v0.48.8\\"}"]	\N	156	f	full	\N	2024-03-10 21:10:19.163291+00
 127	2024-03-10 21:10:19.284507+00	2024-03-10 21:10:19.284507+00	["70951af4-d275-473b-b7df-eca148c4d23a"]	\N	159	f	full	\N	2024-03-10 21:10:19.284507+00
 128	2024-03-10 21:10:19.390819+00	2024-03-10 21:10:19.390819+00	[true]	\N	146	f	full	\N	2024-03-10 21:10:19.390819+00
 129	2024-03-10 21:10:19.495428+00	2024-03-10 21:10:19.495428+00	[null]	\N	153	f	full	\N	2024-03-10 21:10:19.495428+00
@@ -4646,6 +4652,20 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 135	2024-03-10 21:10:20.864212+00	2024-03-10 21:10:20.864212+00	["type/*","type/BigInteger","type/Boolean","type/Date","type/DateTime","type/DateTimeWithLocalTZ","type/Decimal","type/Float","type/Integer","type/Text"]	\N	243	f	full	\N	2024-03-10 21:10:20.864212+00
 136	2024-03-10 21:10:20.930952+00	2024-03-10 21:10:20.930952+00	[0]	\N	245	f	full	\N	2024-03-10 21:10:20.930952+00
 137	2024-03-10 21:10:20.995965+00	2024-03-10 21:10:20.995965+00	["Account ID","Action ID","Action Model ID","Action Qualified ID","Action Type","Active","Active Subscription","Address","Alert Above Goal","Alert Condition","Alert First Only","Anti Csrf Token","Archived","Attribute","Attribute Remappings","Authority Level","Auto Apply Filters","Auto Run Queries","Average Execution Time","Base Type","Birth Date","Blob Data","Body","Bool Prop 1","Bool Prop 2","Button Label","Cache Field Values Schedule","Cache Hash","Cache Hit","Cache Ttl","Calendar","Calendar Name","Canceled At","Card ID","Card Qualified ID","Category","Caveats","Channel Type","Checkin Interval","City","Coercion Strategy","Col","Collection ID","Collection Is Official","Collection Is Personal","Collection Position","Collection Preview","Content","Context","Coords X","Coords Y","Country","Created At","Creator ID","Cron Expression","Custom ID","Custom Position","Dashboardcard ID","Dashboard Card ID","Dashboard ID","Dashboard Qualified ID","Dashboardtab ID","Dashboard Tab ID","Data","Database ID","Database Is Auto Increment","Database Position","Database Qualified ID","Database Required","Database Type","Dataset","Dataset Query","Date Joined","Date Received","Db ID","Dbms Version","Db Version","Dec Prop 1","Dec Prop 2","Default","Definition","Delete","Dependent On ID","Dependent On Model","Description","Details","Device Description","Device ID","Discount","Display","Display Name","Duration","Duration Seconds","Ean","Effective Type","Email","Embedding Params","Enabled","Enable Embedding","Ended At","End Time","End Timestamp","Engine","Entity ID","Entity Qualified ID","Entity Type","Entry ID","Error","Error Handle","Event","Event Timestamp","Executor ID","Expected Invoice","Field ID","Field Order","Fingerprint","Fingerprint Version","Fired Time","First Name","Fk Target Field ID","Full Name","Group ID","Group Name","Has Access","Has Field Values","Hash","Hash Key","Has More Values","How Is This Calculated","Human Readable Field ID","Human Readable Values","Icon","ID","Include Csv","Include Xls","Indexed At","Initial Sync Status","Insert","Instance Name","Int Prop 1","Int Prop 2","IP Address","Is Active","Is Admin","Is Audit","Is Creation","Is Datasetnewb","Is Durable","Is Embedding Enabled","Is Full Sync","Is Group Manager","Is Native","Is Nonconcurrent","Is On Demand","Is Qbnewb","Is Reversion","Is Sample","Is Sandboxed","Is Superuser","Is Update Data","Is Upload","Item ID","Job Class Name","Job Data","Job Group","Job Name","Json Unfolding","Key","Kind","Label ID","Last Analyzed","Last Checkin Time","Last Login","Last Name","Last Used At","Latitude","Legacy Plan","Locale","Location","Lock Name","Login Attributes","Longitude","Long Prop 1","Long Prop 2","Made Public By ID","Made Public By User","Message","Metabase Version","Metadata","Metadata Sync Schedule","Metric ID","Misfire Instr","Model","Model ID","Model Index ID","Model Pk","Moderated Item ID","Moderated Item Type","Moderator ID","Most Recent","Name","Namespace","Native","Next Fire Time","Nfc Path","Object","Ordering","Owner ID","Page URL","Parameter ID","Parameterized Object ID","Parameterized Object Type","Parameter Mappings","Parameters","Parent ID","Password","Password Salt","Payment","Permission ID","Personal Owner ID","Pk Ref","Plan","Points Of Interest","Position","Prev Fire Time","Preview Display","Price","Priority","Product ID","Public UUID","Pulse Channel ID","Pulse ID","Quantity","Query","Query Hash","Query Source","Query Type","Question Database ID","Question Is Native","Question Slug","Question Viz Type","Rating","Rating Mapped","Recipient External","Recipients","Recipient Type","Refingerprint","Refresh Begin","Refresh End","Repeat Count","Repeat Interval","Requests Recovery","Reset Token","Reset Triggered","Response Handle","Result Metadata","Result Rows","Reviewer","Role","Row","Running Time","Running Time Seconds","Sched Name","Sched Time","Schedule","Schedule Day","Schedule Frame","Schedule Hour","Schedule Type","Schema","Seats","Select","Semantic Type","Sensor ID","Session ID","Settings","Show In Getting Started","Size X","Size Y","Skip If Empty","Slug","Source","Sso Source","Started At","Start Time","State","State Change At","Status","Str Prop 1","Str Prop 2","Str Prop 3","Subtotal","Table ID","Table Name","Task","Task Details","Tax","Template","Text","Timeline ID","Time Matters","Timestamp","Times Triggered","Timezone","Time Zone ID","Title","Topic","Total","Trial Converted","Trial Ends At","Trigger Group","Trigger Name","Trigger State","Trigger Type","Type","Update","Updated At","User ID","Value","Value Ref","Values","Vendor","Version","Visibility Type","Visualization Settings","Zip"]	\N	252	f	full	\N	2024-03-10 21:10:20.995965+00
+51	2024-03-10 21:10:11.108558+00	2024-03-10 22:00:24.269889+00	["0 0 20 * * ? *","0 0 22 * * ? *"]	\N	216	f	full	\N	2024-03-10 21:10:11.108558+00
+54	2024-03-10 21:10:11.505084+00	2024-03-10 22:00:24.804767+00	[1710108021673]	\N	447	f	full	\N	2024-03-10 21:10:11.505084+00
+55	2024-03-10 21:10:12.618319+00	2024-03-10 22:00:26.434637+00	[true,null]	\N	693	f	full	\N	2024-03-10 21:10:12.618319+00
+56	2024-03-10 21:10:12.688532+00	2024-03-10 22:00:26.75589+00	[false,null]	\N	695	f	full	\N	2024-03-10 21:10:12.688532+00
+59	2024-03-10 21:10:12.908637+00	2024-03-10 22:00:27.131908+00	["card_1","card_2","collection_1","dashboard_1"]	\N	696	f	full	\N	2024-03-10 21:10:12.908637+00
+60	2024-03-10 21:10:12.99679+00	2024-03-10 22:00:27.25722+00	["map","scalar",null]	\N	698	f	full	\N	2024-03-10 21:10:12.99679+00
+61	2024-03-10 21:10:13.072807+00	2024-03-10 22:00:27.401061+00	[1,2]	\N	700	f	full	\N	2024-03-10 21:10:13.072807+00
+62	2024-03-10 21:10:13.157011+00	2024-03-10 22:00:27.560769+00	[false,null]	\N	702	f	full	\N	2024-03-10 21:10:13.157011+00
+65	2024-03-10 21:10:13.429047+00	2024-03-10 22:00:28.03486+00	[1,null]	\N	708	f	full	\N	2024-03-10 21:10:13.429047+00
+67	2024-03-10 21:10:13.946392+00	2024-03-10 22:00:28.290754+00	["database_2",null]	\N	699	f	full	\N	2024-03-10 21:10:13.946392+00
+70	2024-03-10 21:10:14.184923+00	2024-03-10 22:00:28.678101+00	[false,null]	\N	701	f	full	\N	2024-03-10 21:10:14.184923+00
+80	2024-03-10 21:10:15.129346+00	2024-03-10 22:00:30.112737+00	["0 0 20 * * ? *","0 0 22 * * ? *"]	\N	726	f	full	\N	2024-03-10 21:10:15.129346+00
+84	2024-03-10 21:10:15.441339+00	2024-03-10 22:00:30.478005+00	["0 20 * * * ? *","0 4 * * * ? *"]	\N	733	f	full	\N	2024-03-10 21:10:15.441339+00
+126	2024-03-10 21:10:19.163291+00	2024-03-10 22:00:36.976193+00	["{\\"last-acknowledged-version\\":\\"v0.48.8\\",\\"dismissed-custom-dashboard-toast\\":\\"true\\"}"]	\N	156	f	full	\N	2024-03-10 21:10:19.163291+00
 100	2024-03-10 21:10:16.926388+00	2024-03-10 21:10:16.926388+00	["ACCOUNTS","action","activity","ANALYTIC_EVENTS","application_permissions_revision","audit_log","bookmark_ordering","card_bookmark","card_label","collection","collection_bookmark","collection_permission_graph_revision","connection_impersonations","core_session","core_user","dashboard_bookmark","dashboardcard_series","dashboard_favorite","dashboard_tab","databasechangelog","databasechangeloglock","dependency","dimension","FEEDBACK","http_action","implicit_action","INVOICES","label","login_history","metabase_database","metabase_field","metabase_fieldvalues","metabase_table","metric","metric_important_field","model_index","model_index_value","moderation_review","native_query_snippet","ORDERS","parameter_card","PEOPLE","permissions","permissions_group","permissions_group_membership","permissions_revision","persisted_info","PRODUCTS","pulse","pulse_card","pulse_channel","pulse_channel_recipient","qrtz_blob_triggers","qrtz_calendars","qrtz_cron_triggers","qrtz_fired_triggers","qrtz_job_details","qrtz_locks","qrtz_paused_trigger_grps","qrtz_scheduler_state","qrtz_simple_triggers","qrtz_simprop_triggers","qrtz_triggers","query","query_action","query_cache","query_execution","recent_views","report_card","report_cardfavorite","report_dashboard","report_dashboardcard","REVIEWS","revision","sandboxes","secret","segment","setting","solar_sensor_data","solar_sensors","table_privileges","task_history","timeline","timeline_event","v_alerts","v_audit_log","v_content","v_dashboardcard","v_databases","v_fields","v_group_members","view_log","v_query_log","v_subscriptions","v_tables","v_tasks","v_users","v_view_log"]	\N	799	f	full	\N	2024-03-10 21:10:16.926388+00
 101	2024-03-10 21:10:17.005766+00	2024-03-10 21:10:17.005766+00	["Accounts","Action","Activity","Analytic Events","Application Permissions Revision","Audit Log","Bookmark Ordering","Card Bookmark","Card Label","Collection","Collection Bookmark","Collection Permission Graph Revision","Connection Impersonations","Core Session","Core User","Dashboard Bookmark","Dashboardcard Series","Dashboard Favorite","Dashboard Tab","Databasechangelog","Databasechangeloglock","Dependency","Dimension","Feedback","Http Action","Implicit Action","Invoices","Label","Login History","Metabase Database","Metabase Field","Metabase Fieldvalues","Metabase Table","Metric","Metric Important Field","Model Index","Model Index Value","Moderation Review","Native Query Snippet","Orders","Parameter Card","People","Permissions","Permissions Group","Permissions Group Membership","Permissions Revision","Persisted Info","Products","Pulse","Pulse Card","Pulse Channel","Pulse Channel Recipient","Qrtz Blob Triggers","Qrtz Calendars","Qrtz Cron Triggers","Qrtz Fired Triggers","Qrtz Job Details","Qrtz Locks","Qrtz Paused Trigger Grps","Qrtz Scheduler State","Qrtz Simple Triggers","Qrtz Simprop Triggers","Qrtz Triggers","Query","Query Action","Query Cache","Query Execution","Recent Views","Report Card","Report Cardfavorite","Report Dashboard","Report Dashboardcard","Reviews","Revision","Sandboxes","Secret","Segment","Setting","Solar Sensor Data","Solar Sensors","Table Privileges","Task History","Timeline","Timeline Event","V Alerts","V Audit Log","V Content","V Dashboardcard","V Databases","V Fields","V Group Members","View Log","V Query Log","V Subscriptions","V Tables","V Tasks","V Users","V View Log"]	\N	800	f	full	\N	2024-03-10 21:10:17.005766+00
 102	2024-03-10 21:10:17.082953+00	2024-03-10 21:10:17.082953+00	["An action is something you can do, such as run a readwrite query","An action with dynamic parameters based on the underlying model","An http api call type of action","A readwrite query type of action","Confirmed payments from Piespace’s customers. Most accounts pay for their pie subscription on a monthly basis.","Confirmed Sample Company orders for a product, from a user.","Includes a catalog of all the products ever sold by the famed Sample Company.","Information on customer accounts registered with Piespace. Each account represents a new organization signing up for on-demand pies.","Information on the user accounts registered with Sample Company.","Join table connecting cards to entities (dashboards, other cards, etc.) that use the values generated by the card for filter values","Join table connecting dashboard to dashboardcards","Piespace does some anonymous analytics tracking on how users interact with their platform. They’ve only had time to implement a few events, but you know how it is. Pies come first.","Reviews that Sample Company customers have left on our products.","Table for holding connection impersonation policies","Table for user and role privileges by table","Used to keep track of the values indexed in a model","Used to keep track of which models have indexed columns.","Used to store application events for auditing use cases","Used to store recently viewed objects for each user","With each order of pies sent out, Piespace includes a place for customers to submit feedback and review their order.",null]	\N	802	f	full	\N	2024-03-10 21:10:17.082953+00
@@ -4702,8 +4722,10 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 167	2024-03-10 21:10:23.775672+00	2024-03-10 21:10:23.775672+00	["entity/EventTable","entity/GenericTable","entity/ProductTable","entity/SubscriptionTable","entity/TransactionTable","entity/UserTable",null]	\N	275	f	full	\N	2024-03-10 21:10:23.775672+00
 168	2024-03-10 21:10:23.839179+00	2024-03-10 21:10:23.839179+00	["Is it? We’ll let you be the judge of that.","Is it? You tell us!",null]	\N	287	f	full	\N	2024-03-10 21:10:23.839179+00
 169	2024-03-10 21:10:23.948573+00	2024-03-10 21:10:23.948573+00	["cruft",null]	\N	282	f	full	\N	2024-03-10 21:10:23.948573+00
-202	2024-03-10 21:10:29.411428+00	2024-03-10 21:10:29.411428+00	["analyze","classify-fields","classify-tables","delete-expired-advanced-field-values","field values scanning","fingerprint-fields","sync","sync-dbms-version","sync-fields","sync-fks","sync-metabase-metadata","sync-table-privileges","sync-tables","sync-timezone","update-field-values"]	\N	642	f	full	\N	2024-03-10 21:10:29.411428+00
-203	2024-03-10 21:10:29.58342+00	2024-03-10 21:10:29.58342+00	[1,2]	\N	640	f	full	\N	2024-03-10 21:10:29.58342+00
+48	2024-03-10 21:10:10.861163+00	2024-03-10 22:00:23.636662+00	["0 20 * * * ? *","0 4 * * * ? *"]	\N	218	f	full	\N	2024-03-10 21:10:10.861163+00
+71	2024-03-10 21:10:14.269283+00	2024-03-10 22:00:28.872238+00	["collection","dashboard","question"]	\N	694	f	full	\N	2024-03-10 21:10:14.269283+00
+202	2024-03-10 21:10:29.411428+00	2024-03-10 22:00:52.076449+00	["analyze","classify-fields","classify-tables","delete-expired-advanced-field-values","field values scanning","fingerprint-fields","send-pulses","sync","sync-dbms-version","sync-fields","sync-fks","sync-metabase-metadata","sync-table-privileges","sync-tables","sync-timezone","update-field-values"]	\N	642	f	full	\N	2024-03-10 21:10:29.411428+00
+203	2024-03-10 21:10:29.58342+00	2024-03-10 22:00:52.166931+00	[1,2,null]	\N	640	f	full	\N	2024-03-10 21:10:29.58342+00
 170	2024-03-10 21:10:24.041639+00	2024-03-10 21:10:24.041639+00	["An action is something you can do, such as run a readwrite query","An action with dynamic parameters based on the underlying model","An http api call type of action","A readwrite query type of action","Confirmed payments from Piespace’s customers. Most accounts pay for their pie subscription on a monthly basis.","Confirmed Sample Company orders for a product, from a user.","Includes a catalog of all the products ever sold by the famed Sample Company.","Information on customer accounts registered with Piespace. Each account represents a new organization signing up for on-demand pies.","Information on the user accounts registered with Sample Company.","Join table connecting cards to entities (dashboards, other cards, etc.) that use the values generated by the card for filter values","Join table connecting dashboard to dashboardcards","Piespace does some anonymous analytics tracking on how users interact with their platform. They’ve only had time to implement a few events, but you know how it is. Pies come first.","Reviews that Sample Company customers have left on our products.","Table for holding connection impersonation policies","Table for user and role privileges by table","Used to keep track of the values indexed in a model","Used to keep track of which models have indexed columns.","Used to store application events for auditing use cases","Used to store recently viewed objects for each user","With each order of pies sent out, Piespace includes a place for customers to submit feedback and review their order.",null]	\N	283	f	full	\N	2024-03-10 21:10:24.041639+00
 171	2024-03-10 21:10:24.133042+00	2024-03-10 21:10:24.133042+00	["public","PUBLIC"]	\N	289	f	full	\N	2024-03-10 21:10:24.133042+00
 172	2024-03-10 21:10:24.227531+00	2024-03-10 21:10:24.227531+00	["Accounts","Action","Activity","Analytic Events","Application Permissions Revision","Audit Log","Bookmark Ordering","Card Bookmark","Card Label","Collection","Collection Bookmark","Collection Permission Graph Revision","Connection Impersonations","Core Session","Core User","Dashboard Bookmark","Dashboardcard Series","Dashboard Favorite","Dashboard Tab","Databasechangelog","Databasechangeloglock","Dependency","Dimension","Feedback","Http Action","Implicit Action","Invoices","Label","Login History","Metabase Database","Metabase Field","Metabase Fieldvalues","Metabase Table","Metric","Metric Important Field","Model Index","Model Index Value","Moderation Review","Native Query Snippet","Orders","Parameter Card","People","Permissions","Permissions Group","Permissions Group Membership","Permissions Revision","Persisted Info","Products","Pulse","Pulse Card","Pulse Channel","Pulse Channel Recipient","Qrtz Blob Triggers","Qrtz Calendars","Qrtz Cron Triggers","Qrtz Fired Triggers","Qrtz Job Details","Qrtz Locks","Qrtz Paused Trigger Grps","Qrtz Scheduler State","Qrtz Simple Triggers","Qrtz Simprop Triggers","Qrtz Triggers","Query","Query Action","Query Cache","Query Execution","Recent Views","Report Card","Report Cardfavorite","Report Dashboard","Report Dashboardcard","Reviews","Revision","Sandboxes","Secret","Segment","Setting","Solar Sensor Data","Solar Sensors","Table Privileges","Task History","Timeline","Timeline Event","V Alerts","V Audit Log","V Content","V Dashboardcard","V Databases","V Fields","V Group Members","View Log","V Query Log","V Subscriptions","V Tables","V Tasks","V Users","V View Log"]	\N	273	f	full	\N	2024-03-10 21:10:24.227531+00
@@ -4711,39 +4733,40 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 174	2024-03-10 21:10:24.527877+00	2024-03-10 21:10:24.527877+00	["Administrators","All Users"]	\N	349	f	full	\N	2024-03-10 21:10:24.527877+00
 175	2024-03-10 21:10:24.630131+00	2024-03-10 21:10:24.630131+00	[false]	\N	353	f	full	\N	2024-03-10 21:10:24.630131+00
 176	2024-03-10 21:10:24.922368+00	2024-03-10 21:10:24.922368+00	["GMT"]	\N	417	f	full	\N	2024-03-10 21:10:24.922368+00
-177	2024-03-10 21:10:24.998783+00	2024-03-10 21:10:24.998783+00	["0 0 * * * ? *","0 0 0 * * ? *","0 0 */12 * * ? *","0 0 12 * * ? *","0 0 20 * * ? *","0 15 6,18 * * ? *","0 20 * * * ? *","0 29 0/4 1/1 * ? *","0 48 4 * * ? *","0 50 * * * ? *","0 50 0 * * ? *"]	\N	419	f	full	\N	2024-03-10 21:10:24.998783+00
 178	2024-03-10 21:10:25.169479+00	2024-03-10 21:10:25.169479+00	[false]	\N	435	f	full	\N	2024-03-10 21:10:25.169479+00
 179	2024-03-10 21:10:25.241866+00	2024-03-10 21:10:25.241866+00	[false]	\N	434	f	full	\N	2024-03-10 21:10:25.241866+00
 180	2024-03-10 21:10:25.306392+00	2024-03-10 21:10:25.306392+00	[false,true]	\N	436	f	full	\N	2024-03-10 21:10:25.306392+00
 181	2024-03-10 21:10:25.376031+00	2024-03-10 21:10:25.376031+00	[false,true]	\N	438	f	full	\N	2024-03-10 21:10:25.376031+00
-182	2024-03-10 21:10:25.445817+00	2024-03-10 21:10:25.445817+00	["0xACED0005"]	\N	440	f	full	\N	2024-03-10 21:10:25.445817+00
 183	2024-03-10 21:10:26.632737+00	2024-03-10 21:10:26.632737+00	["metabase.task.email_remove_legacy_pulse.EmailRemoveLegacyPulse","metabase.task.follow_up_emails.FollowUpEmail","metabase.task.index_values.ModelIndexRefresh","metabase.task.persist_refresh.PersistencePrune","metabase.task.persist_refresh.PersistenceRefresh","metabase.task.refresh_slack_channel_user_cache.RefreshCache","metabase.task.send_anonymous_stats.SendAnonymousUsageStats","metabase.task.send_pulses.SendPulses","metabase.task.sync_databases.SyncAndAnalyzeDatabase","metabase.task.sync_databases.UpdateFieldValues","metabase.task.task_history_cleanup.TaskHistoryCleanup","metabase.task.truncate_audit_tables.TruncateAuditTables","metabase.task.upgrade_checks.CheckForNewVersions"]	\N	433	f	full	\N	2024-03-10 21:10:26.632737+00
 184	2024-03-10 21:10:26.876116+00	2024-03-10 21:10:26.876116+00	["Indexed Value Refresh task","Persisted Model prune task","Persisted Model refresh task","sync-and-analyze for all databases","update-field-values for all databases",null]	\N	439	f	full	\N	2024-03-10 21:10:26.876116+00
-185	2024-03-10 21:10:27.171309+00	2024-03-10 21:10:27.171309+00	["WAITING"]	\N	484	f	full	\N	2024-03-10 21:10:27.171309+00
 186	2024-03-10 21:10:27.258561+00	2024-03-10 21:10:27.258561+00	["CRON"]	\N	475	f	full	\N	2024-03-10 21:10:27.258561+00
-187	2024-03-10 21:10:27.340419+00	2024-03-10 21:10:27.340419+00	["0x","0xACED0005","0xACED0005"]	\N	480	f	full	\N	2024-03-10 21:10:27.340419+00
-188	2024-03-10 21:10:27.54888+00	2024-03-10 21:10:27.54888+00	[-1]	\N	486	f	full	\N	2024-03-10 21:10:27.54888+00
 189	2024-03-10 21:10:27.649846+00	2024-03-10 21:10:27.649846+00	[null]	\N	477	f	full	\N	2024-03-10 21:10:27.649846+00
 190	2024-03-10 21:10:27.724035+00	2024-03-10 21:10:27.724035+00	[5]	\N	481	f	full	\N	2024-03-10 21:10:27.724035+00
 191	2024-03-10 21:10:27.797483+00	2024-03-10 21:10:27.797483+00	["sync-and-analyze Database 1","sync-and-analyze Database 2","update-field-values Database 1","update-field-values Database 2",null]	\N	485	f	full	\N	2024-03-10 21:10:27.797483+00
 192	2024-03-10 21:10:27.861214+00	2024-03-10 21:10:27.861214+00	[0,1,2]	\N	471	f	full	\N	2024-03-10 21:10:27.861214+00
 193	2024-03-10 21:10:27.927333+00	2024-03-10 21:10:27.927333+00	[0]	\N	474	f	full	\N	2024-03-10 21:10:27.927333+00
-194	2024-03-10 21:10:27.989298+00	2024-03-10 21:10:27.989298+00	[1710104758000,1710104905000]	\N	482	f	full	\N	2024-03-10 21:10:27.989298+00
-195	2024-03-10 21:10:28.044374+00	2024-03-10 21:10:28.044374+00	[1710105600000,1710107400000,1710108000000,1710115200000,1710116940000,1710118200000,1710132480000,1710137700000,1710158400000,1710187200000]	\N	472	f	full	\N	2024-03-10 21:10:28.044374+00
-196	2024-03-10 21:10:28.397315+00	2024-03-10 21:10:28.397315+00	["2024-03-10 21:08:35.138432+00","2024-03-10T21:05:59.695162Z","3faf4a7c-5e14-4820-a655-332345c15e9c","764249c4-69bd-4ba5-80fa-86b53787de3f","90411","c6b91b19-d3a6-4173-9625-933eb2d0be96","en","false","http://localhost:3000","Inteli","supernicola@email.com","true"]	\N	622	f	full	\N	2024-03-10 21:10:28.397315+00
 197	2024-03-10 21:10:28.824625+00	2024-03-10 21:10:28.824625+00	[true]	\N	633	f	full	\N	2024-03-10 21:10:28.824625+00
 198	2024-03-10 21:10:28.984322+00	2024-03-10 21:10:28.984322+00	[true]	\N	634	f	full	\N	2024-03-10 21:10:28.984322+00
 199	2024-03-10 21:10:29.053037+00	2024-03-10 21:10:29.053037+00	[true]	\N	632	f	full	\N	2024-03-10 21:10:29.053037+00
 200	2024-03-10 21:10:29.117006+00	2024-03-10 21:10:29.117006+00	[null]	\N	635	f	full	\N	2024-03-10 21:10:29.117006+00
 201	2024-03-10 21:10:29.246563+00	2024-03-10 21:10:29.246563+00	[true]	\N	636	f	full	\N	2024-03-10 21:10:29.246563+00
-204	2024-03-10 21:10:29.750203+00	2024-03-10 21:10:29.750203+00	["{\\"deleted\\":0}","{\\"errors\\":0,\\"created\\":24,\\"updated\\":0,\\"deleted\\":1}","{\\"fields-classified\\":240,\\"fields-failed\\":0}","{\\"fields-classified\\":63,\\"fields-failed\\":0}","{\\"flavor\\":\\"H2\\",\\"version\\":\\"2.1.214 (2022-06-13)\\",\\"semantic-version\\":[2,1]}","{\\"flavor\\":\\"PostgreSQL\\",\\"version\\":\\"16.2 (Debian 16.2-1.pgdg120+2)\\",\\"semantic-version\\":[16,2]}","{\\"no-data-fingerprints\\":0,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":63,\\"fingerprints-attempted\\":63}","{\\"no-data-fingerprints\\":447,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":240,\\"fingerprints-attempted\\":687}","{\\"timezone-id\\":\\"GMT\\"}","{\\"total-fields\\":71,\\"updated-fields\\":71}","{\\"total-fields\\":758,\\"updated-fields\\":758}","{\\"total-fks\\":105,\\"updated-fks\\":105,\\"total-failed\\":0}","{\\"total-fks\\":6,\\"updated-fks\\":6,\\"total-failed\\":0}","{\\"total-table-privileges\\":90}","{\\"total-tables\\":84,\\"tables-classified\\":84}","{\\"total-tables\\":8,\\"tables-classified\\":8}","{\\"updated-tables\\":8,\\"total-tables\\":0}","{\\"updated-tables\\":90,\\"total-tables\\":0}",null]	\N	641	f	full	\N	2024-03-10 21:10:29.750203+00
-205	2024-03-10 21:10:29.883908+00	2024-03-10 21:10:29.883908+00	[2,7,51,78,148,180,220,382,941,1106,1284,1612,2252,2446,4310,4386,5242,7707,8276,9496,10723,26689,28483,33329,37522,39515,49974]	\N	638	f	full	\N	2024-03-10 21:10:29.883908+00
-206	2024-03-10 21:10:30.595438+00	2024-03-10 21:10:30.595438+00	["analyze","classify-fields","classify-tables","delete-expired-advanced-field-values","field values scanning","fingerprint-fields","sync","sync-dbms-version","sync-fields","sync-fks","sync-metabase-metadata","sync-table-privileges","sync-tables","sync-timezone","update-field-values"]	\N	807	f	full	\N	2024-03-10 21:10:30.595438+00
-207	2024-03-10 21:10:30.893534+00	2024-03-10 21:10:30.893534+00	["{\\"deleted\\":0}","{\\"errors\\":0,\\"created\\":24,\\"updated\\":0,\\"deleted\\":1}","{\\"fields-classified\\":240,\\"fields-failed\\":0}","{\\"fields-classified\\":63,\\"fields-failed\\":0}","{\\"flavor\\":\\"H2\\",\\"version\\":\\"2.1.214 (2022-06-13)\\",\\"semantic-version\\":[2,1]}","{\\"flavor\\":\\"PostgreSQL\\",\\"version\\":\\"16.2 (Debian 16.2-1.pgdg120+2)\\",\\"semantic-version\\":[16,2]}","{\\"no-data-fingerprints\\":0,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":63,\\"fingerprints-attempted\\":63}","{\\"no-data-fingerprints\\":447,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":240,\\"fingerprints-attempted\\":687}","{\\"timezone-id\\":\\"GMT\\"}","{\\"total-fields\\":71,\\"updated-fields\\":71}","{\\"total-fields\\":758,\\"updated-fields\\":758}","{\\"total-fks\\":105,\\"updated-fks\\":105,\\"total-failed\\":0}","{\\"total-fks\\":6,\\"updated-fks\\":6,\\"total-failed\\":0}","{\\"total-table-privileges\\":90}","{\\"total-tables\\":84,\\"tables-classified\\":84}","{\\"total-tables\\":8,\\"tables-classified\\":8}","{\\"updated-tables\\":8,\\"total-tables\\":0}","{\\"updated-tables\\":90,\\"total-tables\\":0}",null]	\N	804	f	full	\N	2024-03-10 21:10:30.893534+00
-208	2024-03-10 21:10:31.2871+00	2024-03-10 21:10:31.2871+00	["database_1","database_2"]	\N	808	f	full	\N	2024-03-10 21:10:31.2871+00
+58	2024-03-10 21:10:12.841137+00	2024-03-10 22:00:27.006697+00	["Count Solar Sensors","Nicola's Personal Collection","Solar Sensors","Solar Sensors Map"]	\N	709	f	full	\N	2024-03-10 21:10:12.841137+00
+182	2024-03-10 21:10:25.445817+00	2024-03-10 22:00:48.678304+00	["0xACED0005"]	\N	440	f	full	\N	2024-03-10 21:10:25.445817+00
+185	2024-03-10 21:10:27.171309+00	2024-03-10 22:00:49.231438+00	["BLOCKED","WAITING"]	\N	484	f	full	\N	2024-03-10 21:10:27.171309+00
+187	2024-03-10 21:10:27.340419+00	2024-03-10 22:00:49.462999+00	["0x","0xACED0005","0xACED0005"]	\N	480	f	full	\N	2024-03-10 21:10:27.340419+00
+188	2024-03-10 21:10:27.54888+00	2024-03-10 22:00:49.601404+00	[-1,1710105600000,1710108000000]	\N	486	f	full	\N	2024-03-10 21:10:27.54888+00
+194	2024-03-10 21:10:27.989298+00	2024-03-10 22:00:50.224012+00	[1710104758000,1710107735000]	\N	482	f	full	\N	2024-03-10 21:10:27.989298+00
+195	2024-03-10 21:10:28.044374+00	2024-03-10 22:00:50.336573+00	[1710108240000,1710109200000,1710111600000,1710115200000,1710116820000,1710137700000,1710158400000,1710160080000,1710187200000,1710194400000]	\N	472	f	full	\N	2024-03-10 21:10:28.044374+00
 209	2024-03-10 21:10:33.794906+00	2024-03-10 21:10:33.794906+00	["Administrators","All Users"]	\N	752	f	full	\N	2024-03-10 21:10:33.794906+00
 210	2024-03-10 21:10:33.874226+00	2024-03-10 21:10:33.874226+00	[1]	\N	750	f	full	\N	2024-03-10 21:10:33.874226+00
 211	2024-03-10 21:10:33.949875+00	2024-03-10 21:10:33.949875+00	[1,2]	\N	751	f	full	\N	2024-03-10 21:10:33.949875+00
+204	2024-03-10 21:10:29.750203+00	2024-03-10 22:00:52.264359+00	["{\\"deleted\\":0}","{\\"errors\\":0,\\"created\\":187,\\"updated\\":0,\\"deleted\\":1}","{\\"errors\\":0,\\"created\\":24,\\"updated\\":0,\\"deleted\\":1}","{\\"fields-classified\\":0,\\"fields-failed\\":0}","{\\"fields-classified\\":240,\\"fields-failed\\":0}","{\\"fields-classified\\":63,\\"fields-failed\\":0}","{\\"flavor\\":\\"H2\\",\\"version\\":\\"2.1.214 (2022-06-13)\\",\\"semantic-version\\":[2,1]}","{\\"flavor\\":\\"PostgreSQL\\",\\"version\\":\\"16.2 (Debian 16.2-1.pgdg120+2)\\",\\"semantic-version\\":[16,2]}","{\\"no-data-fingerprints\\":0,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":0,\\"fingerprints-attempted\\":0}","{\\"no-data-fingerprints\\":0,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":63,\\"fingerprints-attempted\\":63}","{\\"no-data-fingerprints\\":447,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":240,\\"fingerprints-attempted\\":687}","{\\"timezone-id\\":\\"GMT\\"}","{\\"total-fields\\":71,\\"updated-fields\\":0}","{\\"total-fields\\":71,\\"updated-fields\\":71}","{\\"total-fields\\":758,\\"updated-fields\\":758}","{\\"total-fks\\":105,\\"updated-fks\\":105,\\"total-failed\\":0}","{\\"total-fks\\":6,\\"updated-fks\\":0,\\"total-failed\\":0}","{\\"total-fks\\":6,\\"updated-fks\\":6,\\"total-failed\\":0}","{\\"total-table-privileges\\":90}","{\\"total-tables\\":84,\\"tables-classified\\":84}","{\\"total-tables\\":8,\\"tables-classified\\":0}","{\\"total-tables\\":8,\\"tables-classified\\":8}","{\\"updated-tables\\":0,\\"total-tables\\":8}","{\\"updated-tables\\":8,\\"total-tables\\":0}","{\\"updated-tables\\":90,\\"total-tables\\":0}",null]	\N	641	f	full	\N	2024-03-10 21:10:29.750203+00
+205	2024-03-10 21:10:29.883908+00	2024-03-10 22:00:52.35439+00	[2,6,7,17,18,21,31,35,51,65,78,128,148,180,220,256,382,895,941,1106,1173,1284,1612,2218,2252,2446,4310,4386,5242,7707,8276,9496,10723,11381,26183,26689,28483,33329,37522,37566,39515,49974]	\N	638	f	full	\N	2024-03-10 21:10:29.883908+00
+206	2024-03-10 21:10:30.595438+00	2024-03-10 22:00:53.329612+00	["analyze","classify-fields","classify-tables","delete-expired-advanced-field-values","field values scanning","fingerprint-fields","send-pulses","sync","sync-dbms-version","sync-fields","sync-fks","sync-metabase-metadata","sync-table-privileges","sync-tables","sync-timezone","update-field-values"]	\N	807	f	full	\N	2024-03-10 21:10:30.595438+00
+207	2024-03-10 21:10:30.893534+00	2024-03-10 22:00:53.876105+00	["{\\"deleted\\":0}","{\\"errors\\":0,\\"created\\":187,\\"updated\\":0,\\"deleted\\":1}","{\\"errors\\":0,\\"created\\":24,\\"updated\\":0,\\"deleted\\":1}","{\\"fields-classified\\":0,\\"fields-failed\\":0}","{\\"fields-classified\\":240,\\"fields-failed\\":0}","{\\"fields-classified\\":63,\\"fields-failed\\":0}","{\\"flavor\\":\\"H2\\",\\"version\\":\\"2.1.214 (2022-06-13)\\",\\"semantic-version\\":[2,1]}","{\\"flavor\\":\\"PostgreSQL\\",\\"version\\":\\"16.2 (Debian 16.2-1.pgdg120+2)\\",\\"semantic-version\\":[16,2]}","{\\"no-data-fingerprints\\":0,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":0,\\"fingerprints-attempted\\":0}","{\\"no-data-fingerprints\\":0,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":63,\\"fingerprints-attempted\\":63}","{\\"no-data-fingerprints\\":447,\\"failed-fingerprints\\":0,\\"updated-fingerprints\\":240,\\"fingerprints-attempted\\":687}","{\\"timezone-id\\":\\"GMT\\"}","{\\"total-fields\\":71,\\"updated-fields\\":0}","{\\"total-fields\\":71,\\"updated-fields\\":71}","{\\"total-fields\\":758,\\"updated-fields\\":758}","{\\"total-fks\\":105,\\"updated-fks\\":105,\\"total-failed\\":0}","{\\"total-fks\\":6,\\"updated-fks\\":0,\\"total-failed\\":0}","{\\"total-fks\\":6,\\"updated-fks\\":6,\\"total-failed\\":0}","{\\"total-table-privileges\\":90}","{\\"total-tables\\":84,\\"tables-classified\\":84}","{\\"total-tables\\":8,\\"tables-classified\\":0}","{\\"total-tables\\":8,\\"tables-classified\\":8}","{\\"updated-tables\\":0,\\"total-tables\\":8}","{\\"updated-tables\\":8,\\"total-tables\\":0}","{\\"updated-tables\\":90,\\"total-tables\\":0}",null]	\N	804	f	full	\N	2024-03-10 21:10:30.893534+00
+208	2024-03-10 21:10:31.2871+00	2024-03-10 22:00:54.01467+00	["database_1","database_2",null]	\N	808	f	full	\N	2024-03-10 21:10:31.2871+00
+177	2024-03-10 21:10:24.998783+00	2024-03-10 22:00:47.693563+00	["0 0 * * * ? *","0 0 0 * * ? *","0 0 */12 * * ? *","0 0 12 * * ? *","0 0 20 * * ? *","0 0 22 * * ? *","0 15 6,18 * * ? *","0 20 * * * ? *","0 27 0/4 1/1 * ? *","0 28 12 * * ? *","0 4 * * * ? *"]	\N	419	f	full	\N	2024-03-10 21:10:24.998783+00
+196	2024-03-10 21:10:28.397315+00	2024-03-10 22:00:51.06087+00	["1","19122","2024-03-10 21:55:36.169328+00","2024-03-10T21:05:59.695162Z","3faf4a7c-5e14-4820-a655-332345c15e9c","764249c4-69bd-4ba5-80fa-86b53787de3f","c6b91b19-d3a6-4173-9625-933eb2d0be96","en","false","http://localhost:3000","Inteli","supernicola@email.com","true"]	\N	622	f	full	\N	2024-03-10 21:10:28.397315+00
 \.
 
 
@@ -4752,13 +4775,6 @@ COPY public.metabase_fieldvalues (id, created_at, updated_at, "values", human_re
 --
 
 COPY public.metabase_table (id, created_at, updated_at, name, description, entity_type, active, db_id, display_name, visibility_type, schema, points_of_interest, caveats, show_in_getting_started, field_order, initial_sync_status, is_upload) FROM stdin;
-3	2024-03-10 21:05:08.549346+00	2024-03-10 21:20:02.839061+00	ANALYTIC_EVENTS	Piespace does some anonymous analytics tracking on how users interact with their platform. They’ve only had time to implement a few events, but you know how it is. Pies come first.	entity/EventTable	t	1	Analytic Events	\N	PUBLIC	Is it? We’ll let you be the judge of that.	Piespace has cracked time travel, so keep in mind that some events may have already happened in the future.	f	database	complete	f
-4	2024-03-10 21:05:08.610429+00	2024-03-10 21:20:02.872812+00	FEEDBACK	With each order of pies sent out, Piespace includes a place for customers to submit feedback and review their order.	entity/GenericTable	t	1	Feedback	\N	PUBLIC	Is it? We’ll let you be the judge of that.	Not every account feels inclined to submit feedback. That’s cool. There’s still quite a few responses here.	f	database	complete	f
-7	2024-03-10 21:05:08.817212+00	2024-03-10 21:20:02.799047+00	ACCOUNTS	Information on customer accounts registered with Piespace. Each account represents a new organization signing up for on-demand pies.	entity/UserTable	t	1	Accounts	\N	PUBLIC	Is it? We’ll let you be the judge of that.	Piespace’s business operates with a two week trial period. If you see that “Canceled At” is null then that account is still happily paying for their pies.	f	database	complete	f
-6	2024-03-10 21:05:08.718561+00	2024-03-10 21:20:02.787155+00	INVOICES	Confirmed payments from Piespace’s customers. Most accounts pay for their pie subscription on a monthly basis.	entity/GenericTable	t	1	Invoices	\N	PUBLIC	Is it? We’ll let you be the judge of that.	You can group by “Account ID” to see all the payments from an account and unveil information like total amount paid to date.	f	database	complete	f
-8	2024-03-10 21:05:08.867295+00	2024-03-10 21:20:02.737462+00	REVIEWS	Reviews that Sample Company customers have left on our products.	entity/GenericTable	t	1	Reviews	\N	PUBLIC	Is it? You tell us!	These reviews aren't tied to orders so it is possible people have reviewed products they did not purchase from us.	f	database	complete	f
-1	2024-03-10 21:05:08.308555+00	2024-03-10 21:20:02.703147+00	PRODUCTS	Includes a catalog of all the products ever sold by the famed Sample Company.	entity/ProductTable	t	1	Products	\N	PUBLIC	Is it? You tell us!	The rating column is an integer from 1-5 where 1 is dreadful and 5 is the best thing ever.	f	database	complete	f
-5	2024-03-10 21:05:08.660439+00	2024-03-10 21:20:02.725715+00	PEOPLE	Information on the user accounts registered with Sample Company.	entity/UserTable	t	1	People	\N	PUBLIC	Is it? You tell us!	Note that employees and customer support staff will have accounts.	f	database	complete	f
 22	2024-03-10 21:08:27.493265+00	2024-03-10 21:08:27.493265+00	collection_permission_graph_revision	\N	\N	t	2	Collection Permission Graph Revision	cruft	public	\N	\N	f	database	complete	f
 31	2024-03-10 21:08:27.788592+00	2024-03-10 21:09:55.378483+00	report_dashboardcard	\N	entity/GenericTable	t	2	Report Dashboardcard	\N	public	\N	\N	f	database	complete	f
 17	2024-03-10 21:08:27.137853+00	2024-03-10 21:09:55.169731+00	pulse	\N	entity/GenericTable	t	2	Pulse	\N	public	\N	\N	f	database	complete	f
@@ -4800,6 +4816,9 @@ COPY public.metabase_table (id, created_at, updated_at, name, description, entit
 75	2024-03-10 21:08:29.321035+00	2024-03-10 21:09:54.965416+00	dimension	\N	entity/GenericTable	t	2	Dimension	\N	public	\N	\N	f	database	complete	f
 79	2024-03-10 21:08:29.462527+00	2024-03-10 21:09:55.010979+00	login_history	\N	entity/EventTable	t	2	Login History	\N	public	\N	\N	f	database	complete	f
 25	2024-03-10 21:08:27.583435+00	2024-03-10 21:09:54.825403+00	audit_log	Used to store application events for auditing use cases	entity/EventTable	t	2	Audit Log	\N	public	\N	\N	f	database	complete	f
+3	2024-03-10 21:05:08.549346+00	2024-03-11 11:20:07.690674+00	ANALYTIC_EVENTS	Piespace does some anonymous analytics tracking on how users interact with their platform. They’ve only had time to implement a few events, but you know how it is. Pies come first.	entity/EventTable	t	1	Analytic Events	\N	PUBLIC	Is it? We’ll let you be the judge of that.	Piespace has cracked time travel, so keep in mind that some events may have already happened in the future.	f	database	complete	f
+4	2024-03-10 21:05:08.610429+00	2024-03-11 11:20:07.803151+00	FEEDBACK	With each order of pies sent out, Piespace includes a place for customers to submit feedback and review their order.	entity/GenericTable	t	1	Feedback	\N	PUBLIC	Is it? We’ll let you be the judge of that.	Not every account feels inclined to submit feedback. That’s cool. There’s still quite a few responses here.	f	database	complete	f
+8	2024-03-10 21:05:08.867295+00	2024-03-11 11:20:07.419482+00	REVIEWS	Reviews that Sample Company customers have left on our products.	entity/GenericTable	t	1	Reviews	\N	PUBLIC	Is it? You tell us!	These reviews aren't tied to orders so it is possible people have reviewed products they did not purchase from us.	f	database	complete	f
 92	2024-03-10 21:08:29.92092+00	2024-03-10 21:09:54.999214+00	label	\N	entity/GenericTable	t	2	Label	\N	public	\N	\N	f	database	complete	f
 87	2024-03-10 21:08:29.746045+00	2024-03-10 21:09:54.813502+00	activity	\N	entity/GenericTable	t	2	Activity	\N	public	\N	\N	f	database	complete	f
 33	2024-03-10 21:08:27.846609+00	2024-03-10 21:09:54.834512+00	bookmark_ordering	\N	entity/GenericTable	t	2	Bookmark Ordering	\N	public	\N	\N	f	database	complete	f
@@ -4849,7 +4868,11 @@ COPY public.metabase_table (id, created_at, updated_at, name, description, entit
 21	2024-03-10 21:08:27.464958+00	2024-03-10 21:09:55.346213+00	recent_views	Used to store recently viewed objects for each user	entity/GenericTable	t	2	Recent Views	\N	public	\N	\N	f	database	complete	f
 50	2024-03-10 21:08:28.513019+00	2024-03-10 21:09:55.45376+00	solar_sensors	\N	entity/GenericTable	t	2	Solar Sensors	\N	public	\N	\N	f	database	complete	f
 18	2024-03-10 21:08:27.32943+00	2024-03-10 21:09:55.560532+00	v_group_members	\N	entity/GenericTable	t	2	V Group Members	\N	public	\N	\N	f	database	complete	f
-2	2024-03-10 21:05:08.465039+00	2024-03-10 21:20:02.716069+00	ORDERS	Confirmed Sample Company orders for a product, from a user.	entity/TransactionTable	t	1	Orders	\N	PUBLIC	Is it? You tell us!	You can join this on the Products and Orders table using the ID fields. Discount is left null if not applicable.	f	database	complete	f
+1	2024-03-10 21:05:08.308555+00	2024-03-11 11:20:07.350283+00	PRODUCTS	Includes a catalog of all the products ever sold by the famed Sample Company.	entity/ProductTable	t	1	Products	\N	PUBLIC	Is it? You tell us!	The rating column is an integer from 1-5 where 1 is dreadful and 5 is the best thing ever.	f	database	complete	f
+2	2024-03-10 21:05:08.465039+00	2024-03-11 11:20:07.369546+00	ORDERS	Confirmed Sample Company orders for a product, from a user.	entity/TransactionTable	t	1	Orders	\N	PUBLIC	Is it? You tell us!	You can join this on the Products and Orders table using the ID fields. Discount is left null if not applicable.	f	database	complete	f
+5	2024-03-10 21:05:08.660439+00	2024-03-11 11:20:07.391551+00	PEOPLE	Information on the user accounts registered with Sample Company.	entity/UserTable	t	1	People	\N	PUBLIC	Is it? You tell us!	Note that employees and customer support staff will have accounts.	f	database	complete	f
+6	2024-03-10 21:05:08.718561+00	2024-03-11 11:20:07.564774+00	INVOICES	Confirmed payments from Piespace’s customers. Most accounts pay for their pie subscription on a monthly basis.	entity/GenericTable	t	1	Invoices	\N	PUBLIC	Is it? We’ll let you be the judge of that.	You can group by “Account ID” to see all the payments from an account and unveil information like total amount paid to date.	f	database	complete	f
+7	2024-03-10 21:05:08.817212+00	2024-03-11 11:20:07.591838+00	ACCOUNTS	Information on customer accounts registered with Piespace. Each account represents a new organization signing up for on-demand pies.	entity/UserTable	t	1	Accounts	\N	PUBLIC	Is it? We’ll let you be the judge of that.	Piespace’s business operates with a two week trial period. If you see that “Canceled At” is null then that account is still happily paying for their pies.	f	database	complete	f
 \.
 
 
@@ -4924,6 +4947,8 @@ COPY public.permissions (id, object, group_id) FROM stdin;
 12	/db/2/	1
 13	/download/db/2/	1
 14	/download/db/2/native/	1
+15	/collection/2/	1
+16	/collection/3/	1
 \.
 
 
@@ -5017,15 +5042,15 @@ COPY public.qrtz_calendars (sched_name, calendar_name, calendar) FROM stdin;
 
 COPY public.qrtz_cron_triggers (sched_name, trigger_name, trigger_group, cron_expression, time_zone_id) FROM stdin;
 MetabaseScheduler	metabase.task.update-field-values.trigger.1	DEFAULT	0 0 20 * * ? *	GMT
+MetabaseScheduler	metabase.task.update-field-values.trigger.2	DEFAULT	0 0 22 * * ? *	GMT
 MetabaseScheduler	metabase.task.upgrade-checks.trigger	DEFAULT	0 15 6,18 * * ? *	GMT
-MetabaseScheduler	metabase.task.anonymous-stats.trigger	DEFAULT	0 48 4 * * ? *	GMT
-MetabaseScheduler	metabase.task.refresh-channel-cache.trigger	DEFAULT	0 29 0/4 1/1 * ? *	GMT
+MetabaseScheduler	metabase.task.anonymous-stats.trigger	DEFAULT	0 22 3 * * ? *	GMT
+MetabaseScheduler	metabase.task.refresh-channel-cache.trigger	DEFAULT	0 8 0/4 1/1 * ? *	GMT
 MetabaseScheduler	metabase.task.truncate-audit-tables.trigger	DEFAULT	0 0 */12 * * ? *	GMT
 MetabaseScheduler	metabase.task.send-pulses.trigger	DEFAULT	0 0 * * * ? *	GMT
 MetabaseScheduler	metabase.task.follow-up-emails.trigger	DEFAULT	0 0 12 * * ? *	GMT
 MetabaseScheduler	metabase.task.task-history-cleanup.trigger	DEFAULT	0 0 0 * * ? *	GMT
-MetabaseScheduler	metabase.task.sync-and-analyze.trigger.2	DEFAULT	0 50 * * * ? *	GMT
-MetabaseScheduler	metabase.task.update-field-values.trigger.2	DEFAULT	0 50 0 * * ? *	GMT
+MetabaseScheduler	metabase.task.sync-and-analyze.trigger.2	DEFAULT	0 4 * * * ? *	GMT
 MetabaseScheduler	metabase.task.sync-and-analyze.trigger.1	DEFAULT	0 20 * * * ? *	GMT
 \.
 
@@ -5043,19 +5068,19 @@ COPY public.qrtz_fired_triggers (sched_name, entry_id, trigger_name, trigger_gro
 --
 
 COPY public.qrtz_job_details (sched_name, job_name, job_group, description, job_class_name, is_durable, is_nonconcurrent, is_update_data, requests_recovery, job_data) FROM stdin;
-MetabaseScheduler	metabase.task.sync-and-analyze.job	DEFAULT	sync-and-analyze for all databases	metabase.task.sync_databases.SyncAndAnalyzeDatabase	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
-MetabaseScheduler	metabase.task.update-field-values.job	DEFAULT	update-field-values for all databases	metabase.task.sync_databases.UpdateFieldValues	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
-MetabaseScheduler	metabase.task.PersistenceRefresh.job	DEFAULT	Persisted Model refresh task	metabase.task.persist_refresh.PersistenceRefresh	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.upgrade-checks.job	DEFAULT	\N	metabase.task.upgrade_checks.CheckForNewVersions	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
-MetabaseScheduler	metabase.task.PersistencePrune.job	DEFAULT	Persisted Model prune task	metabase.task.persist_refresh.PersistencePrune	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.anonymous-stats.job	DEFAULT	\N	metabase.task.send_anonymous_stats.SendAnonymousUsageStats	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
-MetabaseScheduler	metabase.task.IndexValues.job	DEFAULT	Indexed Value Refresh task	metabase.task.index_values.ModelIndexRefresh	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.refresh-channel-cache.job	DEFAULT	\N	metabase.task.refresh_slack_channel_user_cache.RefreshCache	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.truncate-audit-tables.job	DEFAULT	\N	metabase.task.truncate_audit_tables.TruncateAuditTables	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.send-pulses.job	DEFAULT	\N	metabase.task.send_pulses.SendPulses	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.follow-up-emails.job	DEFAULT	\N	metabase.task.follow_up_emails.FollowUpEmail	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.task-history-cleanup.job	DEFAULT	\N	metabase.task.task_history_cleanup.TaskHistoryCleanup	f	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 MetabaseScheduler	metabase.task.email-remove-legacy-pulse.job	DEFAULT	\N	metabase.task.email_remove_legacy_pulse.EmailRemoveLegacyPulse	t	f	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
+MetabaseScheduler	metabase.task.PersistenceRefresh.job	DEFAULT	Persisted Model refresh task	metabase.task.persist_refresh.PersistenceRefresh	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
+MetabaseScheduler	metabase.task.PersistencePrune.job	DEFAULT	Persisted Model prune task	metabase.task.persist_refresh.PersistencePrune	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
+MetabaseScheduler	metabase.task.sync-and-analyze.job	DEFAULT	sync-and-analyze for all databases	metabase.task.sync_databases.SyncAndAnalyzeDatabase	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
+MetabaseScheduler	metabase.task.update-field-values.job	DEFAULT	update-field-values for all databases	metabase.task.sync_databases.UpdateFieldValues	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
+MetabaseScheduler	metabase.task.IndexValues.job	DEFAULT	Indexed Value Refresh task	metabase.task.index_values.ModelIndexRefresh	t	t	f	f	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f40000000000010770800000010000000007800
 \.
 
 
@@ -5082,7 +5107,7 @@ COPY public.qrtz_paused_trigger_grps (sched_name, trigger_group) FROM stdin;
 --
 
 COPY public.qrtz_scheduler_state (sched_name, instance_name, last_checkin_time, checkin_interval) FROM stdin;
-MetabaseScheduler	d6a5dec466a71710104756799	1710105924576	7500
+MetabaseScheduler	8203d10d75721710155788207	1710156030557	7500
 \.
 
 
@@ -5108,16 +5133,16 @@ COPY public.qrtz_simprop_triggers (sched_name, trigger_name, trigger_group, str_
 
 COPY public.qrtz_triggers (sched_name, trigger_name, trigger_group, job_name, job_group, description, next_fire_time, prev_fire_time, priority, trigger_state, trigger_type, start_time, end_time, calendar_name, misfire_instr, job_data) FROM stdin;
 MetabaseScheduler	metabase.task.update-field-values.trigger.1	DEFAULT	metabase.task.update-field-values.job	DEFAULT	update-field-values Database 1	1710187200000	-1	5	WAITING	CRON	1710104758000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000017800
-MetabaseScheduler	metabase.task.upgrade-checks.trigger	DEFAULT	metabase.task.upgrade-checks.job	DEFAULT	\N	1710137700000	-1	5	WAITING	CRON	1710104758000	0	\N	0	\\x
-MetabaseScheduler	metabase.task.anonymous-stats.trigger	DEFAULT	metabase.task.anonymous-stats.job	DEFAULT	\N	1710132480000	-1	5	WAITING	CRON	1710104758000	0	\N	0	\\x
-MetabaseScheduler	metabase.task.refresh-channel-cache.trigger	DEFAULT	metabase.task.refresh-channel-cache.job	DEFAULT	\N	1710116940000	-1	5	WAITING	CRON	1710104758000	0	\N	2	\\x
-MetabaseScheduler	metabase.task.truncate-audit-tables.trigger	DEFAULT	metabase.task.truncate-audit-tables.job	DEFAULT	\N	1710115200000	-1	5	WAITING	CRON	1710104758000	0	\N	2	\\x
-MetabaseScheduler	metabase.task.send-pulses.trigger	DEFAULT	metabase.task.send-pulses.job	DEFAULT	\N	1710108000000	-1	5	WAITING	CRON	1710104758000	0	\N	1	\\x
-MetabaseScheduler	metabase.task.follow-up-emails.trigger	DEFAULT	metabase.task.follow-up-emails.job	DEFAULT	\N	1710158400000	-1	5	WAITING	CRON	1710104758000	0	\N	0	\\x
-MetabaseScheduler	metabase.task.task-history-cleanup.trigger	DEFAULT	metabase.task.task-history-cleanup.job	DEFAULT	\N	1710115200000	-1	5	WAITING	CRON	1710104758000	0	\N	0	\\x
-MetabaseScheduler	metabase.task.update-field-values.trigger.2	DEFAULT	metabase.task.update-field-values.job	DEFAULT	update-field-values Database 2	1710118200000	-1	5	WAITING	CRON	1710104905000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000027800
-MetabaseScheduler	metabase.task.sync-and-analyze.trigger.2	DEFAULT	metabase.task.sync-and-analyze.job	DEFAULT	sync-and-analyze Database 2	1710107400000	-1	5	WAITING	CRON	1710104905000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000027800
-MetabaseScheduler	metabase.task.sync-and-analyze.trigger.1	DEFAULT	metabase.task.sync-and-analyze.job	DEFAULT	sync-and-analyze Database 1	1710109200000	1710105600000	5	WAITING	CRON	1710104758000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000017800
+MetabaseScheduler	metabase.task.update-field-values.trigger.2	DEFAULT	metabase.task.update-field-values.job	DEFAULT	update-field-values Database 2	1710194400000	1710108000000	5	WAITING	CRON	1710107735000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000027800
+MetabaseScheduler	metabase.task.upgrade-checks.trigger	DEFAULT	metabase.task.upgrade-checks.job	DEFAULT	\N	1710180900000	-1	5	WAITING	CRON	1710155789000	0	\N	0	\\x
+MetabaseScheduler	metabase.task.anonymous-stats.trigger	DEFAULT	metabase.task.anonymous-stats.job	DEFAULT	\N	1710213720000	-1	5	WAITING	CRON	1710155789000	0	\N	0	\\x
+MetabaseScheduler	metabase.task.refresh-channel-cache.trigger	DEFAULT	metabase.task.refresh-channel-cache.job	DEFAULT	\N	1710158880000	-1	5	WAITING	CRON	1710155789000	0	\N	2	\\x
+MetabaseScheduler	metabase.task.truncate-audit-tables.trigger	DEFAULT	metabase.task.truncate-audit-tables.job	DEFAULT	\N	1710158400000	-1	5	WAITING	CRON	1710155789000	0	\N	2	\\x
+MetabaseScheduler	metabase.task.send-pulses.trigger	DEFAULT	metabase.task.send-pulses.job	DEFAULT	\N	1710158400000	-1	5	WAITING	CRON	1710155789000	0	\N	1	\\x
+MetabaseScheduler	metabase.task.follow-up-emails.trigger	DEFAULT	metabase.task.follow-up-emails.job	DEFAULT	\N	1710158400000	-1	5	WAITING	CRON	1710155789000	0	\N	0	\\x
+MetabaseScheduler	metabase.task.task-history-cleanup.trigger	DEFAULT	metabase.task.task-history-cleanup.job	DEFAULT	\N	1710201600000	-1	5	WAITING	CRON	1710155789000	0	\N	0	\\x
+MetabaseScheduler	metabase.task.sync-and-analyze.trigger.2	DEFAULT	metabase.task.sync-and-analyze.job	DEFAULT	sync-and-analyze Database 2	1710158640000	1710119040000	5	WAITING	CRON	1710107735000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000027800
+MetabaseScheduler	metabase.task.sync-and-analyze.trigger.1	DEFAULT	metabase.task.sync-and-analyze.job	DEFAULT	sync-and-analyze Database 1	1710159600000	1710156000000	5	WAITING	CRON	1710104758000	0	\N	2	\\xaced0005737200156f72672e71756172747a2e4a6f62446174614d61709fb083e8bfa9b0cb020000787200266f72672e71756172747a2e7574696c732e537472696e674b65794469727479466c61674d61708208e8c3fbc55d280200015a0013616c6c6f77735472616e7369656e74446174617872001d6f72672e71756172747a2e7574696c732e4469727479466c61674d617013e62ead28760ace0200025a000564697274794c00036d617074000f4c6a6176612f7574696c2f4d61703b787000737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000174000564622d6964737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870000000017800
 \.
 
 
@@ -5126,7 +5151,6 @@ MetabaseScheduler	metabase.task.sync-and-analyze.trigger.1	DEFAULT	metabase.task
 --
 
 COPY public.query (query_hash, average_execution_time, query) FROM stdin;
-\\x1953836d50118d36e8b0373d9509ca1d59a2947ed08a32ba44ed2aa07ef756d7	330	{"database":2,"type":"query","query":{"source-table":50},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
 \\x5766347ed01392edd7f246ab0c5d234498db2681aab561a388dbe58967d5b9f5	690	{"database":2,"type":"query","query":{"source-table":94,"aggregation":["count"],"filter":["=",["field",626,null],"f8156e93-bc64-446b-bed5-ffdcc135eb24"]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
 \\x0a636655de1c014ad5b4adc949547fb54fb2b0ecb17d25faeeb263ef96e74de4	297	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count"]],"breakout":[["field",629,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
 \\xc33eba3366944814ea41e4f75b2053ab74a950b8a9de6797182325ab4a40d749	202	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count",null]],"breakout":[["field",629,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
@@ -5140,7 +5164,64 @@ COPY public.query (query_hash, average_execution_time, query) FROM stdin;
 \\xf206448d18973ab8dbf2d5b3a9653bd387ef7aaccdfba26e4af0617bdf08afeb	221	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["cum-count"]],"breakout":[["field",628,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
 \\x1e236ff84d39d9e9243523d03a07989ab5d2a0814517b0198d5de9c6fecdeb21	327	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count",null]],"breakout":[["field",628,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
 \\x2668fd04f5d980ce471ff889bf71077c141e9dd88dd7b608ee32d6e8970d1e4b	103	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count"]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
-\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	479	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"source-table":50,"aggregation":[["count"]]},"async?":true,"cache-ttl":null}
+\\x1953836d50118d36e8b0373d9509ca1d59a2947ed08a32ba44ed2aa07ef756d7	321	{"database":2,"type":"query","query":{"source-table":50},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x747c4c62b18d241a3d1e471466db6e76a50a345995d6a35ca3a794a368260c3e	240	{"database":2,"type":"query","query":{"source-table":50,"fields":[["field",629,{"base-type":"type/Text"}],["field",630,{"base-type":"type/Float"}],["field",627,{"base-type":"type/Float"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xe3c8e4ce048bf6e88a81df61861455c40e29664a6a422a5357be9b4de02ea0b6	237	{"database":2,"type":"query","query":{"source-table":94,"breakout":[["field",626,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xc4742ba0fb1f41a646068fcb83baeab3ea83ba8b7d354ed7234b698498e5f375	615	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["distinct",["field",623,{"base-type":"type/Text"}]]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x07169897fe362cfd631e968d3546691f774abfc79d1f42390305d1f5491f1914	677	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count",null]],"breakout":[["field",626,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x76e5a5f9e073afb0d6bfe19429540c7c4918b82176fb2e313a27789bbdc567a8	591	{"query":{"source-table":94,"filter":["time-interval",["field",624,null],"current","day",{"include_current":true}]},"type":"query","database":2,"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xde4175ddcf5debb69bc152843cd14ddbb919e39314c279b2e9f00b1888adeb5a	398	{"database":2,"type":"query","query":{"source-table":94,"fields":[["field",626,{"base-type":"type/Text"}],["field",624,{"base-type":"type/DateTime"}],["field",623,{"base-type":"type/Text"}]],"filter":["time-interval",["field",624,{"base-type":"type/DateTime"}],"current","day",{"include-current":true}]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xba74bd6958440db1a91dd7536401c9aa91557a3229af308008ba1cda6551d83e	487	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]],"breakout":[["field",624,{"base-type":"type/DateTime","temporal-unit":"day"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x71e8bdb67ac3a31fde1c2b435bdbe1c4a035dbc29ed501f07b9db23de25b6c04	1038	{"database":2,"type":"query","query":{"source-table":94},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xf054cdf53be08f4e402d59542fe6b34825d43ca9c880972b9340062afea04d43	809	{"database":2,"type":"query","query":{"source-table":94,"fields":[["field",626,{"base-type":"type/Text"}],["field",624,{"base-type":"type/DateTime"}],["field",623,{"base-type":"type/Text"}]],"limit":10},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x65cfd837e670f3d055ea91572b7fa5d8557f6b56931c30d76554fd01b71d52f6	373	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]],"breakout":[["field",627,{"base-type":"type/Float","source-field":626}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x4f9b0b022a771361ff0fe3e64564510f464194734dd786c839f3c743aa84f1b8	329	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]],"breakout":[["field",629,{"base-type":"type/Text","source-field":626}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x0eccc67214a90bea86a0943e5fa6c394de8a27bd2dffd8acfb3901ad99f036b6	1753	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]],"breakout":[["field",628,{"base-type":"type/Text","source-field":626}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	755	{"database":2,"type":"query","query":{"source-table":94,"fields":[["field",626,{"base-type":"type/Text"}],["field",624,{"base-type":"type/DateTime"}],["field",623,{"base-type":"type/Text"}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xe2623c1ab7859431d740e9aed41dde68789e0e5bcc8ffeffb161fe6889e0191d	541	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]],"breakout":[["field",630,{"base-type":"type/Float","source-field":626}]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xfff50b735c32f330e84bdb17d61a1ea9cdf77e9f2cdf17d086842a3683b24e07	181	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xac5d829f27df45ce831364d0916bed5f20e05f7f5b5e321c913f0a3b97a8c2d2	243	{"database":2,"type":"query","query":{"source-table":94,"fields":[["field",626,{"base-type":"type/Text"}],["field",624,{"base-type":"type/DateTime"}],["field",623,{"base-type":"type/Text"}]],"order-by":[["asc",["field",624,{"base-type":"type/DateTime"}]]]},"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xa56d3368a60c138e731f5892ebaf15ace46c68d9b804d8dde90abb2728995b54	1324	{"type":"native","native":{"query":"SELECT\\n    created_at,\\n    AVG(data) AS average_data,\\n    sensor_id\\nFROM\\n    sensor_data\\nGROUP BY\\n    sensor_id, created_at\\nORDER BY\\n    created_at ASC, sensor_id;\\n","template-tags":{}},"database":2,"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x6ab157996749ca2eb6a05aa103248f59e6239fb4bf07ae479ce093580eff6127	232	{"type":"native","native":{"query":"SELECT\\n    created_at,\\n    AVG(data) AS average_data,\\n    sensor_id\\nFROM\\n    solar_sensor_data\\nGROUP BY\\n    sensor_id, created_at\\nORDER BY\\n    created_at ASC, sensor_id;\\n","template-tags":{}},"database":2,"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x9774f7da7893018d37343a50cb39ef487be2526b26b0c1ec291bc02aeac3a63b	241	{"type":"native","native":{"query":"SELECT\\n    DATE(created_at) AS date,\\n    sensor_id,\\n    COUNT(*) AS count\\nFROM\\n    solar_sensor_data\\nGROUP BY\\n    DATE(created_at),\\n    sensor_id\\nORDER BY\\n    DATE(created_at), sensor_id;\\n","template-tags":{}},"database":2,"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xdd1ff7d558c12b70bcf9b98c4ec0303166bf000bab0a0066d708259674ee40a4	4079	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",623,null]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x16516b594a358b7581a4e97e6632849b1b61e1aff8b1496147ae43dd1fe53cdd	7509	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",624,{"temporal-unit":"day-of-week"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x44a95872699226cbd7f907fd623c0330bf952fc3bd9e58d7bd249e7ce191b10f	7615	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",624,{"temporal-unit":"hour-of-day"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x08c2de12ee3af6f01888f77bdfa8175d558c79c4d51b50f1b59e80264ebe6f54	4122	{"database":2,"type":"query","query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",624,{"temporal-unit":"minute"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x6fea9c5153c62415f4fd8f1baffba498522d56e2fe729c55c3dc44d3decceb68	7160	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",624,{"temporal-unit":"month-of-year"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xa452d833543b514c897070f1eab5a9bfec2bfe92f59ca5f18a784c697bd0a66f	7548	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",624,{"temporal-unit":"day-of-month"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xfe72a714eea0ba893a52fd0bb4df475bcc0a0a57fe6af8b73ac57f9645eb1092	7556	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",624,{"temporal-unit":"minute"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xc25369c9d7fa769b3c8400f385e7858deca31ae9f2f92d974f61d859240d0d2f	7160	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",624,{"temporal-unit":"quarter-of-year"}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x936e744f917de195825bc8064f66392931951ff23a15e3bf4af07e4fc5c5276f	2843	{"database":2,"type":"query","query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",623,null]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xb15727e7814228b17305a80bad8f0261c70776cc4f5c6df9b138f9d0a2254e39	2909	{"database":2,"type":"query","query":{"aggregation":[["distinct",["field",623,null]]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x52899bcd685873e4958c0c5c73aed716fb2260c8c9a9d9ad2ede20d6fff93ae8	8583	{"database":2,"type":"query","query":{"aggregation":[["count"]],"filter":["time-interval",["field",624,{"temporal-unit":"minute"}],-30,"day"],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x21f06ceabf11f10962dcb4c71c352762f019f5d2684603b606a35c258ab9dbac	2868	{"database":2,"type":"query","query":{"aggregation":[["count"]],"filter":["is-null",["field",623,null]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x87f248d4401a59698b389742618645ba1587caf067ab9ba82e711f8d4e8a4ee2	3775	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x0f14cb5f4588ee3fcd56b8fc10cc8201337768086e3e6d685d91ce0a4f3d6eac	1915	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",629,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x2346c2c1fd4c0c6077eaee226aa5180bc23a27f1c16c99b525c2ab8c64ccfadd	5303	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",630,{"source-field":626,"binning":{"strategy":"default"}}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	4296	{"database":2,"type":"query","query":{"aggregation":[["count"]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x98050cc67e09a01fca9c6e76694c2e03e8ed638e3bd9cf3a2ee3e1e3dcb14c83	3765	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",629,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x61c6714db138e4a3beb9ee50fd673476c25b29ec57384154a60ec42094bba21b	5809	{"database":2,"type":"query","query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",628,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x014973f2a3ce339da58bb40398bee268a53a80122114d20157cd3ee09181217e	2755	{"database":2,"type":"query","query":{"aggregation":[["count"]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xa498fa026fa2630d9b8a0e8b334155444bd508fc524093d56d93ad035818529b	2882	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",623,null]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xbb56038f44c2e9c7b47c48c987df7469bf6f28f8f126552f54e4d1d7610ae42a	3784	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",623,null]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xf3ce8cd4c71ee06e2f254f7590a80f46ac3b81e8456df7fb8b837bbc6ab4a5f1	4330	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",623,null],["field",629,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	6396	{"database":2,"type":"query","query":{"aggregation":[["distinct",["field",626,null]]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\xe38f5723e03f4f5858c8f10daec0eae8ae52fc2ba394dd1c24628701a8c98c29	3704	{"database":2,"type":"query","query":{"aggregation":[["count"]],"filter":["is-null",["field",628,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","value":null,"id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","value":null,"id":"-1693601484","target":["dimension",["field",623,null]]}],"middleware":{"js-int-to-string?":true,"add-default-userland-constraints?":true}}
+\\x4045282494b722e4c814f7215ae7c2b7a20b00049bb8f2ff162cf0ea78aa9d40	1521	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["distinct",["field",626,null]]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\x761583f803ab650dbf5b9ee81a8f5d9dbec70c8f11485713f29415b5481e72cb	1541	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\x835bbc1a331c29c838e3250c5e408af9c7614e6c2ea95512008cb34a19195aef	1522	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["count"]],"filter":["is-null",["field",628,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\x48890a15d4675b928d420429a91687ac4ae38a0cfc4ef4760d31c774e5d2af69	1527	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",623,null]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\x391be6e89e46af95b3ef594aff86ebe4a9e7159df11a6f8bc884f714fa54d5d6	2150	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",628,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\xea286210d882b41c99a3a5a03d9ccec41ac472f5db77541420828c9c3d6757ef	1083	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",629,{"source-field":626}]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\x579f673e66f3172ad2f6683a293982913dd9ecd4ea2cfaaae912cb7f028ed2f6	1472	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false},"viz-settings":{},"database":2,"query":{"aggregation":[["count"]],"source-table":94},"parameters":[{"type":"date/all-options","id":"343970340","target":["dimension",["field",624,null]]},{"type":"category","id":"-1693601484","target":["dimension",["field",623,null]]}],"async?":true,"cache-ttl":null}
+\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2846	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"source-table":94,"aggregation":[["count"]]},"async?":true,"cache-ttl":null}
+\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	4155	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}]],"source-table":94},"async?":true,"cache-ttl":null}
+\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	4863	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",628,{"source-field":626}]],"source-table":94},"async?":true,"cache-ttl":null}
+\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2726	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"source-table":50,"aggregation":[["count"]]},"async?":true,"cache-ttl":null}
+\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2661	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"source-table":50,"fields":[["field",629,{"base-type":"type/Text"}],["field",630,{"base-type":"type/Float"}],["field",627,{"base-type":"type/Float"}]]},"async?":true,"cache-ttl":null}
+\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2107	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",629,{"source-field":626}]],"source-table":94},"async?":true,"cache-ttl":null}
+\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	3797	{"constraints":{"max-results":10000,"max-results-bare-rows":2000},"type":"query","middleware":{"js-int-to-string?":true,"ignore-cached-results?":false,"process-viz-settings?":false},"viz-settings":null,"database":2,"query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",623,null]],"source-table":94},"async?":true,"cache-ttl":null}
 \.
 
 
@@ -5195,6 +5276,242 @@ COPY public.query_execution (id, hash, started_at, running_time, result_rows, na
 28	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 21:15:51.182185+00	155	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
 29	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 21:16:03.618739+00	182	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
 30	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 21:16:19.01198+00	920	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+31	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 21:57:10.378173+00	1740	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+32	\\x1953836d50118d36e8b0373d9509ca1d59a2947ed08a32ba44ed2aa07ef756d7	2024-03-10 21:57:43.133795+00	387	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+33	\\x1953836d50118d36e8b0373d9509ca1d59a2947ed08a32ba44ed2aa07ef756d7	2024-03-10 21:57:55.638797+00	183	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+34	\\x747c4c62b18d241a3d1e471466db6e76a50a345995d6a35ca3a794a368260c3e	2024-03-10 21:58:37.639048+00	240	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+35	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 21:59:30.275545+00	386	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+36	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 21:59:30.146056+00	568	1	f	question	\N	1	2	1	\N	2	f	\N	f	\N
+37	\\x71e8bdb67ac3a31fde1c2b435bdbe1c4a035dbc29ed501f07b9db23de25b6c04	2024-03-10 22:00:59.497428+00	1305	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+38	\\xfff50b735c32f330e84bdb17d61a1ea9cdf77e9f2cdf17d086842a3683b24e07	2024-03-10 22:01:13.451344+00	172	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+39	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 22:01:38.310483+00	789	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+40	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 22:01:38.027319+00	1309	1	f	question	\N	1	3	1	\N	2	f	\N	f	\N
+41	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:01:38.213579+00	1198	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+42	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:02:55.771418+00	414	1	f	question	\N	1	2	\N	\N	2	f	\N	f	\N
+43	\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	2024-03-10 22:03:49.130677+00	1041	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+44	\\x07169897fe362cfd631e968d3546691f774abfc79d1f42390305d1f5491f1914	2024-03-10 22:03:59.949935+00	702	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+45	\\xe3c8e4ce048bf6e88a81df61861455c40e29664a6a422a5357be9b4de02ea0b6	2024-03-10 22:04:05.600596+00	237	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+46	\\x71e8bdb67ac3a31fde1c2b435bdbe1c4a035dbc29ed501f07b9db23de25b6c04	2024-03-10 22:04:33.548306+00	1449	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+47	\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	2024-03-10 22:04:48.000881+00	859	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+48	\\xc4742ba0fb1f41a646068fcb83baeab3ea83ba8b7d354ed7234b698498e5f375	2024-03-10 22:09:11.28487+00	615	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+49	\\x71e8bdb67ac3a31fde1c2b435bdbe1c4a035dbc29ed501f07b9db23de25b6c04	2024-03-10 22:09:26.044276+00	350	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+50	\\x76e5a5f9e073afb0d6bfe19429540c7c4918b82176fb2e313a27789bbdc567a8	2024-03-10 22:09:59.348634+00	618	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+51	\\x76e5a5f9e073afb0d6bfe19429540c7c4918b82176fb2e313a27789bbdc567a8	2024-03-10 22:10:34.260748+00	343	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+52	\\xde4175ddcf5debb69bc152843cd14ddbb919e39314c279b2e9f00b1888adeb5a	2024-03-10 22:12:07.281583+00	398	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+53	\\xf054cdf53be08f4e402d59542fe6b34825d43ca9c880972b9340062afea04d43	2024-03-10 22:24:23.094344+00	809	10	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+54	\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	2024-03-10 22:25:12.012199+00	233	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+55	\\x71e8bdb67ac3a31fde1c2b435bdbe1c4a035dbc29ed501f07b9db23de25b6c04	2024-03-10 22:25:29.022785+00	261	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+56	\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	2024-03-10 22:25:49.592075+00	310	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+57	\\x07169897fe362cfd631e968d3546691f774abfc79d1f42390305d1f5491f1914	2024-03-10 22:26:01.527928+00	454	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+58	\\xba74bd6958440db1a91dd7536401c9aa91557a3229af308008ba1cda6551d83e	2024-03-10 22:26:05.602109+00	487	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+59	\\xe2623c1ab7859431d740e9aed41dde68789e0e5bcc8ffeffb161fe6889e0191d	2024-03-10 22:26:21.774216+00	541	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+60	\\x65cfd837e670f3d055ea91572b7fa5d8557f6b56931c30d76554fd01b71d52f6	2024-03-10 22:26:23.795148+00	373	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+61	\\x4f9b0b022a771361ff0fe3e64564510f464194734dd786c839f3c743aa84f1b8	2024-03-10 22:26:26.31385+00	329	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+62	\\x0eccc67214a90bea86a0943e5fa6c394de8a27bd2dffd8acfb3901ad99f036b6	2024-03-10 22:26:27.01422+00	1844	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+63	\\x0eccc67214a90bea86a0943e5fa6c394de8a27bd2dffd8acfb3901ad99f036b6	2024-03-10 22:26:28.188161+00	937	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+64	\\xfff50b735c32f330e84bdb17d61a1ea9cdf77e9f2cdf17d086842a3683b24e07	2024-03-10 22:26:30.889187+00	265	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+65	\\x71e8bdb67ac3a31fde1c2b435bdbe1c4a035dbc29ed501f07b9db23de25b6c04	2024-03-10 22:26:35.522518+00	247	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+66	\\xac5d829f27df45ce831364d0916bed5f20e05f7f5b5e321c913f0a3b97a8c2d2	2024-03-10 22:27:08.946188+00	243	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+67	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:27:33.806904+00	2564	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+68	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 22:27:33.782951+00	2542	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+69	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 22:27:33.817584+00	2989	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+70	\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	2024-03-10 22:27:58.231399+00	218	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+71	\\x96e679e944abe354924b26bea574ea7a12ab8aaef6435124b1960af427209661	2024-03-10 22:29:23.163697+00	218	415	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+72	\\xa56d3368a60c138e731f5892ebaf15ace46c68d9b804d8dde90abb2728995b54	2024-03-10 22:30:27.34294+00	1324	0	t	ad-hoc	ERROR: relation "sensor_data" does not exist\n  Position: 196	1	\N	\N	\N	2	\N	\N	\N	\N
+73	\\x6ab157996749ca2eb6a05aa103248f59e6239fb4bf07ae479ce093580eff6127	2024-03-10 22:30:59.860613+00	232	0	t	ad-hoc	ERROR: function avg(text) does not exist\n  Hint: No function matches the given name and argument types. You might need to add explicit type casts.\n  Position: 146	1	\N	\N	\N	2	\N	\N	\N	\N
+74	\\x9774f7da7893018d37343a50cb39ef487be2526b26b0c1ec291bc02aeac3a63b	2024-03-10 22:31:50.364864+00	241	1	t	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+76	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:40:20.384101+00	2792	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+83	\\x16516b594a358b7581a4e97e6632849b1b61e1aff8b1496147ae43dd1fe53cdd	2024-03-10 22:40:59.315437+00	7530	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+95	\\xa452d833543b514c897070f1eab5a9bfec2bfe92f59ca5f18a784c697bd0a66f	2024-03-10 22:40:59.245115+00	8049	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+100	\\x52899bcd685873e4958c0c5c73aed716fb2260c8c9a9d9ad2ede20d6fff93ae8	2024-03-10 22:40:59.306274+00	8365	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+112	\\x936e744f917de195825bc8064f66392931951ff23a15e3bf4af07e4fc5c5276f	2024-03-10 22:42:52.025216+00	2840	0	f	ad-hoc	Cannot determine the source table or query for Field clause [:field 630 nil]	1	\N	\N	\N	2	\N	\N	\N	\N
+75	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 22:40:20.393197+00	2780	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+77	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 22:40:20.38332+00	2790	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+78	\\xc25369c9d7fa769b3c8400f385e7858deca31ae9f2f92d974f61d859240d0d2f	2024-03-10 22:40:59.242456+00	7442	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+79	\\x6fea9c5153c62415f4fd8f1baffba498522d56e2fe729c55c3dc44d3decceb68	2024-03-10 22:40:59.242578+00	7442	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+80	\\x16516b594a358b7581a4e97e6632849b1b61e1aff8b1496147ae43dd1fe53cdd	2024-03-10 22:40:59.242647+00	7442	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+81	\\xfe72a714eea0ba893a52fd0bb4df475bcc0a0a57fe6af8b73ac57f9645eb1092	2024-03-10 22:40:59.243041+00	6953	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+82	\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	2024-03-10 22:40:59.306274+00	5057	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+84	\\x44a95872699226cbd7f907fd623c0330bf952fc3bd9e58d7bd249e7ce191b10f	2024-03-10 22:40:59.242596+00	7603	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+85	\\xa452d833543b514c897070f1eab5a9bfec2bfe92f59ca5f18a784c697bd0a66f	2024-03-10 22:40:59.245115+00	7492	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+86	\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	2024-03-10 22:40:59.243383+00	7683	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+87	\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	2024-03-10 22:40:59.244237+00	7713	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+88	\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	2024-03-10 22:40:59.243383+00	8046	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+89	\\x16516b594a358b7581a4e97e6632849b1b61e1aff8b1496147ae43dd1fe53cdd	2024-03-10 22:40:59.242647+00	8035	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+90	\\x44a95872699226cbd7f907fd623c0330bf952fc3bd9e58d7bd249e7ce191b10f	2024-03-10 22:40:59.339548+00	7346	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+91	\\xc25369c9d7fa769b3c8400f385e7858deca31ae9f2f92d974f61d859240d0d2f	2024-03-10 22:40:59.242456+00	8052	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+92	\\x44a95872699226cbd7f907fd623c0330bf952fc3bd9e58d7bd249e7ce191b10f	2024-03-10 22:40:59.339548+00	7956	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+93	\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	2024-03-10 22:40:59.245791+00	4728	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+94	\\xfe72a714eea0ba893a52fd0bb4df475bcc0a0a57fe6af8b73ac57f9645eb1092	2024-03-10 22:40:59.243041+00	8055	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+96	\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	2024-03-10 22:40:59.245791+00	8052	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+97	\\x6fea9c5153c62415f4fd8f1baffba498522d56e2fe729c55c3dc44d3decceb68	2024-03-10 22:40:59.242578+00	8053	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+98	\\x52899bcd685873e4958c0c5c73aed716fb2260c8c9a9d9ad2ede20d6fff93ae8	2024-03-10 22:40:59.242462+00	8605	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+99	\\x52899bcd685873e4958c0c5c73aed716fb2260c8c9a9d9ad2ede20d6fff93ae8	2024-03-10 22:40:59.306274+00	8602	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+101	\\xfe72a714eea0ba893a52fd0bb4df475bcc0a0a57fe6af8b73ac57f9645eb1092	2024-03-10 22:40:59.242782+00	11997	8	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+102	\\xc25369c9d7fa769b3c8400f385e7858deca31ae9f2f92d974f61d859240d0d2f	2024-03-10 22:41:11.993995+00	4074	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+103	\\x6fea9c5153c62415f4fd8f1baffba498522d56e2fe729c55c3dc44d3decceb68	2024-03-10 22:41:11.999644+00	4068	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+104	\\x08c2de12ee3af6f01888f77bdfa8175d558c79c4d51b50f1b59e80264ebe6f54	2024-03-10 22:41:11.993974+00	4122	0	f	ad-hoc	Cannot determine the source table or query for Field clause [:field 630 nil]	1	\N	\N	\N	2	\N	\N	\N	\N
+105	\\xdd1ff7d558c12b70bcf9b98c4ec0303166bf000bab0a0066d708259674ee40a4	2024-03-10 22:41:12.000166+00	4079	10	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+106	\\x0f14cb5f4588ee3fcd56b8fc10cc8201337768086e3e6d685d91ce0a4f3d6eac	2024-03-10 22:41:15.285718+00	1915	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+107	\\x2346c2c1fd4c0c6077eaee226aa5180bc23a27f1c16c99b525c2ab8c64ccfadd	2024-03-10 22:41:12.002603+00	5303	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+109	\\x21f06ceabf11f10962dcb4c71c352762f019f5d2684603b606a35c258ab9dbac	2024-03-10 22:42:51.983043+00	2821	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+108	\\xa498fa026fa2630d9b8a0e8b334155444bd508fc524093d56d93ad035818529b	2024-03-10 22:42:52.128992+00	2814	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+110	\\xb15727e7814228b17305a80bad8f0261c70776cc4f5c6df9b138f9d0a2254e39	2024-03-10 22:42:52.059584+00	2871	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+111	\\x014973f2a3ce339da58bb40398bee268a53a80122114d20157cd3ee09181217e	2024-03-10 22:42:52.111198+00	2692	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+113	\\xb15727e7814228b17305a80bad8f0261c70776cc4f5c6df9b138f9d0a2254e39	2024-03-10 22:42:51.986462+00	3013	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+114	\\x21f06ceabf11f10962dcb4c71c352762f019f5d2684603b606a35c258ab9dbac	2024-03-10 22:42:52.073036+00	2927	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+115	\\x014973f2a3ce339da58bb40398bee268a53a80122114d20157cd3ee09181217e	2024-03-10 22:42:52.022116+00	2978	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+116	\\xa498fa026fa2630d9b8a0e8b334155444bd508fc524093d56d93ad035818529b	2024-03-10 22:42:52.128992+00	3045	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+117	\\x014973f2a3ce339da58bb40398bee268a53a80122114d20157cd3ee09181217e	2024-03-10 22:42:52.111198+00	3063	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+118	\\xa498fa026fa2630d9b8a0e8b334155444bd508fc524093d56d93ad035818529b	2024-03-10 22:42:51.983059+00	3287	10	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+119	\\x936e744f917de195825bc8064f66392931951ff23a15e3bf4af07e4fc5c5276f	2024-03-10 22:42:51.996344+00	2868	0	f	ad-hoc	Cannot determine the source table or query for Field clause [:field 630 nil]	1	\N	\N	\N	2	\N	\N	\N	\N
+120	\\xb15727e7814228b17305a80bad8f0261c70776cc4f5c6df9b138f9d0a2254e39	2024-03-10 22:42:52.059584+00	3124	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+121	\\x21f06ceabf11f10962dcb4c71c352762f019f5d2684603b606a35c258ab9dbac	2024-03-10 22:42:51.983043+00	3192	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+122	\\xf3ce8cd4c71ee06e2f254f7590a80f46ac3b81e8456df7fb8b837bbc6ab4a5f1	2024-03-10 22:42:51.987529+00	4322	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+123	\\xf3ce8cd4c71ee06e2f254f7590a80f46ac3b81e8456df7fb8b837bbc6ab4a5f1	2024-03-10 22:42:51.98382+00	4374	10	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+124	\\xf3ce8cd4c71ee06e2f254f7590a80f46ac3b81e8456df7fb8b837bbc6ab4a5f1	2024-03-10 22:42:51.987529+00	4361	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+125	\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	2024-03-10 22:43:25.232533+00	1695	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+126	\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	2024-03-10 22:43:25.239823+00	1726	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+127	\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	2024-03-10 22:43:25.24076+00	1535	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+128	\\x9490b55cce63c108e168396dd811e968f867311fd6780b9cfcf0fc8bbbbc7738	2024-03-10 22:43:25.24076+00	1320	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+129	\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	2024-03-10 22:43:25.239823+00	3214	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+130	\\xb78b685e44d733ddfe0ab88833ab999e5f87e68c156fbd72b3c2009d46ba6033	2024-03-10 22:43:25.238489+00	3390	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+131	\\xe38f5723e03f4f5858c8f10daec0eae8ae52fc2ba394dd1c24628701a8c98c29	2024-03-10 22:43:25.230232+00	3426	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+132	\\x87f248d4401a59698b389742618645ba1587caf067ab9ba82e711f8d4e8a4ee2	2024-03-10 22:43:25.229545+00	3752	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+133	\\x98050cc67e09a01fca9c6e76694c2e03e8ed638e3bd9cf3a2ee3e1e3dcb14c83	2024-03-10 22:43:25.233316+00	3748	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+134	\\xbb56038f44c2e9c7b47c48c987df7469bf6f28f8f126552f54e4d1d7610ae42a	2024-03-10 22:43:25.22983+00	3752	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+135	\\x98050cc67e09a01fca9c6e76694c2e03e8ed638e3bd9cf3a2ee3e1e3dcb14c83	2024-03-10 22:43:25.233316+00	3914	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+136	\\x87f248d4401a59698b389742618645ba1587caf067ab9ba82e711f8d4e8a4ee2	2024-03-10 22:43:25.229545+00	3948	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+137	\\x87f248d4401a59698b389742618645ba1587caf067ab9ba82e711f8d4e8a4ee2	2024-03-10 22:43:25.228632+00	3802	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+138	\\xbb56038f44c2e9c7b47c48c987df7469bf6f28f8f126552f54e4d1d7610ae42a	2024-03-10 22:43:25.228831+00	4011	10	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+139	\\xbb56038f44c2e9c7b47c48c987df7469bf6f28f8f126552f54e4d1d7610ae42a	2024-03-10 22:43:25.22983+00	3833	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+140	\\xe38f5723e03f4f5858c8f10daec0eae8ae52fc2ba394dd1c24628701a8c98c29	2024-03-10 22:43:25.247718+00	4869	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+141	\\xe38f5723e03f4f5858c8f10daec0eae8ae52fc2ba394dd1c24628701a8c98c29	2024-03-10 22:43:25.247718+00	4905	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+142	\\x61c6714db138e4a3beb9ee50fd673476c25b29ec57384154a60ec42094bba21b	2024-03-10 22:43:25.230076+00	5864	1	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+143	\\x61c6714db138e4a3beb9ee50fd673476c25b29ec57384154a60ec42094bba21b	2024-03-10 22:43:25.230568+00	5799	0	f	ad-hoc	\N	1	\N	\N	\N	2	f	\N	f	\N
+144	\\x61c6714db138e4a3beb9ee50fd673476c25b29ec57384154a60ec42094bba21b	2024-03-10 22:43:25.230568+00	5834	0	f	ad-hoc	Broken pipe	1	\N	\N	\N	2	\N	\N	\N	\N
+145	\\x761583f803ab650dbf5b9ee81a8f5d9dbec70c8f11485713f29415b5481e72cb	2024-03-10 22:44:10.040932+00	1619	1	f	dashboard	\N	1	7	2	\N	2	f	\N	f	\N
+146	\\x835bbc1a331c29c838e3250c5e408af9c7614e6c2ea95512008cb34a19195aef	2024-03-10 22:44:10.076805+00	1586	1	f	dashboard	\N	1	5	2	\N	2	f	\N	f	\N
+147	\\x579f673e66f3172ad2f6683a293982913dd9ecd4ea2cfaaae912cb7f028ed2f6	2024-03-10 22:44:10.076769+00	1587	1	f	dashboard	\N	1	4	2	\N	2	f	\N	f	\N
+148	\\x4045282494b722e4c814f7215ae7c2b7a20b00049bb8f2ff162cf0ea78aa9d40	2024-03-10 22:44:10.040803+00	1622	1	f	dashboard	\N	1	6	2	\N	2	f	\N	f	\N
+152	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:44:19.454767+00	897	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+157	\\x761583f803ab650dbf5b9ee81a8f5d9dbec70c8f11485713f29415b5481e72cb	2024-03-10 22:44:42.867829+00	838	1	f	dashboard	\N	1	7	2	\N	2	f	\N	f	\N
+167	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:45:14.599097+00	403	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+169	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-10 22:46:00.422133+00	664	1	f	question	\N	1	8	1	\N	2	f	\N	f	\N
+149	\\x391be6e89e46af95b3ef594aff86ebe4a9e7159df11a6f8bc884f714fa54d5d6	2024-03-10 22:44:10.204395+00	1914	1	f	dashboard	\N	1	8	2	\N	2	f	\N	f	\N
+150	\\x48890a15d4675b928d420429a91687ac4ae38a0cfc4ef4760d31c774e5d2af69	2024-03-10 22:44:11.47183+00	1584	10	f	dashboard	\N	1	9	2	\N	2	f	\N	f	\N
+174	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 23:53:23.209338+00	3397	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+151	\\xea286210d882b41c99a3a5a03d9ccec41ac472f5db77541420828c9c3d6757ef	2024-03-10 22:44:12.878852+00	708	1	f	dashboard	\N	1	10	2	\N	2	f	\N	f	\N
+153	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 22:44:19.455068+00	897	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+158	\\x835bbc1a331c29c838e3250c5e408af9c7614e6c2ea95512008cb34a19195aef	2024-03-10 22:44:42.882139+00	949	1	f	dashboard	\N	1	5	2	\N	2	f	\N	f	\N
+163	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 22:44:55.20112+00	1345	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+165	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 22:45:14.72007+00	282	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+168	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-10 22:45:56.07216+00	923	1	f	question	\N	1	7	1	\N	2	f	\N	f	\N
+170	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-10 22:46:01.832052+00	644	10	f	question	\N	1	9	1	\N	2	f	\N	f	\N
+171	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-10 22:46:03.474141+00	2613	1	f	question	\N	1	10	1	\N	2	f	\N	f	\N
+173	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 23:53:23.208864+00	3399	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+180	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 23:54:19.018905+00	4449	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+154	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 22:44:19.45451+00	896	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+156	\\x4045282494b722e4c814f7215ae7c2b7a20b00049bb8f2ff162cf0ea78aa9d40	2024-03-10 22:44:42.867829+00	614	1	f	dashboard	\N	1	6	2	\N	2	f	\N	f	\N
+161	\\xea286210d882b41c99a3a5a03d9ccec41ac472f5db77541420828c9c3d6757ef	2024-03-10 22:44:44.614182+00	4462	1	f	dashboard	\N	1	10	2	\N	2	f	\N	f	\N
+155	\\x579f673e66f3172ad2f6683a293982913dd9ecd4ea2cfaaae912cb7f028ed2f6	2024-03-10 22:44:42.870761+00	441	1	f	dashboard	\N	1	4	2	\N	2	f	\N	f	\N
+164	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 22:44:55.201246+00	1345	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+166	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 22:45:14.779804+00	223	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+175	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 23:53:23.209586+00	3394	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+159	\\x48890a15d4675b928d420429a91687ac4ae38a0cfc4ef4760d31c774e5d2af69	2024-03-10 22:44:42.900294+00	1010	10	f	dashboard	\N	1	9	2	\N	2	f	\N	f	\N
+160	\\x391be6e89e46af95b3ef594aff86ebe4a9e7159df11a6f8bc884f714fa54d5d6	2024-03-10 22:44:42.95488+00	4275	1	f	dashboard	\N	1	8	2	\N	2	f	\N	f	\N
+162	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-10 22:44:55.201994+00	1345	1	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+172	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-10 23:53:23.281801+00	3322	10	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+181	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-10 23:54:18.939147+00	4527	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+182	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-10 23:54:19.065781+00	5189	18	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+176	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-10 23:53:23.281801+00	3325	1	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+177	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-10 23:53:23.209076+00	3397	1	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+178	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-10 23:53:27.721922+00	359	1	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+179	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-10 23:54:18.944564+00	4522	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+183	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-10 23:54:18.940033+00	5312	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+184	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-10 23:54:18.939145+00	5726	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+185	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:07:14.47233+00	6336	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+186	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:07:14.473086+00	6335	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+187	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:07:14.472172+00	6336	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+188	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:07:14.473718+00	6951	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+189	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 00:07:14.471551+00	6964	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+190	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:07:14.471741+00	8754	0	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+191	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:07:14.471741+00	8769	0	f	dashboard	Closed	1	8	1	\N	2	\N	\N	\N	\N
+192	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:07:23.151653+00	3135	0	f	dashboard	Closed	1	10	1	\N	2	\N	\N	\N	\N
+193	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:07:23.151653+00	3126	0	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+194	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:07:28.570263+00	766	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+195	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:07:28.536304+00	797	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+196	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:07:28.525665+00	994	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+197	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:07:28.635808+00	3997	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+198	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 00:07:28.943796+00	3982	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+199	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:07:28.52737+00	4838	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+200	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:07:32.598408+00	1289	2	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+201	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:08:12.117503+00	975	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+204	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 00:08:12.429754+00	3560	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+208	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:23:50.772719+00	3750	0	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+211	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:23:50.77198+00	6172	0	f	dashboard	Closed	1	3	1	\N	2	\N	\N	\N	\N
+202	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:08:12.16105+00	923	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+203	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:08:12.094825+00	991	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+205	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:08:12.095483+00	3894	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+206	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:08:12.135286+00	4000	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+207	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:08:16.149059+00	921	2	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+212	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:23:50.77338+00	6116	0	f	dashboard	Closed	1	1	1	\N	2	\N	\N	\N	\N
+214	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:23:50.77198+00	6108	0	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+215	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:23:50.831153+00	6228	0	f	dashboard	Closed	1	7	1	\N	2	\N	\N	\N	\N
+216	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:23:50.814478+00	6788	0	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+218	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:24:19.735188+00	1712	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+219	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:24:19.940557+00	1520	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+220	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:24:19.933122+00	2396	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+221	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:24:19.900508+00	6139	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+223	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:24:19.907538+00	6947	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+224	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:24:26.622891+00	680	2	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+209	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:23:50.772719+00	3866	0	f	dashboard	Closed	1	2	1	\N	2	\N	\N	\N	\N
+210	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:23:50.77338+00	6109	0	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+213	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:23:50.831153+00	6189	0	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+217	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:23:50.814478+00	6812	0	f	dashboard	Closed	1	8	1	\N	2	\N	\N	\N	\N
+222	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 00:24:19.995081+00	6044	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+226	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:41:20.719669+00	2488	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+225	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:41:20.65837+00	2560	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+227	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:41:20.663899+00	2544	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+228	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 00:41:20.762317+00	4890	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+229	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:41:20.787407+00	4865	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+230	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:41:20.792087+00	5494	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+231	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:41:26.266869+00	613	2	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+234	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 00:58:22.312235+00	2060	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+233	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 00:58:22.389058+00	1963	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+232	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 00:58:22.317201+00	2035	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+235	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 00:58:22.316514+00	2049	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+236	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 00:58:22.471192+00	2016	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+237	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 00:58:22.437107+00	2485	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+238	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 00:58:25.147808+00	484	2	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+239	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 01:02:24.843234+00	3827	2	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+240	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 01:02:24.873009+00	3798	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+241	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 01:02:24.843429+00	3825	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+242	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 01:02:24.879743+00	5164	2	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+243	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 01:02:25.281097+00	4790	20	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+244	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 01:02:24.935332+00	5258	2	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+245	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 01:02:31.116693+00	941	2	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+246	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 01:03:31.185966+00	2559	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+247	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 01:03:31.185863+00	2556	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+248	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 01:03:31.185918+00	2664	6	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+249	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 01:03:31.186218+00	3798	6	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+250	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 01:03:31.216661+00	4517	6	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+251	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 01:03:34.146973+00	5784	48	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+252	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 01:03:35.495114+00	6766	6	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+253	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 01:03:58.297485+00	1144	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+254	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 01:03:58.289143+00	1181	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+255	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 01:03:58.32946+00	2023	6	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+256	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 01:03:58.285845+00	7672	6	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+257	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 01:03:58.926383+00	7038	60	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+258	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 01:03:58.373288+00	7588	6	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+259	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 01:04:06.14725+00	2515	6	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
+260	\\x46a36de31b9922b98b3ed8888e4913a43a95b80b74b90d3459334a68e6c60a2e	2024-03-11 11:19:33.364029+00	5241	6	f	dashboard	\N	1	7	1	\N	2	f	\N	f	\N
+261	\\x8907a2133eda16ac791c3e8be74b953a6a17d589bf78b9af9aa7cc72f9a0bc25	2024-03-11 11:19:33.363934+00	5243	60	f	dashboard	\N	1	9	1	\N	2	f	\N	f	\N
+262	\\xf249cd444ea6e9efcd4148e1dcf2a202f3f810f39ed7ec17425380164aee6e68	2024-03-11 11:19:33.362569+00	5244	1	f	dashboard	\N	1	3	1	\N	2	f	\N	f	\N
+263	\\xfeb90f8a02fa8b3447c74e53b54cb75b09024789bccd3baf33d0dfc456f7f67f	2024-03-11 11:19:33.365992+00	5240	1	f	dashboard	\N	1	1	1	\N	2	f	\N	f	\N
+264	\\xc9dc43707f2fde5d7aa1ce6c7db24e5d9affc3d1f017d0cc961d4dcc33a9567b	2024-03-11 11:19:33.36281+00	5243	6	f	dashboard	\N	1	2	1	\N	2	f	\N	f	\N
+265	\\x7ddddf562a2a7b6a8445945d8039c683954822fd751e491e0d85b4e56460d6a0	2024-03-11 11:19:33.367849+00	7434	6	f	dashboard	\N	1	8	1	\N	2	f	\N	f	\N
+266	\\xd8887fc66720c98c406496c8c4127437a980a9308e704c30ee8ef7df111e0d06	2024-03-11 11:19:41.033322+00	813	6	f	dashboard	\N	1	10	1	\N	2	f	\N	f	\N
 \.
 
 
@@ -5203,36 +5520,36 @@ COPY public.query_execution (id, hash, started_at, running_time, result_rows, na
 --
 
 COPY public.recent_views (id, user_id, model, model_id, "timestamp") FROM stdin;
-7	1	table	50	2024-03-10 21:12:35.929833
-8	1	table	50	2024-03-10 21:12:37.653278
-9	1	table	50	2024-03-10 21:12:43.144285
-10	1	table	50	2024-03-10 21:12:56.096735
-11	1	table	50	2024-03-10 21:13:06.302384
-12	1	table	50	2024-03-10 21:13:08.428854
-13	1	table	50	2024-03-10 21:13:08.929413
-14	1	table	50	2024-03-10 21:13:09.094551
-15	1	table	50	2024-03-10 21:13:11.376843
-16	1	table	50	2024-03-10 21:13:13.706833
-17	1	table	50	2024-03-10 21:13:18.803032
-18	1	table	50	2024-03-10 21:13:18.935238
-19	1	table	50	2024-03-10 21:13:22.062584
-20	1	table	50	2024-03-10 21:13:41.605698
-21	1	table	50	2024-03-10 21:14:00.622006
-22	1	table	50	2024-03-10 21:14:05.363844
-23	1	table	50	2024-03-10 21:14:10.626506
-24	1	dashboard	1	2024-03-10 21:15:18.532197
-25	1	card	1	2024-03-10 21:15:19.462482
-26	1	dashboard	1	2024-03-10 21:15:27.689735
-27	1	dashboard	1	2024-03-10 21:15:40.013309
-28	1	dashboard	1	2024-03-10 21:15:43.462171
-29	1	dashboard	1	2024-03-10 21:15:45.675867
-30	1	dashboard	1	2024-03-10 21:15:47.406172
-31	1	dashboard	1	2024-03-10 21:15:48.585787
-32	1	dashboard	1	2024-03-10 21:15:48.654167
-33	1	dashboard	1	2024-03-10 21:15:48.734187
-34	1	dashboard	1	2024-03-10 21:15:50.973827
-35	1	dashboard	1	2024-03-10 21:16:03.437617
-36	1	dashboard	1	2024-03-10 21:16:18.816593
+124	1	table	94	2024-03-10 22:43:25.037503
+125	1	dashboard	2	2024-03-10 22:44:07.240389
+126	1	dashboard	1	2024-03-10 22:44:18.945804
+127	1	dashboard	2	2024-03-10 22:44:41.579946
+128	1	dashboard	1	2024-03-10 22:44:52.157371
+129	1	dashboard	1	2024-03-10 22:45:13.944265
+130	1	card	7	2024-03-10 22:45:56.975676
+131	1	card	8	2024-03-10 22:46:01.052789
+132	1	card	9	2024-03-10 22:46:02.411359
+133	1	card	10	2024-03-10 22:46:06.035447
+134	1	dashboard	1	2024-03-10 22:46:12.580107
+135	1	dashboard	1	2024-03-10 23:53:21.894356
+136	1	dashboard	1	2024-03-10 23:54:17.399629
+137	1	dashboard	1	2024-03-11 00:07:08.406328
+138	1	dashboard	1	2024-03-11 00:07:10.72425
+139	1	dashboard	1	2024-03-11 00:07:26.096145
+140	1	dashboard	1	2024-03-11 00:08:09.609439
+141	1	dashboard	1	2024-03-11 00:08:10.902184
+142	1	dashboard	1	2024-03-11 00:23:46.696417
+143	1	dashboard	1	2024-03-11 00:23:47.809643
+144	1	dashboard	1	2024-03-11 00:24:17.738268
+145	1	dashboard	1	2024-03-11 00:24:18.477358
+146	1	dashboard	1	2024-03-11 00:41:16.938663
+147	1	dashboard	1	2024-03-11 00:41:17.652477
+148	1	dashboard	1	2024-03-11 00:58:17.593993
+149	1	dashboard	1	2024-03-11 01:02:21.112857
+150	1	dashboard	1	2024-03-11 01:03:28.080286
+151	1	dashboard	1	2024-03-11 01:03:56.650783
+152	1	dashboard	1	2024-03-11 11:19:28.116035
+153	1	dashboard	1	2024-03-11 11:19:30.611703
 \.
 
 
@@ -5241,7 +5558,16 @@ COPY public.recent_views (id, user_id, model, model_id, "timestamp") FROM stdin;
 --
 
 COPY public.report_card (id, created_at, updated_at, name, description, display, dataset_query, visualization_settings, creator_id, database_id, table_id, query_type, archived, collection_id, public_uuid, made_public_by_id, enable_embedding, embedding_params, cache_ttl, result_metadata, collection_position, dataset, entity_id, parameters, parameter_mappings, collection_preview, metabase_version) FROM stdin;
-1	2024-03-10 21:14:46.777697+00	2024-03-10 21:16:19.910068+00	Count Solar Sensors	\N	scalar	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count"]]}}	{"scalar.field":"count"}	1	2	50	query	f	\N	\N	\N	f	\N	\N	[{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":null,"avg":1.0}}}}]	\N	f	tf7_EUaoGsIYXwqyTEU6g	[]	[]	t	v0.48.8 (a900c85)
+5	2024-03-10 22:44:00.071439+00	2024-03-10 22:44:43.799305+00	Null values	\N	scalar	{"database":2,"type":"query","query":{"aggregation":[["count"]],"filter":["is-null",["field",628,{"source-field":626}]],"source-table":94}}	{"graph.series_labels":[null],"graph.metrics":["count"],"graph.dimensions":null}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":0.0,"q1":0.0,"q3":0.0,"max":0.0,"sd":null,"avg":0.0}}}}]	\N	f	bafYB2jplGUxsq4jfXHf4	[]	[]	t	v0.48.8 (a900c85)
+4	2024-03-10 22:43:59.692804+00	2024-03-10 22:44:43.293484+00	Count	\N	scalar	{"database":2,"type":"query","query":{"aggregation":[["count"]],"source-table":94}}	{"graph.series_labels":[null],"graph.metrics":["count"],"graph.dimensions":null}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":415.0,"q1":415.0,"q3":415.0,"max":415.0,"sd":null,"avg":415.0}}}}]	\N	f	EZT1rfoBPy46e1fhaDUG-	[]	[]	t	v0.48.8 (a900c85)
+6	2024-03-10 22:44:00.36955+00	2024-03-10 22:44:43.442828+00	Distinct values	\N	scalar	{"database":2,"type":"query","query":{"aggregation":[["distinct",["field",626,null]]],"source-table":94}}	{"graph.series_labels":[null],"graph.metrics":["distinct"],"graph.dimensions":null}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"display_name":"Distinct values of Sensor ID","semantic_type":"type/Quantity","settings":null,"field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":1.0,"q3":1.0,"max":1.0,"sd":null,"avg":1.0}}}}]	\N	f	kjIVrSREYYwlfCuP1VE4k	[]	[]	t	v0.48.8 (a900c85)
+7	2024-03-10 22:44:00.624121+00	2024-03-11 11:19:38.55848+00	How the Sensor ID is distributed	\N	bar	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}]],"source-table":94}}	{"graph.series_labels":[null],"graph.metrics":["count"],"graph.dimensions":["sensor_id"],"graph.colors":["#F2A86F"]}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"description":null,"semantic_type":"type/PK","coercion_strategy":null,"name":"id","settings":null,"fk_target_field_id":null,"field_ref":["field",628,{"source-field":626}],"effective_type":"type/Text","id":628,"visibility_type":"normal","display_name":"Sensor → ID","fingerprint":null,"base_type":"type/Text"},{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":65.0,"q1":65.0,"q3":102.0,"max":524.0,"sd":184.9580132534589,"avg":147.66666666666666}}}}]	\N	f	g9WdcFxlohtVoWOzRzDpv	[]	[]	t	v0.48.8 (a900c85)
+3	2024-03-10 22:01:33.154967+00	2024-03-11 11:19:38.558176+00	Count Solar Sensor Data	\N	scalar	{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]]}}	{}	1	2	94	query	f	\N	\N	\N	f	\N	\N	[{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":886.0,"q1":886.0,"q3":886.0,"max":886.0,"sd":null,"avg":886.0}}}}]	\N	f	hkHA02kxLqmU3LT9h1glg	[]	[]	t	v0.48.8 (a900c85)
+1	2024-03-10 21:14:46.777697+00	2024-03-11 11:19:38.558376+00	Count Solar Sensors	\N	scalar	{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count"]]}}	{"scalar.field":"count"}	1	2	50	query	f	\N	\N	\N	f	\N	\N	[{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":6.0,"q1":6.0,"q3":6.0,"max":6.0,"sd":null,"avg":6.0}}}}]	\N	f	tf7_EUaoGsIYXwqyTEU6g	[]	[]	t	v0.48.8 (a900c85)
+9	2024-03-10 22:44:02.397523+00	2024-03-11 11:19:38.557431+00	Sensor ID by Data	\N	table	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",623,null]],"source-table":94}}	{"graph.series_labels":[null],"graph.metrics":["count"],"graph.dimensions":["sensor_id","data"]}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"description":null,"semantic_type":"type/PK","coercion_strategy":null,"name":"id","settings":null,"fk_target_field_id":null,"field_ref":["field",628,{"source-field":626}],"effective_type":"type/Text","id":628,"visibility_type":"normal","display_name":"Sensor → ID","fingerprint":null,"base_type":"type/Text"},{"description":null,"semantic_type":"type/Category","coercion_strategy":null,"name":"data","settings":null,"fk_target_field_id":null,"field_ref":["field",623,null],"effective_type":"type/Text","id":623,"visibility_type":"normal","display_name":"Data","fingerprint":{"global":{"distinct-count":10,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":14.848192771084337}}},"base_type":"type/Text"},{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":23,"nil%":0.0},"type":{"type/Number":{"min":1.0,"q1":5.418011102528388,"q3":10.833333333333334,"max":62.0,"sd":17.34433592561459,"avg":14.766666666666667}}}}]	\N	f	FJsSWOTPo_C8r9-4o2iv0	[]	[]	t	v0.48.8 (a900c85)
+2	2024-03-10 21:59:23.611992+00	2024-03-11 11:19:38.558176+00	Solar Sensors Map	\N	map	{"database":2,"type":"query","query":{"source-table":50,"fields":[["field",629,{"base-type":"type/Text"}],["field",630,{"base-type":"type/Float"}],["field",627,{"base-type":"type/Float"}]]}}	{"map.type":"pin","map.latitude_column":"coords_y","map.longitude_column":"coords_x"}	1	2	50	query	f	\N	\N	\N	f	\N	\N	[{"description":null,"semantic_type":"type/Name","coercion_strategy":null,"name":"name","settings":null,"fk_target_field_id":null,"field_ref":["field",629,{"base-type":"type/Text"}],"effective_type":"type/Text","id":629,"visibility_type":"normal","display_name":"Name","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":15.0}}},"base_type":"type/Text"},{"description":null,"semantic_type":null,"coercion_strategy":null,"name":"coords_x","settings":null,"fk_target_field_id":null,"field_ref":["field",630,{"base-type":"type/Float"}],"effective_type":"type/Float","id":630,"visibility_type":"normal","display_name":"Coords X","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":-46.61275574620269,"q1":-46.61275574620269,"q3":-46.61275574620269,"max":-46.61275574620269,"sd":null,"avg":-46.61275574620269}}},"base_type":"type/Float"},{"description":null,"semantic_type":null,"coercion_strategy":null,"name":"coords_y","settings":null,"fk_target_field_id":null,"field_ref":["field",627,{"base-type":"type/Float"}],"effective_type":"type/Float","id":627,"visibility_type":"normal","display_name":"Coords Y","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Number":{"min":-23.60237950291104,"q1":-23.60237950291104,"q3":-23.60237950291104,"max":-23.60237950291104,"sd":null,"avg":-23.60237950291104}}},"base_type":"type/Float"}]	\N	f	tLE-5RuLbwP2zj0lwhvWB	[]	[]	t	v0.48.8 (a900c85)
+8	2024-03-10 22:44:01.852881+00	2024-03-11 11:19:40.755184+00	Sensor → Coords X by Sensor ID	\N	bar	{"database":2,"type":"query","query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",628,{"source-field":626}]],"source-table":94}}	{"graph.series_labels":[null,null],"graph.metrics":["sum","avg"],"graph.dimensions":["sensor_id"],"graph.colors":["#F2A86F","#7172AD"]}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"description":null,"semantic_type":"type/PK","coercion_strategy":null,"name":"id","settings":null,"fk_target_field_id":null,"field_ref":["field",628,{"source-field":626}],"effective_type":"type/Text","id":628,"visibility_type":"normal","display_name":"Sensor → ID","fingerprint":null,"base_type":"type/Text"},{"display_name":"Sum of solar_sensors__via__sensor_id → Coords X","semantic_type":null,"settings":null,"field_ref":["aggregation",0],"name":"sum","base_type":"type/Float","effective_type":"type/Float","fingerprint":{"global":{"distinct-count":6,"nil%":0.0},"type":{"type/Number":{"min":-24425.08401101005,"q1":-4739.890659255508,"q3":-3018.033287543823,"max":-3013.0774584445194,"sd":8623.60973189983,"avg":-6877.9577468116695}}}},{"display_name":"Average of solar_sensors__via__sensor_id → Coords X","semantic_type":null,"settings":null,"field_ref":["aggregation",1],"name":"avg","base_type":"type/Float","effective_type":"type/Float","fingerprint":{"global":{"distinct-count":6,"nil%":0.0},"type":{"type/Number":{"min":-46.78465381229047,"q1":-46.62551641257293,"q3":-46.431281346828044,"max":-46.35503782222337,"sd":0.15697786140303374,"avg":-46.54646023455467}}}}]	\N	f	_DE_7lP9nWJQcmG1LBiQm	[]	[]	t	v0.48.8 (a900c85)
+10	2024-03-10 22:44:02.796714+00	2024-03-11 11:19:41.820127+00	Sensor ID by Sensor → Name	\N	table	{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",629,{"source-field":626}]],"source-table":94}}	{"graph.series_labels":[null],"graph.metrics":["count"],"graph.dimensions":["sensor_id","name"]}	1	2	94	query	f	3	\N	\N	f	\N	\N	[{"description":null,"semantic_type":"type/PK","coercion_strategy":null,"name":"id","settings":null,"fk_target_field_id":null,"field_ref":["field",628,{"source-field":626}],"effective_type":"type/Text","id":628,"visibility_type":"normal","display_name":"Sensor → ID","fingerprint":null,"base_type":"type/Text"},{"description":null,"semantic_type":"type/Name","coercion_strategy":null,"name":"name","settings":null,"fk_target_field_id":null,"field_ref":["field",629,{"source-field":626}],"effective_type":"type/Text","id":629,"visibility_type":"normal","display_name":"Sensor → Name","fingerprint":{"global":{"distinct-count":1,"nil%":0.0},"type":{"type/Text":{"percent-json":0.0,"percent-url":0.0,"percent-email":0.0,"percent-state":0.0,"average-length":15.0}}},"base_type":"type/Text"},{"display_name":"Count","semantic_type":"type/Quantity","field_ref":["aggregation",0],"name":"count","base_type":"type/BigInteger","effective_type":"type/BigInteger","fingerprint":{"global":{"distinct-count":3,"nil%":0.0},"type":{"type/Number":{"min":65.0,"q1":65.0,"q3":102.0,"max":524.0,"sd":184.9580132534589,"avg":147.66666666666666}}}}]	\N	f	4EibEKC5VjSkR9tdlFU7m	[]	[]	t	v0.48.8 (a900c85)
 \.
 
 
@@ -5258,7 +5584,8 @@ COPY public.report_cardfavorite (id, created_at, updated_at, card_id, owner_id) 
 --
 
 COPY public.report_dashboard (id, created_at, updated_at, name, description, creator_id, parameters, points_of_interest, caveats, show_in_getting_started, public_uuid, made_public_by_id, enable_embedding, embedding_params, archived, "position", collection_id, collection_position, cache_ttl, entity_id, auto_apply_filters) FROM stdin;
-1	2024-03-10 21:15:16.410467+00	2024-03-10 21:15:26.817798+00	Solar Sensors	\N	1	[]	\N	\N	f	\N	\N	f	\N	f	\N	\N	\N	\N	p8PeXM0qhoSrkFESXzyhe	t
+2	2024-03-10 22:43:59.448112+00	2024-03-10 22:43:59.448112+00	A look at the Sensor ID fields	A look at Solar Sensor Data across Sensor ID fields, and how it changes over time.	1	[{"id":"343970340","type":"date/all-options","name":"Created At","slug":"created_at"},{"id":"-1693601484","type":"category","name":"Data","slug":"data"}]	\N	\N	f	\N	\N	f	\N	f	\N	3	1	\N	gqY6cx-qNmjalt7T-qQ_8	t
+1	2024-03-10 21:15:16.410467+00	2024-03-10 22:46:11.28908+00	Solar Sensors	\N	1	[]	\N	\N	f	\N	\N	f	\N	f	\N	\N	\N	\N	p8PeXM0qhoSrkFESXzyhe	t
 \.
 
 
@@ -5267,7 +5594,22 @@ COPY public.report_dashboard (id, created_at, updated_at, name, description, cre
 --
 
 COPY public.report_dashboardcard (id, created_at, updated_at, size_x, size_y, "row", col, card_id, dashboard_id, parameter_mappings, visualization_settings, entity_id, action_id, dashboard_tab_id) FROM stdin;
-1	2024-03-10 21:15:26.817798+00	2024-03-10 21:15:26.817798+00	4	3	0	0	1	1	[]	{}	HTkVUkUSVMVeOlmhrOacS	\N	\N
+1	2024-03-10 21:15:26.817798+00	2024-03-10 22:02:19.129725+00	4	3	0	2	1	1	[]	{}	HTkVUkUSVMVeOlmhrOacS	\N	\N
+2	2024-03-10 22:00:40.533708+00	2024-03-10 22:02:19.129725+00	12	9	3	0	2	1	[]	{}	gHZK_LcWpzNI0uohL7UgF	\N	\N
+3	2024-03-10 22:02:19.129725+00	2024-03-10 22:02:19.129725+00	4	3	0	6	3	1	[]	{}	uT6naAy3infUm9DPlUvCB	\N	\N
+4	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	18	2	0	0	\N	2	[]	{"text":"# Overview","virtual_card":{"name":null,"display":"text","dataset_query":{},"visualization_settings":{}},"dashcard.background":false,"text.align_vertical":"bottom"}	vu3a1nYOOiQ3i6B9C2D_n	\N	\N
+5	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	6	4	2	0	4	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":4},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":4}]	{}	QHRlw36NZBHXi6eKTcpxT	\N	\N
+6	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	6	4	2	6	5	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":5},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":5}]	{}	BOQFjRx1TJANlqjiqShjK	\N	\N
+7	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	6	4	2	12	6	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":6},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":6}]	{}	YXUOf6XqWOGVYzRDzdkRf	\N	\N
+8	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	12	4	6	0	7	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":7},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":7}]	{}	gsQTwBxub7lis1KKo4LJz	\N	\N
+9	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	18	2	10	0	\N	2	[]	{"text":"# How the Sensor ID fields is distributed","virtual_card":{"name":null,"display":"text","dataset_query":{},"visualization_settings":{}},"dashcard.background":false,"text.align_vertical":"bottom"}	qriy88Xhi-uVNoZuJ9vu9	\N	\N
+10	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	6	8	12	0	8	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":8},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":8}]	{}	5CDCZRNsNPkHTJ83hZnrR	\N	\N
+11	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	9	8	12	6	9	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":9},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":9}]	{}	fYveMSpcC7RcUU2o4qezF	\N	\N
+12	2024-03-10 22:44:02.921875+00	2024-03-10 22:44:02.921875+00	9	8	20	0	10	2	[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":10},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":10}]	{}	-b8MU_3Cn2OlWJzwZHe4e	\N	\N
+13	2024-03-10 22:46:11.28908+00	2024-03-10 22:46:11.28908+00	12	6	0	12	7	1	[]	{}	i2X9_1NyDAa8CveBM25vC	\N	\N
+14	2024-03-10 22:46:11.28908+00	2024-03-10 22:46:11.28908+00	12	6	6	12	8	1	[]	{}	-cJ0SzBaP1VbseRpSiRNq	\N	\N
+15	2024-03-10 22:46:11.28908+00	2024-03-10 22:46:11.28908+00	12	9	12	0	9	1	[]	{}	8p3_PKlKWaGwefo7FkICR	\N	\N
+16	2024-03-10 22:46:11.28908+00	2024-03-10 22:46:11.28908+00	12	9	12	12	10	1	[]	{}	YlK-jxLwNfFh2P-fBItXU	\N	\N
 \.
 
 
@@ -5277,8 +5619,21 @@ COPY public.report_dashboardcard (id, created_at, updated_at, size_x, size_y, "r
 
 COPY public.revision (id, model, model_id, user_id, "timestamp", object, is_reversion, is_creation, message, most_recent, metabase_version) FROM stdin;
 1	Card	1	1	2024-03-10 21:14:47.153386+00	{"description":null,"archived":false,"collection_position":null,"table_id":50,"database_id":2,"enable_embedding":false,"collection_id":null,"query_type":"query","name":"Count Solar Sensors","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"source-table":50,"aggregation":[["count"]]}},"parameter_mappings":[],"display":"scalar","collection_preview":true,"visualization_settings":{"scalar.field":"count"},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
-3	Dashboard	1	1	2024-03-10 21:15:27.319342+00	{"description":null,"archived":false,"collection_position":null,"tabs":[],"enable_embedding":false,"collection_id":null,"name":"Solar Sensors","embedding_params":null,"cache_ttl":null,"cards":[{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":1,"parameter_mappings":[],"card_id":1,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0}],"parameters":[],"auto_apply_filters":true}	f	f	\N	t	v0.48.8 (a900c85)
 2	Dashboard	1	1	2024-03-10 21:15:16.573287+00	{"description":null,"archived":false,"collection_position":null,"tabs":[],"enable_embedding":false,"collection_id":null,"name":"Solar Sensors","embedding_params":null,"cache_ttl":null,"cards":[],"parameters":[],"auto_apply_filters":true}	f	t	\N	f	v0.48.8 (a900c85)
+4	Card	2	1	2024-03-10 21:59:23.905823+00	{"description":null,"archived":false,"collection_position":null,"table_id":50,"database_id":2,"enable_embedding":false,"collection_id":null,"query_type":"query","name":"Solar Sensors Map","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"source-table":50,"fields":[["field",629,{"base-type":"type/Text"}],["field",630,{"base-type":"type/Float"}],["field",627,{"base-type":"type/Float"}]]}},"parameter_mappings":[],"display":"map","collection_preview":true,"visualization_settings":{"map.type":"pin","map.latitude_column":"coords_y","map.longitude_column":"coords_x"},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+3	Dashboard	1	1	2024-03-10 21:15:27.319342+00	{"description":null,"archived":false,"collection_position":null,"tabs":[],"enable_embedding":false,"collection_id":null,"name":"Solar Sensors","embedding_params":null,"cache_ttl":null,"cards":[{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":1,"parameter_mappings":[],"card_id":1,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0}],"parameters":[],"auto_apply_filters":true}	f	f	\N	f	v0.48.8 (a900c85)
+6	Card	3	1	2024-03-10 22:01:33.234602+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":null,"query_type":"query","name":"Count Solar Sensor Data","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"source-table":94,"aggregation":[["count"]]}},"parameter_mappings":[],"display":"scalar","collection_preview":true,"visualization_settings":{},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+5	Dashboard	1	1	2024-03-10 22:00:42.491913+00	{"description":null,"archived":false,"collection_position":null,"tabs":[],"enable_embedding":false,"collection_id":null,"name":"Solar Sensors","embedding_params":null,"cache_ttl":null,"cards":[{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":1,"parameter_mappings":[],"card_id":1,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0},{"size_x":11,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":2,"parameter_mappings":[],"card_id":2,"visualization_settings":{},"size_y":9,"dashboard_id":1,"row":3}],"parameters":[],"auto_apply_filters":true}	f	f	\N	f	v0.48.8 (a900c85)
+8	Card	4	1	2024-03-10 22:43:59.750251+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"Count","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["count"]],"source-table":94}},"parameter_mappings":[],"display":"scalar","collection_preview":true,"visualization_settings":{"graph.series_labels":[null],"graph.dimensions":null,"graph.metrics":["count"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+9	Card	5	1	2024-03-10 22:44:00.125593+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"Null values","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["count"]],"filter":["is-null",["field",628,{"source-field":626}]],"source-table":94}},"parameter_mappings":[],"display":"scalar","collection_preview":true,"visualization_settings":{"graph.series_labels":[null],"graph.dimensions":null,"graph.metrics":["count"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+10	Card	6	1	2024-03-10 22:44:00.429253+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"Distinct values","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["distinct",["field",626,null]]],"source-table":94}},"parameter_mappings":[],"display":"scalar","collection_preview":true,"visualization_settings":{"graph.series_labels":[null],"graph.dimensions":null,"graph.metrics":["distinct"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+11	Card	7	1	2024-03-10 22:44:00.661755+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"How the Sensor ID is distributed","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}]],"source-table":94}},"parameter_mappings":[],"display":"bar","collection_preview":true,"visualization_settings":{"graph.series_labels":[null],"graph.dimensions":["sensor_id"],"graph.colors":["#F2A86F"],"graph.metrics":["count"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+12	Card	8	1	2024-03-10 22:44:02.056264+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"Sensor → Coords X by Sensor ID","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["sum",["field",630,null]],["avg",["field",630,null]]],"breakout":[["field",628,{"source-field":626}]],"source-table":94}},"parameter_mappings":[],"display":"bar","collection_preview":true,"visualization_settings":{"graph.series_labels":[null,null],"graph.dimensions":["sensor_id"],"graph.colors":["#F2A86F","#7172AD"],"graph.metrics":["sum","avg"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+13	Card	9	1	2024-03-10 22:44:02.442968+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"Sensor ID by Data","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",623,null]],"source-table":94}},"parameter_mappings":[],"display":"table","collection_preview":true,"visualization_settings":{"graph.series_labels":[null],"graph.dimensions":["sensor_id","data"],"graph.metrics":["count"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+14	Card	10	1	2024-03-10 22:44:02.846363+00	{"description":null,"archived":false,"collection_position":null,"table_id":94,"database_id":2,"enable_embedding":false,"collection_id":3,"query_type":"query","name":"Sensor ID by Sensor → Name","embedding_params":null,"cache_ttl":null,"dataset_query":{"database":2,"type":"query","query":{"aggregation":[["count"]],"breakout":[["field",628,{"source-field":626}],["field",629,{"source-field":626}]],"source-table":94}},"parameter_mappings":[],"display":"table","collection_preview":true,"visualization_settings":{"graph.series_labels":[null],"graph.dimensions":["sensor_id","name"],"graph.metrics":["count"]},"parameters":[],"dataset":false}	f	t	\N	t	v0.48.8 (a900c85)
+15	Dashboard	2	1	2024-03-10 22:44:03.281041+00	{"description":"A look at Solar Sensor Data across Sensor ID fields, and how it changes over time.","archived":false,"collection_position":1,"tabs":[],"enable_embedding":false,"collection_id":3,"name":"A look at the Sensor ID fields","embedding_params":null,"cache_ttl":null,"cards":[{"size_x":18,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":4,"parameter_mappings":[],"card_id":null,"visualization_settings":{"text":"# Overview","virtual_card":{"name":null,"display":"text","dataset_query":{},"visualization_settings":{}},"dashcard.background":false,"text.align_vertical":"bottom"},"size_y":2,"dashboard_id":2,"row":0},{"size_x":6,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":5,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":4},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":4}],"card_id":4,"visualization_settings":{},"size_y":4,"dashboard_id":2,"row":2},{"size_x":6,"dashboard_tab_id":null,"series":[],"action_id":null,"col":6,"id":6,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":5},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":5}],"card_id":5,"visualization_settings":{},"size_y":4,"dashboard_id":2,"row":2},{"size_x":6,"dashboard_tab_id":null,"series":[],"action_id":null,"col":12,"id":7,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":6},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":6}],"card_id":6,"visualization_settings":{},"size_y":4,"dashboard_id":2,"row":2},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":8,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":7},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":7}],"card_id":7,"visualization_settings":{},"size_y":4,"dashboard_id":2,"row":6},{"size_x":18,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":9,"parameter_mappings":[],"card_id":null,"visualization_settings":{"text":"# How the Sensor ID fields is distributed","virtual_card":{"name":null,"display":"text","dataset_query":{},"visualization_settings":{}},"dashcard.background":false,"text.align_vertical":"bottom"},"size_y":2,"dashboard_id":2,"row":10},{"size_x":6,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":10,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":8},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":8}],"card_id":8,"visualization_settings":{},"size_y":8,"dashboard_id":2,"row":12},{"size_x":9,"dashboard_tab_id":null,"series":[],"action_id":null,"col":6,"id":11,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":9},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":9}],"card_id":9,"visualization_settings":{},"size_y":8,"dashboard_id":2,"row":12},{"size_x":9,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":12,"parameter_mappings":[{"parameter_id":"343970340","target":["dimension",["field",624,null]],"card_id":10},{"parameter_id":"-1693601484","target":["dimension",["field",623,null]],"card_id":10}],"card_id":10,"visualization_settings":{},"size_y":8,"dashboard_id":2,"row":20}],"parameters":[{"id":"343970340","type":"date/all-options","name":"Created At","slug":"created_at"},{"id":"-1693601484","type":"category","name":"Data","slug":"data"}],"auto_apply_filters":true}	f	t	\N	t	v0.48.8 (a900c85)
+16	Dashboard	1	1	2024-03-10 22:46:11.759085+00	{"description":null,"archived":false,"collection_position":null,"tabs":[],"enable_embedding":false,"collection_id":null,"name":"Solar Sensors","embedding_params":null,"cache_ttl":null,"cards":[{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":2,"id":1,"parameter_mappings":[],"card_id":1,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":2,"parameter_mappings":[],"card_id":2,"visualization_settings":{},"size_y":9,"dashboard_id":1,"row":3},{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":6,"id":3,"parameter_mappings":[],"card_id":3,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":12,"id":13,"parameter_mappings":[],"card_id":7,"visualization_settings":{},"size_y":6,"dashboard_id":1,"row":0},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":12,"id":14,"parameter_mappings":[],"card_id":8,"visualization_settings":{},"size_y":6,"dashboard_id":1,"row":6},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":15,"parameter_mappings":[],"card_id":9,"visualization_settings":{},"size_y":9,"dashboard_id":1,"row":12},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":12,"id":16,"parameter_mappings":[],"card_id":10,"visualization_settings":{},"size_y":9,"dashboard_id":1,"row":12}],"parameters":[],"auto_apply_filters":true}	f	f	\N	t	v0.48.8 (a900c85)
+7	Dashboard	1	1	2024-03-10 22:02:19.470656+00	{"description":null,"archived":false,"collection_position":null,"tabs":[],"enable_embedding":false,"collection_id":null,"name":"Solar Sensors","embedding_params":null,"cache_ttl":null,"cards":[{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":2,"id":1,"parameter_mappings":[],"card_id":1,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0},{"size_x":12,"dashboard_tab_id":null,"series":[],"action_id":null,"col":0,"id":2,"parameter_mappings":[],"card_id":2,"visualization_settings":{},"size_y":9,"dashboard_id":1,"row":3},{"size_x":4,"dashboard_tab_id":null,"series":[],"action_id":null,"col":6,"id":3,"parameter_mappings":[],"card_id":3,"visualization_settings":{},"size_y":3,"dashboard_id":1,"row":0}],"parameters":[],"auto_apply_filters":true}	f	f	\N	f	v0.48.8 (a900c85)
 \.
 
 
@@ -5314,7 +5669,6 @@ COPY public.setting (key, value) FROM stdin;
 setup-token	764249c4-69bd-4ba5-80fa-86b53787de3f
 redirect-all-requests-to-https	false
 site-url	http://localhost:3000
-startup-time-millis	90411
 analytics-uuid	c6b91b19-d3a6-4173-9625-933eb2d0be96
 instance-creation	2024-03-10T21:05:59.695162Z
 site-name	Inteli
@@ -5324,7 +5678,8 @@ anon-tracking-enabled	true
 site-uuid	3faf4a7c-5e14-4820-a655-332345c15e9c
 custom-homepage-dashboard	1
 custom-homepage	true
-settings-last-updated	2024-03-10 21:15:41.152547+00
+startup-time-millis	17327
+settings-last-updated	2024-03-11 11:16:30.098292+00
 \.
 
 
@@ -5629,6 +5984,7 @@ c6e07c82-02bd-49aa-b4b3-6816c00debb4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-0
 51c1daf1-54d6-4965-9ba9-d4584a16b0db	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:15:17.273567	3.333333333333333
 93e8a268-5b94-4787-85a2-4c15ae775cd8	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:15:18.275466	500.0
 46a977b5-3e69-48a9-99fc-3b8a69c1aaaf	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:15:19.276778	1.1111111111111107
+54d3113a-1a2d-42dc-a2ae-4e803661c4cf	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:27.74815	500.0
 76252255-6078-415a-a182-fb79b1fa7c92	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:15:20.279146	4.444444444444445
 f0c2a7c1-920e-40e0-9de8-1e5643fe145b	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:15:21.281358	3.333333333333333
 b100270a-ea09-4b47-aa66-d425b8bb1405	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:15:22.283369	0.5555555555555554
@@ -5748,6 +6104,476 @@ ba696744-aa0f-4ea3-9d6a-ed0f6717537b	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-0
 4f50a919-0b05-48d8-9c7f-56a8a94dc0f9	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:17:16.562382	0.5555555555555554
 c9896fd3-2173-493a-b8c1-6129646532ab	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:17:17.565	500.0
 5acb8bc5-7e5b-4507-88a1-a3f3d5f9b3eb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 18:17:18.5672	1.6666666666666665
+4571c479-2094-4b3a-8e90-327fb51f73e8	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:06.617899	500.0
+7b349bd9-c9f9-4b0c-914a-8a1ff0fa125a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:07.620422	1.1111111111111107
+6a2a7d01-7362-4e38-8e67-660744df6496	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:08.622176	5.0
+fe6214d0-3297-4d4f-8c9e-b0ecad454d78	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:09.624831	500.0
+a13c523c-d7ba-415e-879a-1c2fffcda926	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:10.626021	1.1111111111111107
+d2dedac3-3808-42a6-b7ea-0e8fdc21b505	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:11.628718	3.333333333333333
+57b2ac05-72df-46c7-84c4-e0f4143ad109	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:53:12.629709	2.2222222222222223
+ea64f760-d540-4b00-b6b2-206be379f820	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:01.34554	1.6666666666666665
+2f175d21-2d2d-4763-9d24-82ad9f7458c1	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:01.345545	4.444444444444445
+2cff07c4-a293-4b2e-ba71-a8bd970394cb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:02.347939	1.6666666666666665
+2d53f55f-4551-4913-8698-3848dabc12ec	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:02.348012	0.5555555555555554
+1369f5d8-838b-4c47-9ac4-d1e2b078b1fd	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:03.349572	1.1111111111111107
+578d2ba4-916f-4e79-ab40-3652f477944f	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:03.349485	3.888888888888889
+ab0a5f05-2155-4b90-8662-77d8f8600100	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:04.351152	2.7777777777777777
+f445e8da-d2b9-4d07-bda2-88f07413436a	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:04.351185	500.0
+2213ce12-855c-4de2-9678-d8d7fb3a7305	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:05.352737	3.888888888888889
+5cc16bdc-00d8-4e4a-ac1e-ffa1c66c92fd	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:05.352704	5.0
+7d957b6f-95fd-459f-94b2-d5bbff81cdbf	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:06.354775	5.0
+1cb4adf0-4a91-49d1-8960-6fbb3e91f548	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:06.354702	0.5555555555555554
+915e0f7a-c0cb-446b-b92e-87d60d379d4a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:07.356039	3.888888888888889
+12488591-ec50-41b6-8503-ec60e2187069	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:07.356148	5.0
+2f9bcf7d-c646-4940-83d7-f23890133e3e	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:08.358185	3.888888888888889
+0446dc02-439f-4427-9214-cbc043c20bf5	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:08.358215	5.0
+940a613a-50f7-462f-9d24-2de72a68cd1d	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:09.359921	2.2222222222222223
+890349df-37fe-44ac-94a9-a49e50f551da	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:09.359889	3.888888888888889
+5010ef57-ccc2-41f9-9aae-25a3bc1dddbc	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:10.361424	5.0
+3798ab31-bd20-4cc1-8ffc-88d662c495ef	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:10.361404	500.0
+f9181de7-8ba8-46c9-a635-4756fb4aa721	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:11.36322	2.2222222222222223
+2523f984-eea4-4620-9831-85b3dcd2e304	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:11.363216	0.5555555555555554
+1b7b4f8b-4f26-4f2b-8649-8210bfe24288	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:12.364982	0.5555555555555554
+ab7f3d02-6bcc-4b39-91ab-99acf21b8e69	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:12.365702	500.0
+81c44821-bdfd-4751-abcf-de8e40c7a998	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:13.367902	3.888888888888889
+3b3989e4-d13d-434f-bb54-5bf48ab726c1	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:13.367898	5.0
+170c623f-1208-49ca-99ef-fc215b06a8c0	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:14.370228	500.0
+76c76a57-e87c-4569-938e-7e861bce72f0	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:14.370214	2.7777777777777777
+d25485d3-bb24-4cfc-a539-93db7536fa25	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:15.372102	3.333333333333333
+28b2eb88-12e5-422d-9677-29c13e741c83	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:15.372094	0.5555555555555554
+2b398dec-64c5-40cf-9b59-beee24afd851	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:16.374002	2.7777777777777777
+417b82fc-21f5-46d9-860a-63eac2b9c3fd	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:16.374002	4.444444444444445
+30234bb3-2b92-4bf7-9ef6-a0b1a407b7ba	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:17.375772	3.888888888888889
+03b215e7-cb2a-4ed4-8970-8df924cda7e3	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:17.375792	2.7777777777777777
+f9b27164-0b31-4e28-881d-cb358c0d0853	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:18.377753	4.444444444444445
+4ac83d8f-8245-417c-97d7-26e2e3ea6a0c	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:18.377763	5.0
+33ca5407-80e1-4257-903a-b95a994f44b6	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:19.380321	5.0
+04de03a6-03d4-4a83-b670-dff6833efc14	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:19.380318	4.444444444444445
+95f35392-1fe3-44a4-8e53-bb5c1e79dd71	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:20.383247	0.5555555555555554
+c0fc3c92-355f-433c-b52b-fc2423879bd1	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:20.383274	3.333333333333333
+93daf442-3dc1-4da0-a88e-16f519d826bc	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:21.386814	500.0
+f90b6dd1-f63b-4086-b1fc-eef02a8bff91	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:21.386851	500.0
+12c1ed12-a708-41c5-bd31-8ed4a81ab8eb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:22.388618	1.6666666666666665
+5f0c034a-646b-4225-9b35-53cbc2cbff10	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:22.388602	2.2222222222222223
+19befc1b-ee04-41e6-9457-0813de2eb265	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:23.390271	1.6666666666666665
+da95e149-4c30-46f9-916b-ba00e36435be	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:23.390334	5.0
+2712faff-5f5c-4121-8d7f-1d97c694bf64	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:24.39136	2.2222222222222223
+d2d74d27-9b8c-437e-aa7d-f5d8ce275b24	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:24.39136	3.333333333333333
+9d905e96-f4ac-48d0-9b5b-a78d42b72d47	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:25.39353	2.7777777777777777
+8164e410-19e3-4e4c-bcb3-acec60b105a4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:25.393541	5.0
+d9fa9a1d-4c38-4b5e-96ad-8184d70553db	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:26.395933	3.888888888888889
+1238f14d-2fac-4b58-8a9d-a2b100678359	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:26.395969	3.333333333333333
+da60b7fb-d62f-4527-ac6a-9ab850f193f4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:27.398301	1.1111111111111107
+8476eec8-807c-453e-a21b-479cb24ca456	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:27.39843	1.1111111111111107
+46ed9734-af24-4e4d-a4d1-b9fe2a4ee96b	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:28.400583	0.5555555555555554
+065c581b-deea-459d-b27a-4502a155715d	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:28.400592	3.888888888888889
+e343aa92-5fba-4c25-ad57-95b90e05a788	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:29.402935	2.2222222222222223
+1f4c698f-84cc-4e67-b36c-71437f45107e	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:29.403023	0.5555555555555554
+d4adb929-86b0-424d-a9bf-2742f6a68952	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:30.404651	1.6666666666666665
+5424cbcb-d56a-406a-923c-5c91fcda4548	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:30.404658	500.0
+512150ca-c36c-4f0a-9cd6-1537ed38757d	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:31.405854	5.0
+7dcd4eee-d346-441b-9a80-b448c0b59365	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:31.405859	0.5555555555555554
+42bc24d7-e284-4f94-8284-99f13b92aa2a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:32.406543	2.7777777777777777
+5214f567-a4f8-48af-b3ba-d9cabe50fa44	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:32.406567	4.444444444444445
+1e867ced-7bd4-4743-b9ed-24e06fd554e9	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:33.408368	1.1111111111111107
+bae02c1f-2573-4eca-9975-72cba366e11b	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:33.408435	1.6666666666666665
+1c5b8e5a-6932-4909-88bc-f84d8badc693	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:34.41037	5.0
+1639c9e7-33d3-41d0-b4bd-63d137213374	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:34.410592	1.1111111111111107
+4758c415-fdd3-4f42-9f4f-b060a10ade12	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:35.412063	4.444444444444445
+2ac497c7-0933-4b9b-af12-556c6cad46f3	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:35.41206	3.333333333333333
+fec42afb-4563-4f62-80bb-dce56cc4a4ba	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:36.41369	3.888888888888889
+5e963119-22a8-4ec0-8c75-9a45adab562a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:36.413744	2.2222222222222223
+6db18e72-fe98-4f5a-bf76-ec772f06c1e4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 20:54:37.416626	3.333333333333333
+4fb0b363-1af6-4e55-a36b-242cc6da57a0	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 20:54:37.416564	1.6666666666666665
+9e3f5e15-4f21-4071-9aef-524d3a10b0a2	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:21.720008	1.6666666666666665
+c826c372-4c54-4cd0-bfa1-7eb6ca30556f	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:21.720006	3.333333333333333
+22399ef7-748d-466a-8387-0e56eceef6da	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:21.719944	2.2222222222222223
+234f14a8-04f8-493f-88a4-b466a83458e1	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:21.719946	4.444444444444445
+1001df07-bd4a-40f3-b7d5-2dc8585a0939	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:21.719975	3.333333333333333
+c7deada8-8a2b-41db-abb5-d0b9c3ea05b7	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:21.720043	3.888888888888889
+76dd769d-4530-4dbe-9673-76b84cdb65d1	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:22.725709	3.888888888888889
+49aa0823-d91f-4fdf-9163-10162a5fbb5e	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:22.725794	2.2222222222222223
+37f611c3-5c43-4640-8268-b0e804bfea59	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:22.725876	2.7777777777777777
+e400771f-6457-4e2e-a8ff-fc923cd608bb	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:22.72571	3.333333333333333
+c14b7660-9825-436b-a5d5-893e33362831	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:22.726029	4.444444444444445
+983c9aeb-772a-4b2a-aa6f-ba3fd91d0413	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:22.725904	4.444444444444445
+c43bd103-2105-4dda-ace3-c0a656bbd02c	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:23.729338	1.1111111111111107
+3327af49-1ded-41c3-b116-afe0ca31039d	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:23.729379	1.6666666666666665
+002ec029-4bde-4238-a896-ac56dd33dda1	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:23.729336	3.888888888888889
+22dec933-aa30-48cf-9e8d-21dd590286da	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:23.729403	1.6666666666666665
+ecbf5f35-d769-4b33-abe9-538bdc43c4d9	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:23.729428	0.5555555555555554
+24ae351a-1979-4fcf-b4ad-92d3afcdcfd2	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:23.729345	2.2222222222222223
+4f2bf50a-e9d8-4f94-95f5-b826b9b8809a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:24.732145	500.0
+e6dc4d10-bb3e-4184-baaf-282dfa8adecd	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:24.731825	3.333333333333333
+2dbfd9a4-fbfb-43ee-86ff-9d616ef7625c	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:24.731797	1.6666666666666665
+e7269893-2c04-43d1-9aa3-8d83043f684e	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:24.731858	3.333333333333333
+3bee3a09-4436-4e0c-8896-fe841f70c9df	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:24.73211	1.1111111111111107
+3c2c4aee-d3f7-42a1-b213-deb21a53bdd3	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:24.731797	1.6666666666666665
+9e86fe3f-9f01-4c98-bb07-af5c66c549da	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:25.735217	0.5555555555555554
+7576c1cc-0eb0-4665-8e18-f8d1ca904380	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:25.73541	3.888888888888889
+39d31326-adb7-48c5-8474-a53da109dac9	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:25.735517	5.0
+01a2b1fa-46f2-461d-ae36-f095d0656767	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:25.735188	3.333333333333333
+635d8d53-6d69-4e90-8454-202a04017f86	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:25.735003	1.6666666666666665
+6047fddb-423b-45ff-8f23-ced2f44852ab	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:25.735606	0.5555555555555554
+d7513146-9ce1-4ee4-8a13-ca0efcd6cf9c	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:26.739751	3.333333333333333
+89906265-377f-4a2d-9186-7102fdfc079b	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:26.739845	4.444444444444445
+4e77adb0-e686-4c91-ad4d-d136cb9cc3cc	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:26.739849	2.7777777777777777
+2846f97a-539b-4ab1-9b85-b67a487ba7db	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:26.739747	1.1111111111111107
+cdc23feb-eafa-4da0-8489-c61291702236	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:26.73983	1.6666666666666665
+bf0b974b-cd99-4f21-8395-cbc817e9d26b	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:26.740097	2.7777777777777777
+ff5db2e7-b44d-4d75-ad43-027072f56992	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:27.74827	5.0
+54f15a95-c3af-4256-8b56-04975ce38437	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:27.748231	1.6666666666666665
+147e3991-597c-4e95-a4f1-35896bec0be3	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:27.74822	1.6666666666666665
+80af2b7f-710a-4ebc-95d8-dab0312836f9	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:27.748219	1.6666666666666665
+02f5c4d5-3489-452b-b99d-38c708c0d764	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:27.748156	0.5555555555555554
+19239d53-974e-4ea0-b5e4-059d37bf3c83	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:28.770573	0.5555555555555554
+fe11228b-7944-4df2-92b4-544afa5d4c31	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:28.770664	500.0
+5ada5a03-aad5-463c-afb0-223843af1d45	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:28.770547	0.5555555555555554
+eb3f1a65-e640-4d31-bfdc-1e6966a71f17	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:28.770566	0.5555555555555554
+cfbcdb03-07af-4516-bf15-cacea9e40351	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:28.770506	2.2222222222222223
+d4ef0510-8915-457b-bdd9-bb9beeec7125	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:28.770598	2.7777777777777777
+a4dfcf64-ef46-4e8e-9a64-758621acfb55	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:29.773633	0.5555555555555554
+9ab65eb9-19cb-4464-9e37-6655a326b0a0	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:29.773519	500.0
+0249d7e4-7133-400a-8fb6-cc82a0b42faf	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:29.77352	2.7777777777777777
+fedf96ce-835e-4a18-90f9-e36be252dd0d	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:29.773861	500.0
+beb89e73-692e-4319-aa0c-627e17a66e8d	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:29.773762	4.444444444444445
+72d8fc57-100a-4c55-a2a0-66f5031b6d57	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:29.773516	0.5555555555555554
+35d1e185-40d2-42a4-b943-eb229e876ee9	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:30.776416	3.888888888888889
+fc4eae5d-dd39-4b33-b84e-7b35936d6d73	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:30.77805	5.0
+56369473-83ca-4953-a2ae-da23875308fa	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:30.778496	1.6666666666666665
+76e80029-4459-4693-9329-535c8d339971	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:30.778599	500.0
+f828d45a-4288-41cd-a792-8fa30c8ba6af	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:30.778738	3.333333333333333
+6c6c3a8c-53df-4ec8-9525-c21a8fcfbd1c	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:30.778801	1.6666666666666665
+83ad5012-d0ed-4bc7-8693-f8803d4938a8	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:31.779986	4.444444444444445
+9deb3fb8-a074-4ace-b259-fbc110b1ee17	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:31.780003	1.6666666666666665
+0a4b96b0-424d-42b2-9135-2ca5ecbbde43	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:31.779996	2.2222222222222223
+28a48705-3e71-4297-be79-c41f5914d364	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:31.780046	4.444444444444445
+abbc7537-e0e6-4272-b16f-1bf9d226aa8a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:31.780058	5.0
+81f2598e-c039-49df-816f-e58bd3cd8ba4	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:31.779978	1.1111111111111107
+81106c44-ac1c-4af8-a4bd-2d81f9221adf	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:32.782481	3.888888888888889
+770119c1-6ff4-4d7c-87ce-238d6a4b9a3d	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:32.782485	4.444444444444445
+3e58a7cd-4c6c-44d1-9b54-5cc7d9c8cf52	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:32.782458	1.1111111111111107
+2f6a1ac7-de6e-402b-873d-d1f8b116e654	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:32.782683	500.0
+9d1c836f-8e9a-43a5-8bc3-0666e2dc978d	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:32.782595	500.0
+3c90f6e9-eed3-4806-8ae4-00d0413becb7	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:32.782874	4.444444444444445
+8c513ef9-78cb-4c76-b84e-ff7a03080ea8	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:33.785264	5.0
+0790ffaf-1a15-4601-b64e-73ba3b018cef	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:33.785052	0.5555555555555554
+c6b04a9f-bc7e-4c21-9f83-9e248fbc4654	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:33.785058	3.333333333333333
+30cbc710-bacb-46d3-8182-e73f581290d4	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:33.785127	1.1111111111111107
+2c743636-2060-44b4-925d-8f8de5a1c8b4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:33.787176	1.6666666666666665
+f789cb3d-3354-4cda-b950-988e38d9e901	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:33.788131	2.7777777777777777
+7b6f0849-b690-4cc4-ab68-85828b818daa	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:34.789053	3.333333333333333
+bc1fbb4e-98c0-4327-a7cf-8d04b53664c3	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:34.789424	1.1111111111111107
+477a28f2-c172-46e8-898d-9e29a6a71a50	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:34.789093	4.444444444444445
+a1d7e421-f038-4c64-8278-68cb2e045d28	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:34.789494	4.444444444444445
+4527ac10-9c2e-42bc-939c-3050bae177fb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:34.789384	4.444444444444445
+379dcf9a-75c3-4236-8355-f26d7410ae91	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:34.789595	3.333333333333333
+3423750f-9d3d-42d9-adde-093bb399e4cb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:35.7929	3.333333333333333
+5027cea5-ddf6-43dd-ae27-16a07a1be9b0	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:35.793053	1.1111111111111107
+05c527ce-2c33-4850-b8ee-4e2e511a8a1b	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:35.793345	1.6666666666666665
+bb0470b6-ac3a-4e57-ba75-ae1cd3f9d08c	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:35.792813	1.6666666666666665
+5e1a2a37-70c4-420f-a126-67c13aae06eb	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:35.792918	5.0
+86aad24c-2de7-4868-96a4-7cb4553c2613	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:35.793078	5.0
+188dfdbf-ba35-4775-a22f-af55dd62d0e4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:36.795769	3.888888888888889
+ed75f929-ba79-453a-84fa-3d9798f29ff0	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:36.795765	3.888888888888889
+1540e087-c38b-4b9e-b94c-4ca9c2165c85	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:36.79577	1.6666666666666665
+60f25db1-d146-4aca-a306-8f64507a5c6c	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:36.79614	500.0
+c8a6fa79-8254-4a9f-85fb-aa014e2e10ed	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:36.795821	3.888888888888889
+055f10fb-9f89-4dab-bcae-8c7a32068137	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:36.795886	500.0
+63fbbbf1-aa97-408d-85f9-e36240d72213	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:37.798583	2.2222222222222223
+bf38d3cd-c382-4bbc-a678-09efe73c9a96	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:37.798705	5.0
+3588b9e6-a11f-4d8d-b9b8-f2fe0170f5de	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:37.798964	2.7777777777777777
+0c71051d-5b9a-4fbc-bc24-25e610823902	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:37.798779	0.5555555555555554
+69ca567c-4d6f-42c9-a401-e08694d669aa	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:37.798606	5.0
+36097f78-bc4f-4f44-8fcd-c76c75563f4d	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:37.802905	3.333333333333333
+d513b8d4-f016-459e-a3e9-36b8fba03744	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:38.804107	2.7777777777777777
+aead6ed7-c269-4d0d-8d6e-de1f8730a145	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:38.804513	1.6666666666666665
+e5b437b6-0db5-4cf3-b306-2510184ef4df	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:38.804155	3.888888888888889
+5c9dbe39-dbc0-4c70-92f0-6e63aa2b297d	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:38.80435	2.7777777777777777
+c07c5fab-7f78-4f0c-8190-c2915283ccb4	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:38.804347	500.0
+b58cf2cd-326f-4444-84cb-c61d353b2194	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:38.804109	3.333333333333333
+d7e984e5-e748-4295-ae99-5c31432b1870	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:39.810912	1.1111111111111107
+31038953-643a-488d-b830-d75513a4ee49	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:39.810738	4.444444444444445
+f121f4e5-4323-45fc-bf29-57d7cd364458	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:39.810768	0.5555555555555554
+dccc50ac-c8a8-41b7-8f6f-5596a9a46ef9	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:39.810725	2.7777777777777777
+9bcdbf2e-61db-482e-9946-6c24da89c89f	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:39.810705	3.888888888888889
+0248c8c7-8ef5-4f6d-8e77-2a80c324a5be	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:39.810789	4.444444444444445
+7e9775cc-8fb9-4410-9a81-b986db92e473	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:40.818296	1.6666666666666665
+67835a69-7ebb-49b1-896b-f00dc902cbf8	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:40.818467	3.333333333333333
+a5e750e7-519c-4406-b0cb-5422df1fcd6c	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:40.818026	500.0
+aa701b08-a0e8-4c9a-b470-9172b74688de	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:40.818525	1.1111111111111107
+74666323-37e0-4cc7-aa72-c599a005ab4c	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:40.818696	2.7777777777777777
+f4503621-271e-4458-b3ff-c1c9e18a8ddd	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:40.81869	3.888888888888889
+c0f5d0f4-8e8d-403f-8cdd-36fefbf5ff30	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:41.821187	3.888888888888889
+067248ff-18db-4998-ad82-0e6242daf02a	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:41.82142	2.7777777777777777
+d2e1cd49-9c97-442b-a234-ad5f387c8317	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:41.821577	2.7777777777777777
+6c37cdc5-161f-45bb-894d-b90f62f01edb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:41.821628	1.6666666666666665
+f74ff151-c364-4a1d-92ec-9c4b2e08eb5d	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:41.821282	3.888888888888889
+1ea6a7fe-a4ff-48f3-87e3-4dba486e42bb	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:41.821402	3.333333333333333
+8a1b840f-dd63-4fd6-9811-da814fdcf1b9	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:42.8271	3.333333333333333
+0f5b3f6e-1067-4e79-ad51-6a595b902ea6	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:42.827255	500.0
+a30fb02b-ed0a-42d0-9c94-e29856f73ed7	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:42.826934	0.5555555555555554
+45c2b9c9-dafd-4280-a770-4eb74c2dddc8	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:42.827002	1.1111111111111107
+f5c13814-bf9e-4cd3-ae0d-183f2e7b781f	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:42.82681	2.7777777777777777
+b031f85d-5abb-4b72-8736-49cbdce5bd55	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:42.827554	0.5555555555555554
+052fb23a-2299-49bf-967e-78765913b4a1	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:43.830426	500.0
+c6aef183-5669-48ed-9934-fa0fb0d61e93	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:43.830528	500.0
+ece896ce-d777-4732-b94c-29a55a559818	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:43.830431	3.333333333333333
+26270b5e-4858-4754-bd13-3015b8f0ca37	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:43.830427	3.333333333333333
+56903782-e6dd-431a-97c8-59df263f6b5c	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:43.830621	2.2222222222222223
+df969048-8551-4c50-bc46-fd31807615ba	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:43.830653	3.888888888888889
+9d878009-7378-40d3-af5d-b37425d84575	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:44.832053	1.6666666666666665
+ada47808-111c-4841-b8a8-cd51ef37a830	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:44.832103	0.5555555555555554
+2377158e-1e64-4d78-8397-aaa97e18b577	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:44.832192	1.6666666666666665
+73f2a7b6-2d09-4ce8-ac51-39843b0b5b71	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:44.832236	2.2222222222222223
+9b74158a-8a6b-4013-826c-98a12db7bf54	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:44.832313	5.0
+f9dfba39-3069-42e2-b67c-98561e1316c9	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:44.832389	4.444444444444445
+859b6e60-d805-4ba1-983f-379595b01e0a	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:45.834603	2.2222222222222223
+2e9b2aff-45f9-49f0-8fe9-afdf0679b13c	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:45.83718	5.0
+a42f86ed-67fc-4087-981d-c962c6f1467e	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:45.834399	5.0
+3efae0ba-ec02-4c9a-9e85-dc0e51f757c5	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:45.834531	4.444444444444445
+5459c975-b537-44a6-a779-6d0fa39bca29	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:45.83732	2.7777777777777777
+ec66856c-c8f4-4b25-a915-4559e4f0df24	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:45.837448	0.5555555555555554
+9ea1831c-3897-4be5-9363-f18cde4e13a8	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:46.83987	2.2222222222222223
+968b2a70-16c4-43b7-a5f7-e5346d65da24	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:46.840518	1.6666666666666665
+d1b66804-438d-4763-9abf-6d2b35299a43	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:46.840592	1.1111111111111107
+6e63cbe9-51e5-465b-ba20-c72cda6be88b	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:46.840071	3.888888888888889
+fee375bf-f48e-4280-adb4-7ab9f583f1e8	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:46.840984	3.333333333333333
+83edf501-de3e-4944-a198-630c7a014d2c	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:46.840707	2.7777777777777777
+f85e294d-2b46-433a-9983-8c570deddf40	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:47.84246	1.6666666666666665
+2670f2c3-9dc5-4aaa-b4bd-6e966cbfc334	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:47.842488	2.7777777777777777
+2a23677e-3796-492c-90c0-df18d23b056b	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:47.842467	4.444444444444445
+e8b788ac-c965-4275-aa9b-c1029549f5c2	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:47.842656	5.0
+44e5edb7-e756-4011-ab7f-5d70b7812d4c	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:47.842689	3.888888888888889
+07c1ca69-a8df-4e25-8454-7fe7a94cbf9f	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:47.842878	1.1111111111111107
+56d9d62b-45ce-45f3-8460-b1289c945659	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:48.843496	3.333333333333333
+dfe29496-92a1-4099-85f9-fc8b641fffff	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:48.843536	3.333333333333333
+8be4f7a8-8e34-440b-960b-9aa96b7069ab	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:48.843559	0.5555555555555554
+4bfb1b56-d83f-434a-b184-8eed7343b4a7	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:48.843465	1.6666666666666665
+bd7ba18c-38b8-417f-b8d0-22041a3539bb	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:48.843462	3.888888888888889
+691c958a-44a2-4a7c-af62-d4d90bd2913b	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:48.84367	500.0
+1cd71690-5a2a-4f8d-a9e5-fa3e73dd3a4e	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:49.845877	1.6666666666666665
+fedb077d-cbe1-4f32-b861-05e8d6e2b712	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:49.845713	2.2222222222222223
+0e080dfd-c31b-41d7-99d2-dd23e33a6726	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:49.845828	1.1111111111111107
+3c71cf06-10a7-40a5-b49d-dd5acd98b9ca	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:49.846043	5.0
+5a1a1dce-a83d-4b4f-b274-98c452cb3f39	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:49.845791	4.444444444444445
+56410d3b-9e9d-47fd-873d-9ed974e69adb	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:49.846124	0.5555555555555554
+99ad01f5-aef2-4bf5-8fcc-a2d2fc893aaa	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:50.848277	4.444444444444445
+a373c785-f363-44e4-bebb-c73e20cef478	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:50.848293	3.888888888888889
+f02b2015-42b3-4e9c-a7b3-d9453bd00895	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:50.848381	0.5555555555555554
+e54f29c1-b4b4-4b69-bdfa-93d774ad29eb	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:50.848352	5.0
+839b2a74-781e-4c01-ae55-0f327df34083	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:50.848373	500.0
+506ed6af-edfc-4beb-86a2-cb083944ffe6	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:50.848381	1.1111111111111107
+85b4399b-3498-4f4b-8bec-5a8ed93a5054	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:51.85127	4.444444444444445
+ed77e6ef-3934-44e5-af84-4b110772258c	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:51.851964	500.0
+316eb5f8-6f9e-4fb9-bf32-3ec850a01c87	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:51.852234	3.333333333333333
+dd6f538f-5792-4bb8-9e96-25ddede650e7	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:51.852236	5.0
+9471f978-a4a6-433e-aad5-0d23aaf80cd9	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:51.852267	3.333333333333333
+5c06dde6-8114-485c-ab33-1951b72c8bbf	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:51.852293	1.1111111111111107
+f38975fd-7267-4f01-b3d1-9a84e002d904	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:52.853408	500.0
+e0a4ee68-fbc5-4266-b52a-02cc2b196361	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:52.853491	1.6666666666666665
+f6357be8-bdea-4514-8340-cf96729bfb64	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:52.853548	0.5555555555555554
+f89c6ea7-94d5-464d-bfe2-ce8895897488	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:52.853769	2.7777777777777777
+974e4547-3ad7-4a0c-b095-8802c0af4053	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:52.854373	4.444444444444445
+d9a2b3dc-5a0d-426c-8cae-bb50ccae046f	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:52.853814	1.1111111111111107
+608d6505-b121-49c1-b343-9767bf546d81	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:53.855831	3.888888888888889
+ed77832b-992c-4761-8857-ca9186f39afb	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:53.85578	4.444444444444445
+8f054187-dbd5-4bdb-aeb8-412370336da7	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:53.855994	3.888888888888889
+b9a64133-5612-4b70-a580-1121d35db92e	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:53.85578	1.6666666666666665
+a34a67f9-1bff-467b-be9c-5af8007d5deb	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:53.855909	1.1111111111111107
+7d8b71c0-3369-4f58-8686-88b09acc5e30	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:53.855792	3.333333333333333
+62cfd0c9-ce2a-494a-82b4-05b6ba04c5a1	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:54.858016	1.6666666666666665
+2d243b83-f72c-4408-a690-7fd0005469eb	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:54.857879	1.1111111111111107
+fdab2187-6919-4189-8ebd-5c36bd25cf8b	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:54.857879	500.0
+c5c0a376-3c4d-4c4f-9b96-31dd9d0c33ac	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:54.857969	3.888888888888889
+2a67beff-3db4-451d-b088-f97668fe1260	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:54.85788	0.5555555555555554
+3d4bf3ae-e049-4a32-9bf5-e8f18f270ec0	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:54.860393	5.0
+37dc87d0-7a1e-4a10-b61b-2737e868d041	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:55.860078	500.0
+226064fa-c8f0-47e7-8fd4-b2a2803d559a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:55.8601	2.2222222222222223
+145284f9-1d8c-42b0-a17d-67e70079bb9a	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:55.860374	1.1111111111111107
+60c24033-c87f-447a-bf7d-22da626f6cc3	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:55.86011	3.888888888888889
+53b9b204-d3c5-495a-a5b2-e6a9f71384bc	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:55.860068	5.0
+64ff2c45-c93e-4dd3-b454-c13b022093ff	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:55.860922	500.0
+6dd1ddc4-70d4-4a87-af2d-5abca9f52540	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:56.8622	2.7777777777777777
+54756540-54eb-402b-80d1-37378f113960	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:56.86232	2.7777777777777777
+bd65873c-29c5-4a05-8cd5-7cfc040f557a	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:56.862367	1.6666666666666665
+2310a21b-6bb8-4782-8608-1165d5b2c3ff	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:56.862198	1.6666666666666665
+6dff7fad-a88f-4c8b-bdd3-a67bc8ed4f12	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:56.862403	1.1111111111111107
+77f1cb78-b546-4aea-9a9f-fc549312d529	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:56.862198	0.5555555555555554
+1be1ac33-f568-4049-934a-3d82805b1ae7	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:57.864253	1.1111111111111107
+bcfb6419-a4df-4f50-b8a8-7eb8ae5dfa0a	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:57.864278	1.6666666666666665
+39b57b59-b7f1-470c-a151-cf873829e262	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:57.864305	500.0
+937b11b8-0235-400a-b472-8b6889b31a26	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:57.864266	3.333333333333333
+186cbf11-11d7-425e-9444-cca18d795343	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:57.864464	0.5555555555555554
+4556a352-42b6-4631-ab36-99912dd0b934	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:57.864249	5.0
+b56a26f4-491f-49ee-8780-1510aa30eb42	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:58.866457	3.333333333333333
+cf8c79b3-16cb-4c59-a2cd-e56d91b9a448	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:58.866445	1.1111111111111107
+fa7c7792-667d-4854-94a8-433f8992343f	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:58.866453	500.0
+6d864a71-d9ff-4032-a9a2-771967932cbc	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:58.86644	0.5555555555555554
+4c8716e8-01e3-40e5-a661-c767d6850161	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:58.866567	3.888888888888889
+5b308272-dfd4-44a7-9a4c-067c9edf64ec	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:58.866764	3.888888888888889
+02f7d8dc-3812-40e9-8adb-84f5c5bf4de3	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:03:59.86882	1.6666666666666665
+2e1e83ad-d9f5-4e66-845e-8f566f1e3464	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:03:59.868674	1.6666666666666665
+ee745749-16fe-480b-9923-2251cfbd613c	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:03:59.868879	2.7777777777777777
+4ae5d740-8cf7-4df8-ab80-10ac42f67ff0	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:03:59.868965	3.888888888888889
+9a455e7d-8274-4f99-928d-3bea1a30395d	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:03:59.868603	2.2222222222222223
+f6036570-3f22-4c52-bfa7-db78f3d052ff	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:03:59.868868	0.5555555555555554
+e4c324f5-a5bd-4579-af87-d394e74f3aa2	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:00.871552	3.333333333333333
+f3c1b201-1dce-488b-b735-ef11563150c9	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:00.87169	1.6666666666666665
+1b4d7182-151b-4c2e-84ea-da0350593aa8	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:00.871836	3.333333333333333
+41ae8cd8-e79a-460f-ab7e-ef6d947c9f89	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:00.871733	4.444444444444445
+43eaeff1-aa9b-484b-ae34-96f632789562	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:00.871712	5.0
+7951e753-76f3-46bd-893b-cd715bb03abe	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:00.871563	3.888888888888889
+e06d5a89-eba6-4b93-b303-b7091471a8f4	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:01.874336	1.6666666666666665
+863054ed-5bb8-4c50-bb79-948f121c1157	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:01.874459	4.444444444444445
+5f231492-4562-443d-99fa-95778fde069a	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:01.874414	500.0
+e9ecc103-0f67-4977-8a67-dde901a547cd	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:01.874242	500.0
+e64df0e2-0695-4c2d-9fdd-f382d5f9c15c	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:01.87432	1.1111111111111107
+9c27a7a7-3823-47b2-9715-7b9581959890	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:01.874336	500.0
+42683891-9631-46ac-bda3-975ceaaca722	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:02.885467	4.444444444444445
+68bcac0e-ab56-44f4-a835-4b8e1b1cd6d2	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:02.885696	0.5555555555555554
+194fdf9f-345a-4892-aa7f-9c85f2aa7ce2	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:02.884539	2.2222222222222223
+0c1d4f2a-294d-4d09-8d24-657f7618e438	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:02.886401	3.888888888888889
+9b2c17f7-7589-4024-8edd-e41fa290c7e3	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:02.884109	1.6666666666666665
+fdb76db7-d4bd-4fa9-8eb3-fbbcab8da613	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:02.886817	2.2222222222222223
+b8e6d949-bb58-4de7-809b-7bc41258db9c	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:03.892917	2.7777777777777777
+99863c30-1115-47c9-a3ce-90ca019e1675	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:03.893157	500.0
+9dcfb44f-520a-483c-9963-8ff2bc0079c0	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:03.897696	1.6666666666666665
+2ff5be5f-5639-402e-a2a8-a3623e2b0e64	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:03.898661	3.333333333333333
+fca86498-6839-44f5-980a-f5a314fdcfb5	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:03.898954	2.2222222222222223
+3ae3d074-98f9-4282-8c70-e4d16ffced82	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:03.898993	2.7777777777777777
+88efcd8a-317e-4491-ab0d-84cffb2ba969	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:04.896823	1.6666666666666665
+b30b2bea-894b-423a-ab2d-720b4b0d05f7	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:04.896735	4.444444444444445
+93b51f71-d76d-40ba-af30-4a2040b4cbf3	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:04.90152	1.1111111111111107
+ed22a977-7e91-4470-bd30-fdbd1d46add8	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:04.90439	500.0
+122baf94-5e2b-4bc8-ae03-68f2f7002166	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:04.906279	3.333333333333333
+2a0ddca7-fb36-4001-8322-b35e34d32ad0	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:04.906466	3.333333333333333
+fff9af4b-32d3-408f-b702-9cfebf12a206	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:05.908566	500.0
+b586509b-29d9-42c4-9523-8a42a2934921	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:05.908772	2.2222222222222223
+a57825ff-d5d5-4f14-92ff-2675db267316	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:05.908824	4.444444444444445
+8880e1a3-af20-4caa-b17e-be4e9ef1dddf	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:05.908616	3.888888888888889
+5b364f8a-c0ce-4651-9ef2-da7f9f426c39	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:05.908559	500.0
+bc412129-62e7-40c7-a916-19f4ef9aa2d4	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:05.908855	2.7777777777777777
+5d15d5b5-213b-4c8b-af81-3c135a1bc957	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:06.912379	2.7777777777777777
+9dda6d89-337b-4fd7-81e2-0ab44c53a448	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:06.913776	0.5555555555555554
+3f885632-d456-4393-8edc-c81abda36b47	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:06.913743	1.1111111111111107
+2860e668-cdef-4611-905a-dba5b88022cc	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:06.91316	2.7777777777777777
+90fad9a7-14b1-48f5-92be-6b4400718756	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:06.913004	4.444444444444445
+e8e02f3b-a591-4f70-af95-74282c2041ae	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:06.913994	3.333333333333333
+0c8041cb-9e3a-4d1e-b39b-4c445ceff051	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:07.92292	4.444444444444445
+e730af02-022c-4c0b-8d18-72718c9ed00b	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:07.922743	2.2222222222222223
+ced799dd-1117-4208-9615-f31121425bc1	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:07.922741	3.333333333333333
+6796ac68-0605-411e-9d60-ed68503b9c45	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:07.922971	1.6666666666666665
+2c47c631-4db4-4d68-a498-893958db97a7	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:07.923009	2.2222222222222223
+dee5a8c4-cba1-4f12-a533-d2b1e7ceec2f	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:07.923028	1.6666666666666665
+52367c99-93ff-43da-9403-962871e7e142	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:08.928966	1.1111111111111107
+05eb22d5-0730-43fb-96e5-3df9ca7b1996	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:08.929667	4.444444444444445
+96af6e60-0783-4dd6-a1b5-f5316bea9ab4	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:08.929554	0.5555555555555554
+b494fd39-1ee6-4cb6-8a93-9f97d909a906	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:08.929069	1.6666666666666665
+cb6c4158-c9d6-4b36-b691-b0d60708b0dc	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:08.929744	3.333333333333333
+265b4aae-d4a3-40e9-8f61-9d3b46672f13	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:08.929567	3.888888888888889
+7a71bd7c-8891-44e2-a30d-2381536be15f	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:09.933971	2.7777777777777777
+db1cd346-68fc-43e3-93cb-ac4985e88611	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:09.935099	5.0
+fc223615-7666-4af7-8935-56da6e502a7b	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:09.933306	3.888888888888889
+371bc785-8676-42eb-810d-7a4a2427af2c	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:09.933552	1.1111111111111107
+c8f010e7-6443-4ea3-84af-69b5ac781df9	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:09.936067	0.5555555555555554
+cd488cfa-5c03-43f1-a6d4-58a059fff784	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:09.936132	3.333333333333333
+cdb457a7-21cd-4638-9c36-184d88c0cf8b	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:10.938627	1.1111111111111107
+7adbf35a-a06f-4344-9efd-93e77d48a121	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:10.938822	5.0
+a2a15008-4960-45b3-9481-0878bfdc901a	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:10.939761	2.7777777777777777
+4ed040ea-95b3-4f74-a4b7-a9183bb541a6	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:10.939843	4.444444444444445
+1b85680e-4091-43fd-aa25-def20088ecfc	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:10.939878	1.6666666666666665
+479ee8c7-b34d-40c2-a826-e89b89a39da7	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:10.939952	500.0
+0b80eac3-68bc-4df9-a14c-4a8008394abf	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:11.942412	1.1111111111111107
+ee3105ef-dc1b-42f2-a7db-1e1675e7c08f	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:11.942893	1.1111111111111107
+af4d39b6-f6a7-40e1-99f7-b6dc09d1702a	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:11.942555	0.5555555555555554
+1408e533-918f-4dae-8265-9cbfb395169f	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:11.942335	0.5555555555555554
+587469b0-1a75-4e37-8fe2-37e64866e54e	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:11.942704	4.444444444444445
+8de711a4-d4ee-4c8b-ab57-449875d1eea1	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:11.942962	1.6666666666666665
+b0cd6167-6ff9-46e1-b64f-146a5577453e	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:12.94582	5.0
+c11a8025-705c-4940-bb10-c2d735a6edfe	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:12.945585	2.2222222222222223
+41320c05-ee39-48fd-bbd3-a6b8ec347878	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:12.945438	4.444444444444445
+7844def3-8a0e-4742-a7ef-955d1e7114d2	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:12.945538	2.7777777777777777
+cb76d485-6446-4c39-ad6b-5ae3b899e3af	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:12.945357	500.0
+59fa223e-b0eb-4f8c-9017-1a217f87e2c9	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:12.945585	3.888888888888889
+5719c421-a923-4a70-9777-7b4a9320d1be	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:13.948658	3.888888888888889
+1bcfd103-0a72-4a8f-8b91-368af5ac1ab4	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:13.948474	2.2222222222222223
+d3128731-4cd4-4e66-b94c-2267731d7b77	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:13.948443	1.6666666666666665
+dfe9d5f2-ae3c-4f8f-877a-b5ec4927b07f	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:13.948593	3.333333333333333
+228ff077-3f3f-47a4-b6a7-42b980ff885d	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:13.948514	2.7777777777777777
+a008ef43-59b0-46fc-be94-0c4497f42ca8	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:13.949047	2.2222222222222223
+d65e0b2f-8a8e-4117-a70c-b51aa0d89283	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:14.950797	4.444444444444445
+e51aae24-017d-4ce0-b64c-4cca13d231a4	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:14.950816	1.1111111111111107
+64eb9fcc-becf-49f9-b021-abe3ad258c50	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:14.950721	2.2222222222222223
+88907a58-fbe2-4658-99bb-8557bc3d025a	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:14.950713	4.444444444444445
+2f7c56f5-bc70-47aa-bfc0-b237d5a2961b	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:14.950714	5.0
+762f72fd-4527-4f3c-8ce6-986f0b4c0b5c	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:14.95072	2.2222222222222223
+a717aaf3-9302-4833-8a92-cdac1d08e663	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:15.957606	1.6666666666666665
+fb9e3d3a-6c3f-4deb-8622-e2e9fddf47c2	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:15.957654	4.444444444444445
+8fbd1312-3024-4e94-90ce-5cb236e53ced	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:15.957594	1.1111111111111107
+8776c591-9476-493f-bb79-71bc750a10d1	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:15.957686	0.5555555555555554
+efe7177e-44d8-4dd6-8093-080214d7cffa	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:15.957336	2.7777777777777777
+381c6b9a-4228-4594-8ec8-be787bebeb3f	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:15.957622	4.444444444444445
+3818888f-2e44-4d97-81ef-051d85de5a38	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:16.9631	2.2222222222222223
+6ef2a01c-8ff0-45b4-9c65-b0b1412a7afe	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:16.962502	1.1111111111111107
+620b062a-a10e-4871-89d9-21140a1e583a	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:16.961038	3.333333333333333
+9cc9c9c5-e377-4402-8c49-77ad755481b9	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:16.964195	500.0
+b4ede1ec-ee89-4c15-ba3c-d7e1e9659091	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:16.962664	3.888888888888889
+a73ba1cc-e084-40ca-b5ce-75c4da860d2c	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:16.961069	0.5555555555555554
+ae8b7c12-65bd-433c-a78e-54d3b9bf4927	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:17.966281	0.5555555555555554
+be643533-4776-412c-be31-89942847d60c	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:17.966497	500.0
+870b5695-9046-47e7-9fcb-047c683cf117	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:17.966686	3.888888888888889
+6464e1c0-3f4d-42d6-87d5-0090966f4091	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:17.966302	1.6666666666666665
+3fdf7496-c1c6-4041-b3a0-0142786ff16d	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:17.966756	1.1111111111111107
+e43d2fdc-19ee-438b-a062-19789ceb03cc	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:17.96628	2.7777777777777777
+39bef4ed-e2fb-42cb-994c-dc67962d5e1e	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:18.967768	3.333333333333333
+ee6d2290-3295-48bd-9519-00f17be28e9b	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:18.967995	1.6666666666666665
+a653f800-5e6d-47f4-9a55-f1df73fe361c	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:18.968045	1.1111111111111107
+1de5b95c-c8db-4688-a619-4e9468b4a667	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:18.967891	5.0
+3d0ad658-878e-4e56-b2c9-df09a51cfc49	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:18.969695	3.888888888888889
+98c28b28-57b1-4e5d-a1c3-08f88ace0151	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:18.969694	5.0
+279c518c-3539-4ff5-8d47-283afa8ae959	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:19.970122	3.333333333333333
+9907f628-1d98-40ef-a1b4-abd54d880a6d	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:19.970187	500.0
+2e5d4541-316d-4d44-b97a-7b03e97da194	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:19.970121	2.2222222222222223
+d3cdae3e-7831-4f3c-addc-8a4d34539743	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:19.970109	4.444444444444445
+e6373375-b6ab-4095-9fed-db5042e6a7d0	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:19.970269	3.888888888888889
+12addefb-e86f-4f30-9819-a4e4dee90b62	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:19.970406	3.888888888888889
+c79d1a1f-1e48-4fa9-8c6b-738c792dbe52	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:20.972542	1.1111111111111107
+30af7513-a496-487f-91c7-61b5ee3eebf1	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:20.972374	3.333333333333333
+359f2eb1-8bf7-4712-9347-117ed8acaf54	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:20.972393	1.1111111111111107
+700b75ed-211e-4586-858f-a13dc8353f19	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:20.972202	0.5555555555555554
+c9fa58d8-54fe-4d93-afbe-31f09b91fb25	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:20.972423	2.2222222222222223
+cfd06703-7d4f-4c8e-9b9e-5e350e0d56b1	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:20.97218	3.888888888888889
+386e7738-c88a-4f2a-9db7-fab9e307256d	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:21.974985	2.2222222222222223
+2dc0a550-9dc3-4ceb-8311-f9444ecbc7b0	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:21.97526	0.5555555555555554
+6a9a9ace-ddcc-4eb6-9c00-bf75db2c1d6e	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:21.975153	3.333333333333333
+f2156dfe-d21a-4c02-8b0c-dcdebfc4fb4f	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:21.975271	2.7777777777777777
+b282247b-96a4-468e-b3cb-b9622654de70	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:21.974929	2.2222222222222223
+552a2852-9cf9-4686-8e76-74176858626e	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:21.974895	3.888888888888889
+9a83f04b-7293-490f-a9ae-2534c349e641	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:22.976629	4.444444444444445
+456ae340-4cf1-41e2-876e-cc370a334d27	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:22.976626	2.7777777777777777
+3affcffe-dcad-48cb-8853-0cbda0593b88	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:22.976626	5.0
+fe471b9a-1c7d-4909-ba3b-68a0fed675c6	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:22.976685	3.333333333333333
+921258db-dd82-4e02-bf1b-d6247b6dde3e	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:22.976808	2.2222222222222223
+68f0895c-6b3e-48ad-be9f-e58c199162db	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:22.977142	2.7777777777777777
+55916b9a-95f9-435b-9b52-f7e6525871f0	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:23.979257	5.0
+24cee400-c277-45bb-859c-23693945d15f	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:23.979325	500.0
+1d46c088-74ac-4b26-8357-b7a5fc01b492	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:23.979243	500.0
+4818e130-b22e-4699-bbb8-b6d4d856ab33	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:23.979335	3.333333333333333
+0d061718-948f-40e2-992d-134139a0f01b	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:23.979347	500.0
+cad09529-08da-4308-81bc-14619531f973	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:23.979264	3.333333333333333
+25b9a45b-8b7d-4577-8af4-b741e433c99b	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:24.983946	1.1111111111111107
+f484975a-749a-47e6-9ab8-8d3d4cb3a52b	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:24.983698	500.0
+1e42d86a-6761-43d6-bedc-997c1ad86752	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:24.9839	1.6666666666666665
+b546dc5a-f6b1-4850-a851-e9d02ae292a8	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:24.983699	3.888888888888889
+40c17811-56a7-4f25-a5a3-732e794f7dc9	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:24.984089	2.7777777777777777
+c220192c-f2fb-4f81-ac8e-6a9cfa1ae8ae	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:24.98436	1.6666666666666665
+2221d8ea-0d6d-40be-b12e-ab256a8b2c07	19dfb304-cf6c-4d32-a7a7-b63a450f339b	2024-03-10 22:04:25.986136	2.7777777777777777
+8e6f9fb5-6557-4c69-a76d-73389c0c1f1b	8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	2024-03-10 22:04:25.986492	5.0
+c470fba5-5981-4d6c-ab99-04da08ed44b0	640f4097-9da5-4a68-b1ff-edbdbb300c9f	2024-03-10 22:04:25.98686	1.1111111111111107
+606c7913-4a81-487e-a61e-94daab3804c0	8802ad81-7d1f-4e2f-a7bd-b564e0d70749	2024-03-10 22:04:25.98694	0.5555555555555554
+1ab68412-5656-45c1-b948-777f4d46cc39	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-03-10 22:04:25.98706	1.1111111111111107
+7fd68132-da73-451e-b6f6-db7ea67c3f9e	95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	2024-03-10 22:04:25.987084	4.444444444444445
 \.
 
 
@@ -5757,6 +6583,11 @@ c9896fd3-2173-493a-b8c1-6129646532ab	f8156e93-bc64-446b-bed5-ffdcc135eb24	2024-0
 
 COPY public.solar_sensors (id, name, coords_x, coords_y) FROM stdin;
 f8156e93-bc64-446b-bed5-ffdcc135eb24	Solar_sensor 1\n	-46.61275574620269	-23.60237950291104
+95b1e22e-e1c3-454a-a69c-8ba9e3f3e033	Solar_sensor 2\n	-46.46951626721082	-23.704953470667974
+640f4097-9da5-4a68-b1ff-edbdbb300c9f	Solar_sensor 3\n	-46.43128134682799	-23.45734800238543
+8802ad81-7d1f-4e2f-a7bd-b564e0d70749	Solar_sensor 4\n	-46.35503782222337	-23.59533610061168
+19dfb304-cf6c-4d32-a7a7-b63a450f339b	Solar_sensor 5\n	-46.62551641257298	-23.47764320217807
+8f1e5f3a-838b-4afd-aa88-ae5de1fb8473	Solar_sensor 6\n	-46.78465381229051	-23.52974337311081
 \.
 
 
@@ -5779,10 +6610,10 @@ COPY public.table_privileges (table_id, role, "select", update, insert, delete) 
 36	\N	t	t	t	t
 59	\N	t	t	t	t
 24	\N	t	t	t	t
-28	\N	t	t	t	t
 34	\N	t	t	t	t
-58	\N	t	t	t	t
+28	\N	t	t	t	t
 74	\N	t	t	t	t
+58	\N	t	t	t	t
 71	\N	t	t	t	t
 17	\N	t	t	t	t
 97	\N	t	t	t	t
@@ -5794,8 +6625,8 @@ COPY public.table_privileges (table_id, role, "select", update, insert, delete) 
 60	\N	t	t	t	t
 69	\N	t	t	t	t
 18	\N	t	t	t	t
-85	\N	t	t	t	t
 27	\N	t	t	t	t
+85	\N	t	t	t	t
 47	\N	t	t	t	t
 89	\N	t	t	t	t
 75	\N	t	t	t	t
@@ -5804,10 +6635,10 @@ COPY public.table_privileges (table_id, role, "select", update, insert, delete) 
 38	\N	t	t	t	t
 67	\N	t	t	t	t
 62	\N	t	t	t	t
-91	\N	t	t	t	t
-46	\N	t	t	t	t
 93	\N	t	t	t	t
 49	\N	t	t	t	t
+91	\N	t	t	t	t
+46	\N	t	t	t	t
 81	\N	t	t	t	t
 73	\N	t	t	t	t
 39	\N	t	t	t	t
@@ -5816,11 +6647,11 @@ COPY public.table_privileges (table_id, role, "select", update, insert, delete) 
 65	\N	t	t	t	t
 43	\N	t	t	t	t
 55	\N	t	t	t	t
-84	\N	t	t	t	t
 95	\N	t	t	t	t
+84	\N	t	t	t	t
 51	\N	t	t	t	t
-79	\N	t	t	t	t
 61	\N	t	t	t	t
+79	\N	t	t	t	t
 44	\N	t	t	t	t
 70	\N	t	t	t	t
 41	\N	t	t	t	t
@@ -5829,9 +6660,9 @@ COPY public.table_privileges (table_id, role, "select", update, insert, delete) 
 30	\N	t	t	t	t
 16	\N	t	t	t	t
 13	\N	t	t	t	t
+53	\N	t	t	t	t
 35	\N	t	t	t	t
 14	\N	t	t	t	t
-53	\N	t	t	t	t
 29	\N	t	t	t	t
 96	\N	t	t	t	t
 87	\N	t	t	t	t
@@ -5852,8 +6683,8 @@ COPY public.table_privileges (table_id, role, "select", update, insert, delete) 
 45	\N	t	t	t	t
 33	\N	t	t	t	t
 64	\N	t	t	t	t
-10	\N	t	t	t	t
 48	\N	t	t	t	t
+10	\N	t	t	t	t
 52	\N	t	t	t	t
 \.
 
@@ -5905,6 +6736,107 @@ COPY public.task_history (id, task, db_id, started_at, ended_at, duration, task_
 40	fingerprint-fields	1	2024-03-10 21:20:02.968234+00	2024-03-10 21:20:03.046572+00	78	{"no-data-fingerprints":0,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":0}
 41	classify-fields	1	2024-03-10 21:20:03.046625+00	2024-03-10 21:20:03.078264+00	31	{"fields-classified":0,"fields-failed":0}
 42	classify-tables	1	2024-03-10 21:20:03.078377+00	2024-03-10 21:20:03.096621+00	18	{"total-tables":8,"tables-classified":0}
+43	send-pulses	\N	2024-03-10 22:00:00.185+00	2024-03-10 22:00:00.441+00	256	\N
+44	field values scanning	2	2024-03-10 22:00:00.531734+00	2024-03-10 22:00:55.073922+00	54542	\N
+45	delete-expired-advanced-field-values	2	2024-03-10 22:00:00.533953+00	2024-03-10 22:00:18.319806+00	17785	{"deleted":0}
+46	update-field-values	2	2024-03-10 22:00:18.322003+00	2024-03-10 22:00:55.073198+00	36751	{"errors":0,"created":0,"updated":32,"deleted":0}
+47	sync	2	2024-03-10 22:04:00.737408+00	2024-03-10 22:04:24.302164+00	23564	\N
+48	sync-dbms-version	2	2024-03-10 22:04:00.737592+00	2024-03-10 22:04:00.815852+00	78	{"flavor":"PostgreSQL","version":"16.2 (Debian 16.2-1.pgdg120+2)","semantic-version":[16,2]}
+49	sync-timezone	2	2024-03-10 22:04:00.816016+00	2024-03-10 22:04:00.90963+00	93	{"timezone-id":"GMT"}
+50	sync-tables	2	2024-03-10 22:04:00.909827+00	2024-03-10 22:04:00.96861+00	58	{"updated-tables":0,"total-tables":90}
+51	sync-fields	2	2024-03-10 22:04:00.968687+00	2024-03-10 22:04:21.761814+00	20793	{"total-fields":758,"updated-fields":0}
+52	sync-fks	2	2024-03-10 22:04:21.763935+00	2024-03-10 22:04:24.09952+00	2335	{"total-fks":105,"updated-fks":0,"total-failed":0}
+53	sync-metabase-metadata	2	2024-03-10 22:04:24.110528+00	2024-03-10 22:04:24.122344+00	11	\N
+54	sync-table-privileges	2	2024-03-10 22:04:24.12242+00	2024-03-10 22:04:24.30207+00	179	{"total-table-privileges":90}
+55	analyze	2	2024-03-10 22:04:24.688719+00	2024-03-10 22:04:59.59612+00	34907	\N
+56	fingerprint-fields	2	2024-03-10 22:04:24.688788+00	2024-03-10 22:04:55.630851+00	30942	{"no-data-fingerprints":292,"failed-fingerprints":0,"updated-fingerprints":155,"fingerprints-attempted":447}
+57	classify-fields	2	2024-03-10 22:04:55.631427+00	2024-03-10 22:04:59.226594+00	3595	{"fields-classified":155,"fields-failed":0}
+58	classify-tables	2	2024-03-10 22:04:59.227103+00	2024-03-10 22:04:59.595989+00	368	{"total-tables":84,"tables-classified":0}
+59	sync	1	2024-03-10 22:20:04.95564+00	2024-03-10 22:20:08.151573+00	3195	\N
+60	sync-dbms-version	1	2024-03-10 22:20:04.95658+00	2024-03-10 22:20:05.006759+00	50	{"flavor":"H2","version":"2.1.214 (2022-06-13)","semantic-version":[2,1]}
+61	sync-timezone	1	2024-03-10 22:20:05.007817+00	2024-03-10 22:20:05.029788+00	21	{"timezone-id":"GMT"}
+62	sync-tables	1	2024-03-10 22:20:05.029896+00	2024-03-10 22:20:05.19119+00	161	{"updated-tables":0,"total-tables":8}
+63	sync-fields	1	2024-03-10 22:20:05.191585+00	2024-03-10 22:20:06.400085+00	1208	{"total-fields":71,"updated-fields":0}
+64	sync-fks	1	2024-03-10 22:20:06.40073+00	2024-03-10 22:20:06.556639+00	155	{"total-fks":6,"updated-fks":0,"total-failed":0}
+65	sync-metabase-metadata	1	2024-03-10 22:20:06.556724+00	2024-03-10 22:20:08.140747+00	1584	\N
+66	sync-table-privileges	1	2024-03-10 22:20:08.141338+00	2024-03-10 22:20:08.151427+00	10	\N
+67	analyze	1	2024-03-10 22:20:08.242257+00	2024-03-10 22:20:08.458018+00	215	\N
+68	fingerprint-fields	1	2024-03-10 22:20:08.242307+00	2024-03-10 22:20:08.345193+00	102	{"no-data-fingerprints":0,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":0}
+69	classify-fields	1	2024-03-10 22:20:08.345296+00	2024-03-10 22:20:08.412094+00	66	{"fields-classified":0,"fields-failed":0}
+70	classify-tables	1	2024-03-10 22:20:08.412284+00	2024-03-10 22:20:08.455905+00	43	{"total-tables":8,"tables-classified":0}
+71	send-pulses	\N	2024-03-10 23:00:00.132+00	2024-03-10 23:00:00.317+00	185	\N
+72	sync	2	2024-03-10 23:04:00.85145+00	2024-03-10 23:04:23.843943+00	22992	\N
+84	sync	1	2024-03-10 23:20:00.760634+00	2024-03-10 23:20:04.87143+00	4110	\N
+73	sync-dbms-version	2	2024-03-10 23:04:00.851833+00	2024-03-10 23:04:00.88071+00	28	{"flavor":"PostgreSQL","version":"16.2 (Debian 16.2-1.pgdg120+2)","semantic-version":[16,2]}
+74	sync-timezone	2	2024-03-10 23:04:00.880932+00	2024-03-10 23:04:00.896166+00	15	{"timezone-id":"GMT"}
+75	sync-tables	2	2024-03-10 23:04:00.896226+00	2024-03-10 23:04:01.184714+00	288	{"updated-tables":0,"total-tables":90}
+76	sync-fields	2	2024-03-10 23:04:01.185444+00	2024-03-10 23:04:21.683591+00	20498	{"total-fields":758,"updated-fields":0}
+77	sync-fks	2	2024-03-10 23:04:21.684851+00	2024-03-10 23:04:23.423689+00	1738	{"total-fks":105,"updated-fks":0,"total-failed":0}
+78	sync-metabase-metadata	2	2024-03-10 23:04:23.424132+00	2024-03-10 23:04:23.428917+00	4	\N
+79	sync-table-privileges	2	2024-03-10 23:04:23.428964+00	2024-03-10 23:04:23.843216+00	414	{"total-table-privileges":90}
+80	analyze	2	2024-03-10 23:04:24.297549+00	2024-03-10 23:04:40.84095+00	16543	\N
+81	fingerprint-fields	2	2024-03-10 23:04:24.29761+00	2024-03-10 23:04:40.441128+00	16143	{"no-data-fingerprints":292,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":292}
+82	classify-fields	2	2024-03-10 23:04:40.44276+00	2024-03-10 23:04:40.781071+00	338	{"fields-classified":0,"fields-failed":0}
+83	classify-tables	2	2024-03-10 23:04:40.781134+00	2024-03-10 23:04:40.840895+00	59	{"total-tables":84,"tables-classified":0}
+85	sync-dbms-version	1	2024-03-10 23:20:00.760722+00	2024-03-10 23:20:00.774116+00	13	{"flavor":"H2","version":"2.1.214 (2022-06-13)","semantic-version":[2,1]}
+86	sync-timezone	1	2024-03-10 23:20:00.774379+00	2024-03-10 23:20:00.793155+00	18	{"timezone-id":"GMT"}
+87	sync-tables	1	2024-03-10 23:20:00.793216+00	2024-03-10 23:20:00.828112+00	34	{"updated-tables":0,"total-tables":8}
+88	sync-fields	1	2024-03-10 23:20:00.828194+00	2024-03-10 23:20:02.253839+00	1425	{"total-fields":71,"updated-fields":0}
+89	sync-fks	1	2024-03-10 23:20:02.254217+00	2024-03-10 23:20:02.414182+00	159	{"total-fks":6,"updated-fks":0,"total-failed":0}
+90	sync-metabase-metadata	1	2024-03-10 23:20:02.414264+00	2024-03-10 23:20:04.853789+00	2439	\N
+91	sync-table-privileges	1	2024-03-10 23:20:04.854707+00	2024-03-10 23:20:04.871284+00	16	\N
+92	analyze	1	2024-03-10 23:20:04.995282+00	2024-03-10 23:20:05.12927+00	133	\N
+93	fingerprint-fields	1	2024-03-10 23:20:04.995315+00	2024-03-10 23:20:05.078193+00	82	{"no-data-fingerprints":0,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":0}
+94	classify-fields	1	2024-03-10 23:20:05.078235+00	2024-03-10 23:20:05.107285+00	29	{"fields-classified":0,"fields-failed":0}
+95	classify-tables	1	2024-03-10 23:20:05.107329+00	2024-03-10 23:20:05.129215+00	21	{"total-tables":8,"tables-classified":0}
+96	task-history-cleanup	\N	2024-03-11 00:00:00.443+00	2024-03-11 00:00:00.56+00	117	\N
+97	send-pulses	\N	2024-03-11 00:00:00.38+00	2024-03-11 00:00:00.559+00	179	\N
+98	task-history-cleanup	\N	2024-03-11 00:00:00.497+00	2024-03-11 00:00:00.599+00	102	\N
+99	sync	2	2024-03-11 00:07:01.06481+00	2024-03-11 00:08:10.454615+00	69389	\N
+100	sync-dbms-version	2	2024-03-11 00:07:01.074779+00	2024-03-11 00:07:01.207916+00	133	{"flavor":"PostgreSQL","version":"16.2 (Debian 16.2-1.pgdg120+2)","semantic-version":[16,2]}
+101	sync-timezone	2	2024-03-11 00:07:01.208435+00	2024-03-11 00:07:01.234847+00	26	{"timezone-id":"GMT"}
+102	sync-tables	2	2024-03-11 00:07:01.235124+00	2024-03-11 00:07:02.410884+00	1175	{"updated-tables":0,"total-tables":90}
+103	sync-fields	2	2024-03-11 00:07:02.413119+00	2024-03-11 00:08:04.973201+00	62560	{"total-fields":758,"updated-fields":0}
+104	sync-fks	2	2024-03-11 00:08:04.975092+00	2024-03-11 00:08:09.628229+00	4653	{"total-fks":105,"updated-fks":0,"total-failed":0}
+105	sync-metabase-metadata	2	2024-03-11 00:08:09.630096+00	2024-03-11 00:08:09.811181+00	181	\N
+106	sync-table-privileges	2	2024-03-11 00:08:09.811541+00	2024-03-11 00:08:10.454516+00	642	{"total-table-privileges":90}
+107	analyze	2	2024-03-11 00:08:11.53069+00	2024-03-11 00:08:36.479574+00	24948	\N
+108	fingerprint-fields	2	2024-03-11 00:08:11.530764+00	2024-03-11 00:08:35.613323+00	24082	{"no-data-fingerprints":292,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":292}
+109	classify-fields	2	2024-03-11 00:08:35.614068+00	2024-03-11 00:08:36.37819+00	764	{"fields-classified":0,"fields-failed":0}
+110	classify-tables	2	2024-03-11 00:08:36.378307+00	2024-03-11 00:08:36.479497+00	101	{"total-tables":84,"tables-classified":0}
+111	sync	1	2024-03-11 00:20:04.225031+00	2024-03-11 00:20:09.251736+00	5026	\N
+112	sync-dbms-version	1	2024-03-11 00:20:04.225882+00	2024-03-11 00:20:04.258391+00	32	{"flavor":"H2","version":"2.1.214 (2022-06-13)","semantic-version":[2,1]}
+113	sync-timezone	1	2024-03-11 00:20:04.258776+00	2024-03-11 00:20:04.271258+00	12	{"timezone-id":"GMT"}
+114	sync-tables	1	2024-03-11 00:20:04.271325+00	2024-03-11 00:20:04.921148+00	649	{"updated-tables":0,"total-tables":8}
+115	sync-fields	1	2024-03-11 00:20:04.923078+00	2024-03-11 00:20:06.488789+00	1565	{"total-fields":71,"updated-fields":0}
+116	sync-fks	1	2024-03-11 00:20:06.489366+00	2024-03-11 00:20:06.649321+00	159	{"total-fks":6,"updated-fks":0,"total-failed":0}
+117	sync-metabase-metadata	1	2024-03-11 00:20:06.649422+00	2024-03-11 00:20:09.223556+00	2574	\N
+118	sync-table-privileges	1	2024-03-11 00:20:09.225177+00	2024-03-11 00:20:09.25142+00	26	\N
+119	analyze	1	2024-03-11 00:20:09.418053+00	2024-03-11 00:20:09.65316+00	235	\N
+120	fingerprint-fields	1	2024-03-11 00:20:09.418101+00	2024-03-11 00:20:09.564088+00	145	{"no-data-fingerprints":0,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":0}
+121	classify-fields	1	2024-03-11 00:20:09.564362+00	2024-03-11 00:20:09.627133+00	62	{"fields-classified":0,"fields-failed":0}
+122	classify-tables	1	2024-03-11 00:20:09.627253+00	2024-03-11 00:20:09.653095+00	25	{"total-tables":8,"tables-classified":0}
+123	send-pulses	\N	2024-03-11 01:00:00.217+00	2024-03-11 01:00:01.157+00	940	\N
+124	sync	2	2024-03-11 01:04:05.940979+00	2024-03-11 01:04:45.83717+00	39896	\N
+125	sync-dbms-version	2	2024-03-11 01:04:05.941071+00	2024-03-11 01:04:06.121135+00	180	{"flavor":"PostgreSQL","version":"16.2 (Debian 16.2-1.pgdg120+2)","semantic-version":[16,2]}
+126	sync-timezone	2	2024-03-11 01:04:06.122968+00	2024-03-11 01:04:06.238215+00	115	{"timezone-id":"GMT"}
+127	sync-tables	2	2024-03-11 01:04:06.238557+00	2024-03-11 01:04:06.351629+00	113	{"updated-tables":0,"total-tables":90}
+128	sync-fields	2	2024-03-11 01:04:06.351941+00	2024-03-11 01:04:43.613879+00	37261	{"total-fields":758,"updated-fields":0}
+129	sync-fks	2	2024-03-11 01:04:43.616158+00	2024-03-11 01:04:45.563592+00	1947	{"total-fks":105,"updated-fks":0,"total-failed":0}
+130	sync-metabase-metadata	2	2024-03-11 01:04:45.563782+00	2024-03-11 01:04:45.567021+00	3	\N
+131	sync-table-privileges	2	2024-03-11 01:04:45.567059+00	2024-03-11 01:04:45.836957+00	269	{"total-table-privileges":90}
+132	sync	1	2024-03-11 11:20:02.310671+00	2024-03-11 11:20:07.856777+00	5546	\N
+133	sync-dbms-version	1	2024-03-11 11:20:02.312434+00	2024-03-11 11:20:02.342668+00	30	{"flavor":"H2","version":"2.1.214 (2022-06-13)","semantic-version":[2,1]}
+134	sync-timezone	1	2024-03-11 11:20:02.342976+00	2024-03-11 11:20:02.36152+00	18	{"timezone-id":"GMT"}
+135	sync-tables	1	2024-03-11 11:20:02.361684+00	2024-03-11 11:20:02.529324+00	167	{"updated-tables":0,"total-tables":8}
+136	sync-fields	1	2024-03-11 11:20:02.529454+00	2024-03-11 11:20:05.116115+00	2586	{"total-fields":71,"updated-fields":0}
+137	sync-fks	1	2024-03-11 11:20:05.116711+00	2024-03-11 11:20:05.491875+00	375	{"total-fks":6,"updated-fks":0,"total-failed":0}
+138	sync-metabase-metadata	1	2024-03-11 11:20:05.491971+00	2024-03-11 11:20:07.822504+00	2330	\N
+139	sync-table-privileges	1	2024-03-11 11:20:07.822792+00	2024-03-11 11:20:07.856623+00	33	\N
+140	analyze	1	2024-03-11 11:20:08.144435+00	2024-03-11 11:20:08.565914+00	421	\N
+141	fingerprint-fields	1	2024-03-11 11:20:08.144502+00	2024-03-11 11:20:08.29377+00	149	{"no-data-fingerprints":0,"failed-fingerprints":0,"updated-fingerprints":0,"fingerprints-attempted":0}
+142	classify-fields	1	2024-03-11 11:20:08.293834+00	2024-03-11 11:20:08.523098+00	229	{"fields-classified":0,"fields-failed":0}
+143	classify-tables	1	2024-03-11 11:20:08.523158+00	2024-03-11 11:20:08.565838+00	42	{"total-tables":8,"tables-classified":0}
 \.
 
 
@@ -5976,6 +6908,301 @@ COPY public.view_log (id, user_id, model, model_id, "timestamp", metadata, has_a
 45	1	card	1	2024-03-10 21:16:03.422115+00	\N	t	dashboard
 46	1	dashboard	1	2024-03-10 21:16:18.796817+00	\N	t	\N
 47	1	card	1	2024-03-10 21:16:18.796817+00	\N	t	dashboard
+48	1	dashboard	1	2024-03-10 21:57:05.424532+00	\N	t	\N
+49	1	card	1	2024-03-10 21:57:05.424532+00	\N	t	dashboard
+50	1	dashboard	1	2024-03-10 21:57:07.843924+00	\N	t	\N
+51	1	card	1	2024-03-10 21:57:07.843924+00	\N	t	dashboard
+52	1	table	50	2024-03-10 21:57:43.07473+00	\N	t	\N
+53	1	table	50	2024-03-10 21:57:55.575642+00	\N	t	\N
+54	1	table	50	2024-03-10 21:58:37.584085+00	\N	t	\N
+55	1	card	2	2024-03-10 21:59:26.317473+00	\N	t	question
+56	1	dashboard	1	2024-03-10 21:59:29.668015+00	\N	t	\N
+57	1	card	1	2024-03-10 21:59:29.668015+00	\N	t	dashboard
+58	1	dashboard	1	2024-03-10 22:00:43.4292+00	\N	t	\N
+59	1	card	1	2024-03-10 22:00:43.4292+00	\N	t	dashboard
+60	1	card	2	2024-03-10 22:00:43.4292+00	\N	t	dashboard
+61	1	table	94	2024-03-10 22:00:59.418801+00	\N	t	\N
+62	1	table	94	2024-03-10 22:01:13.402986+00	\N	t	\N
+63	1	card	3	2024-03-10 22:01:33.815077+00	\N	t	question
+64	1	dashboard	1	2024-03-10 22:01:36.39234+00	\N	t	\N
+65	1	card	1	2024-03-10 22:01:36.39234+00	\N	t	dashboard
+66	1	card	2	2024-03-10 22:01:36.39234+00	\N	t	dashboard
+67	1	dashboard	1	2024-03-10 22:02:19.954513+00	\N	t	\N
+68	1	card	1	2024-03-10 22:02:19.954513+00	\N	t	dashboard
+69	1	card	2	2024-03-10 22:02:19.954513+00	\N	t	dashboard
+70	1	card	3	2024-03-10 22:02:19.954513+00	\N	t	dashboard
+71	1	table	94	2024-03-10 22:03:49.092574+00	\N	t	\N
+72	1	table	94	2024-03-10 22:03:59.898509+00	\N	t	\N
+73	1	table	94	2024-03-10 22:04:05.454551+00	\N	t	\N
+74	1	table	94	2024-03-10 22:04:33.412441+00	\N	t	\N
+75	1	table	94	2024-03-10 22:04:47.775135+00	\N	t	\N
+76	1	table	94	2024-03-10 22:09:11.189057+00	\N	t	\N
+77	1	table	94	2024-03-10 22:09:25.951402+00	\N	t	\N
+78	1	table	94	2024-03-10 22:09:59.236909+00	\N	t	\N
+79	1	table	94	2024-03-10 22:10:34.200694+00	\N	t	\N
+80	1	table	94	2024-03-10 22:12:07.236181+00	\N	t	\N
+81	1	table	94	2024-03-10 22:24:22.686113+00	\N	t	\N
+82	1	table	94	2024-03-10 22:25:11.946636+00	\N	t	\N
+83	1	table	94	2024-03-10 22:25:28.985191+00	\N	t	\N
+84	1	table	94	2024-03-10 22:25:49.518916+00	\N	t	\N
+85	1	table	94	2024-03-10 22:26:01.491967+00	\N	t	\N
+86	1	table	94	2024-03-10 22:26:05.546576+00	\N	t	\N
+87	1	table	94	2024-03-10 22:26:21.734121+00	\N	t	\N
+88	1	table	94	2024-03-10 22:26:23.758956+00	\N	t	\N
+89	1	table	94	2024-03-10 22:26:26.269692+00	\N	t	\N
+90	1	table	94	2024-03-10 22:26:26.869957+00	\N	t	\N
+91	1	table	94	2024-03-10 22:26:27.116302+00	\N	t	\N
+92	1	table	94	2024-03-10 22:26:30.815017+00	\N	t	\N
+93	1	table	94	2024-03-10 22:26:35.488641+00	\N	t	\N
+94	1	table	94	2024-03-10 22:27:08.909984+00	\N	t	\N
+95	1	dashboard	1	2024-03-10 22:27:33.347839+00	\N	t	\N
+96	1	card	1	2024-03-10 22:27:33.347839+00	\N	t	dashboard
+97	1	card	2	2024-03-10 22:27:33.347839+00	\N	t	dashboard
+98	1	card	3	2024-03-10 22:27:33.347839+00	\N	t	dashboard
+99	1	table	94	2024-03-10 22:27:58.163915+00	\N	t	\N
+100	1	table	94	2024-03-10 22:29:23.122176+00	\N	t	\N
+101	1	dashboard	1	2024-03-10 22:40:19.642253+00	\N	t	\N
+102	1	card	1	2024-03-10 22:40:19.642253+00	\N	t	dashboard
+103	1	card	2	2024-03-10 22:40:19.642253+00	\N	t	dashboard
+104	1	card	3	2024-03-10 22:40:19.642253+00	\N	t	dashboard
+105	1	table	94	2024-03-10 22:40:58.597389+00	\N	t	\N
+106	1	table	94	2024-03-10 22:40:58.593186+00	\N	t	\N
+107	1	table	94	2024-03-10 22:40:58.598025+00	\N	t	\N
+108	1	table	94	2024-03-10 22:40:58.593019+00	\N	t	\N
+109	1	table	94	2024-03-10 22:40:58.592607+00	\N	t	\N
+110	1	table	94	2024-03-10 22:40:58.620918+00	\N	t	\N
+111	1	table	94	2024-03-10 22:40:58.593405+00	\N	t	\N
+112	1	table	94	2024-03-10 22:40:58.592011+00	\N	t	\N
+113	1	table	94	2024-03-10 22:40:58.592239+00	\N	t	\N
+114	1	table	94	2024-03-10 22:40:58.59934+00	\N	t	\N
+115	1	table	94	2024-03-10 22:40:58.597576+00	\N	t	\N
+116	1	table	94	2024-03-10 22:40:58.631797+00	\N	t	\N
+117	1	table	94	2024-03-10 22:40:58.614282+00	\N	t	\N
+120	1	table	94	2024-03-10 22:41:11.791157+00	\N	t	\N
+119	1	table	94	2024-03-10 22:40:58.690681+00	\N	t	\N
+123	1	table	94	2024-03-10 22:41:11.781652+00	\N	t	\N
+118	1	table	94	2024-03-10 22:40:58.657651+00	\N	t	\N
+121	1	table	94	2024-03-10 22:41:11.789857+00	\N	t	\N
+122	1	table	94	2024-03-10 22:41:11.785801+00	\N	t	\N
+124	1	table	94	2024-03-10 22:41:11.786888+00	\N	t	\N
+125	1	table	94	2024-03-10 22:41:12.262024+00	\N	t	\N
+126	1	table	94	2024-03-10 22:42:51.804818+00	\N	t	\N
+127	1	table	94	2024-03-10 22:42:51.808985+00	\N	t	\N
+128	1	table	94	2024-03-10 22:42:51.811914+00	\N	t	\N
+129	1	table	94	2024-03-10 22:42:51.810096+00	\N	t	\N
+131	1	table	94	2024-03-10 22:42:51.838173+00	\N	t	\N
+130	1	table	94	2024-03-10 22:42:51.806623+00	\N	t	\N
+132	1	table	94	2024-03-10 22:42:51.813746+00	\N	t	\N
+133	1	table	94	2024-03-10 22:42:51.804966+00	\N	t	\N
+134	1	table	94	2024-03-10 22:42:51.81689+00	\N	t	\N
+135	1	table	94	2024-03-10 22:42:51.842103+00	\N	t	\N
+136	1	table	94	2024-03-10 22:42:51.869833+00	\N	t	\N
+137	1	table	94	2024-03-10 22:42:51.924702+00	\N	t	\N
+138	1	table	94	2024-03-10 22:43:25.008646+00	\N	t	\N
+139	1	table	94	2024-03-10 22:43:25.009146+00	\N	t	\N
+140	1	table	94	2024-03-10 22:43:25.009409+00	\N	t	\N
+141	1	table	94	2024-03-10 22:43:25.008647+00	\N	t	\N
+142	1	table	94	2024-03-10 22:43:25.008773+00	\N	t	\N
+143	1	table	94	2024-03-10 22:43:25.009552+00	\N	t	\N
+145	1	table	94	2024-03-10 22:43:25.00894+00	\N	t	\N
+144	1	table	94	2024-03-10 22:43:25.00897+00	\N	t	\N
+146	1	table	94	2024-03-10 22:43:25.010081+00	\N	t	\N
+147	1	table	94	2024-03-10 22:43:25.009301+00	\N	t	\N
+148	1	table	94	2024-03-10 22:43:25.009894+00	\N	t	\N
+149	1	table	94	2024-03-10 22:43:25.008973+00	\N	t	\N
+150	1	table	94	2024-03-10 22:43:25.008647+00	\N	t	\N
+151	1	dashboard	2	2024-03-10 22:44:07.223855+00	\N	t	\N
+152	1	card	4	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+153	1	card	5	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+154	1	card	6	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+155	1	card	7	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+156	1	card	8	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+157	1	card	9	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+158	1	card	10	2024-03-10 22:44:07.223855+00	\N	t	dashboard
+159	1	dashboard	1	2024-03-10 22:44:18.925743+00	\N	t	\N
+160	1	card	1	2024-03-10 22:44:18.925743+00	\N	t	dashboard
+161	1	card	2	2024-03-10 22:44:18.925743+00	\N	t	dashboard
+162	1	card	3	2024-03-10 22:44:18.925743+00	\N	t	dashboard
+163	1	dashboard	2	2024-03-10 22:44:41.571357+00	\N	t	\N
+164	1	card	4	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+165	1	card	5	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+166	1	card	6	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+167	1	card	7	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+168	1	card	8	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+169	1	card	9	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+170	1	card	10	2024-03-10 22:44:41.571357+00	\N	t	dashboard
+171	1	dashboard	1	2024-03-10 22:44:52.129909+00	\N	t	\N
+172	1	card	1	2024-03-10 22:44:52.129909+00	\N	t	dashboard
+173	1	card	2	2024-03-10 22:44:52.129909+00	\N	t	dashboard
+174	1	card	3	2024-03-10 22:44:52.129909+00	\N	t	dashboard
+175	1	dashboard	1	2024-03-10 22:45:13.929999+00	\N	t	\N
+176	1	card	1	2024-03-10 22:45:13.929999+00	\N	t	dashboard
+177	1	card	2	2024-03-10 22:45:13.929999+00	\N	t	dashboard
+178	1	card	3	2024-03-10 22:45:13.929999+00	\N	t	dashboard
+179	1	card	7	2024-03-10 22:45:55.395477+00	\N	t	question
+180	1	card	8	2024-03-10 22:46:00.069362+00	\N	t	question
+181	1	card	9	2024-03-10 22:46:01.454606+00	\N	t	question
+182	1	card	10	2024-03-10 22:46:03.16618+00	\N	t	question
+183	1	dashboard	1	2024-03-10 22:46:12.571104+00	\N	t	\N
+184	1	card	1	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+185	1	card	2	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+186	1	card	3	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+187	1	card	7	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+188	1	card	8	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+189	1	card	9	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+190	1	card	10	2024-03-10 22:46:12.571104+00	\N	t	dashboard
+191	1	dashboard	1	2024-03-10 23:53:21.872605+00	\N	t	\N
+192	1	card	1	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+193	1	card	2	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+194	1	card	3	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+195	1	card	7	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+196	1	card	8	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+197	1	card	9	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+198	1	card	10	2024-03-10 23:53:21.872605+00	\N	t	dashboard
+199	1	dashboard	1	2024-03-10 23:54:17.357592+00	\N	t	\N
+200	1	card	1	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+201	1	card	2	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+202	1	card	3	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+203	1	card	8	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+204	1	card	7	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+205	1	card	9	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+206	1	card	10	2024-03-10 23:54:17.357592+00	\N	t	dashboard
+207	1	dashboard	1	2024-03-11 00:07:07.806355+00	\N	t	\N
+208	1	card	1	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+209	1	card	2	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+210	1	card	3	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+211	1	card	8	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+212	1	card	7	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+213	1	card	10	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+214	1	card	9	2024-03-11 00:07:07.806355+00	\N	t	dashboard
+215	1	dashboard	1	2024-03-11 00:07:10.706207+00	\N	t	\N
+216	1	card	1	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+217	1	card	2	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+218	1	card	3	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+219	1	card	8	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+220	1	card	7	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+221	1	card	10	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+222	1	card	9	2024-03-11 00:07:10.706207+00	\N	t	dashboard
+223	1	dashboard	1	2024-03-11 00:07:26.079577+00	\N	t	\N
+224	1	card	1	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+225	1	card	2	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+226	1	card	3	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+227	1	card	10	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+228	1	card	7	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+229	1	card	8	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+230	1	card	9	2024-03-11 00:07:26.079577+00	\N	t	dashboard
+231	1	dashboard	1	2024-03-11 00:08:09.575751+00	\N	t	\N
+232	1	card	1	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+233	1	card	2	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+234	1	card	3	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+235	1	card	7	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+236	1	card	10	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+237	1	card	8	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+238	1	card	9	2024-03-11 00:08:09.575751+00	\N	t	dashboard
+239	1	dashboard	1	2024-03-11 00:08:10.884581+00	\N	t	\N
+240	1	card	1	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+241	1	card	2	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+242	1	card	3	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+243	1	card	7	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+244	1	card	10	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+245	1	card	8	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+246	1	card	9	2024-03-11 00:08:10.884581+00	\N	t	dashboard
+247	1	dashboard	1	2024-03-11 00:23:46.665219+00	\N	t	\N
+248	1	card	1	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+249	1	card	2	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+250	1	card	3	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+251	1	card	8	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+252	1	card	7	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+253	1	card	9	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+254	1	card	10	2024-03-11 00:23:46.665219+00	\N	t	dashboard
+255	1	dashboard	1	2024-03-11 00:23:47.794252+00	\N	t	\N
+256	1	card	1	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+257	1	card	2	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+258	1	card	3	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+259	1	card	8	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+260	1	card	7	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+261	1	card	9	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+262	1	card	10	2024-03-11 00:23:47.794252+00	\N	t	dashboard
+263	1	dashboard	1	2024-03-11 00:24:17.70553+00	\N	t	\N
+264	1	card	1	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+265	1	card	2	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+266	1	card	3	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+267	1	card	7	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+268	1	card	9	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+269	1	card	10	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+270	1	card	8	2024-03-11 00:24:17.70553+00	\N	t	dashboard
+271	1	dashboard	1	2024-03-11 00:24:18.469419+00	\N	t	\N
+272	1	card	1	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+273	1	card	2	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+274	1	card	3	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+275	1	card	7	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+276	1	card	9	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+277	1	card	10	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+278	1	card	8	2024-03-11 00:24:18.469419+00	\N	t	dashboard
+279	1	dashboard	1	2024-03-11 00:41:16.906321+00	\N	t	\N
+280	1	card	1	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+281	1	card	2	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+282	1	card	3	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+283	1	card	7	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+284	1	card	10	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+285	1	card	9	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+286	1	card	8	2024-03-11 00:41:16.906321+00	\N	t	dashboard
+287	1	dashboard	1	2024-03-11 00:41:17.640924+00	\N	t	\N
+288	1	card	1	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+289	1	card	2	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+290	1	card	3	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+291	1	card	7	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+292	1	card	10	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+293	1	card	9	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+294	1	card	8	2024-03-11 00:41:17.640924+00	\N	t	dashboard
+295	1	dashboard	1	2024-03-11 00:58:17.571275+00	\N	t	\N
+296	1	card	1	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+297	1	card	2	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+298	1	card	3	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+299	1	card	8	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+300	1	card	7	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+301	1	card	10	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+302	1	card	9	2024-03-11 00:58:17.571275+00	\N	t	dashboard
+303	1	dashboard	1	2024-03-11 01:02:21.035364+00	\N	t	\N
+304	1	card	1	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+305	1	card	2	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+306	1	card	3	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+307	1	card	8	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+308	1	card	7	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+309	1	card	9	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+310	1	card	10	2024-03-11 01:02:21.035364+00	\N	t	dashboard
+311	1	dashboard	1	2024-03-11 01:03:28.065712+00	\N	t	\N
+312	1	card	1	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+313	1	card	2	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+314	1	card	3	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+315	1	card	8	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+316	1	card	7	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+317	1	card	9	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+318	1	card	10	2024-03-11 01:03:28.065712+00	\N	t	dashboard
+319	1	dashboard	1	2024-03-11 01:03:56.641656+00	\N	t	\N
+320	1	card	1	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+321	1	card	2	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+322	1	card	3	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+323	1	card	8	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+324	1	card	7	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+325	1	card	9	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+326	1	card	10	2024-03-11 01:03:56.641656+00	\N	t	dashboard
+327	1	dashboard	1	2024-03-11 11:19:28.026834+00	\N	t	\N
+328	1	card	1	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+329	1	card	2	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+330	1	card	3	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+331	1	card	7	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+332	1	card	8	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+333	1	card	9	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+334	1	card	10	2024-03-11 11:19:28.026834+00	\N	t	dashboard
+335	1	dashboard	1	2024-03-11 11:19:30.597822+00	\N	t	\N
+336	1	card	1	2024-03-11 11:19:30.597822+00	\N	t	dashboard
+337	1	card	2	2024-03-11 11:19:30.597822+00	\N	t	dashboard
+338	1	card	3	2024-03-11 11:19:30.597822+00	\N	t	dashboard
+339	1	card	7	2024-03-11 11:19:30.597822+00	\N	t	dashboard
+340	1	card	8	2024-03-11 11:19:30.597822+00	\N	t	dashboard
+341	1	card	9	2024-03-11 11:19:30.597822+00	\N	t	dashboard
+342	1	card	10	2024-03-11 11:19:30.597822+00	\N	t	dashboard
 \.
 
 
@@ -6039,7 +7266,7 @@ SELECT pg_catalog.setval('public.collection_bookmark_id_seq', 1, false);
 -- Name: collection_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.collection_id_seq', 1, true);
+SELECT pg_catalog.setval('public.collection_id_seq', 3, true);
 
 
 --
@@ -6123,7 +7350,7 @@ SELECT pg_catalog.setval('public.label_id_seq', 1, false);
 -- Name: login_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.login_history_id_seq', 1, false);
+SELECT pg_catalog.setval('public.login_history_id_seq', 2, true);
 
 
 --
@@ -6214,7 +7441,7 @@ SELECT pg_catalog.setval('public.permissions_group_membership_id_seq', 2, true);
 -- Name: permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.permissions_id_seq', 14, true);
+SELECT pg_catalog.setval('public.permissions_id_seq', 16, true);
 
 
 --
@@ -6263,21 +7490,21 @@ SELECT pg_catalog.setval('public.pulse_id_seq', 1, false);
 -- Name: query_execution_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.query_execution_id_seq', 30, true);
+SELECT pg_catalog.setval('public.query_execution_id_seq', 266, true);
 
 
 --
 -- Name: recent_views_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.recent_views_id_seq', 36, true);
+SELECT pg_catalog.setval('public.recent_views_id_seq', 153, true);
 
 
 --
 -- Name: report_card_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.report_card_id_seq', 1, true);
+SELECT pg_catalog.setval('public.report_card_id_seq', 10, true);
 
 
 --
@@ -6291,21 +7518,21 @@ SELECT pg_catalog.setval('public.report_cardfavorite_id_seq', 1, false);
 -- Name: report_dashboard_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.report_dashboard_id_seq', 1, true);
+SELECT pg_catalog.setval('public.report_dashboard_id_seq', 2, true);
 
 
 --
 -- Name: report_dashboardcard_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.report_dashboardcard_id_seq', 1, true);
+SELECT pg_catalog.setval('public.report_dashboardcard_id_seq', 16, true);
 
 
 --
 -- Name: revision_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.revision_id_seq', 3, true);
+SELECT pg_catalog.setval('public.revision_id_seq', 16, true);
 
 
 --
@@ -6326,7 +7553,7 @@ SELECT pg_catalog.setval('public.segment_id_seq', 1, false);
 -- Name: task_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.task_history_id_seq', 42, true);
+SELECT pg_catalog.setval('public.task_history_id_seq', 143, true);
 
 
 --
@@ -6347,7 +7574,7 @@ SELECT pg_catalog.setval('public.timeline_id_seq', 1, false);
 -- Name: view_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.view_log_id_seq', 47, true);
+SELECT pg_catalog.setval('public.view_log_id_seq', 342, true);
 
 
 --

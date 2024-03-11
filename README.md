@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-Este projeto visa criar um simulador de dispositivos IoT que utiliza o protocolo MQTT para enviar informações simuladas baseadas em dados de sensores reais, nesse caso o [Sensor de Radiação Solar Sem Fio HOBOnet RXW-LIB-900](https://sigmasensors.com.br/produtos/sensor-de-radiacao-solar-sem-fio-hobonet-rxw-lib-900) e itegra-lo a um dashboard (nesse caso o [metabase](https://www.metabase.com/))
+Este projeto visa criar um simulador de dispositivos IoT que utiliza o protocolo MQTT para enviar informações simuladas baseadas em dados de sensores reais, nesse caso o [Sensor de Radiação Solar Sem Fio HOBOnet RXW-LIB-900](https://sigmasensors.com.br/produtos/sensor-de-radiacao-solar-sem-fio-hobonet-rxw-lib-900) e itegrá-lo a um dashboard (nesse caso o [metabase](https://www.metabase.com/))
 
 ## 2. Como Instalar e Rodar
 
@@ -33,7 +33,7 @@ cd inteli-modulo-9-ponderada-4
 ### Execução
 
 > [!IMPORTANT]
-> Antes de rodar a aplicacao, garanta que tenha um broker rodando, caso seja mosquitto, rode com as configuracoes desse projeto:
+> Antes de rodar a aplicacao, garanta que tenha um broker rodando, caso seja mosquitto, rode com as configurações desse projeto:
 >
 > ```bash
 > mosquitto -c ./configs/mosquitto.conf
@@ -41,7 +41,7 @@ cd inteli-modulo-9-ponderada-4
 
 ````
 
-Caso queira modificar as credenciais, edite os aquivos `.env`, mas caso queira apenas rodar, utilize as credenciais de template. Aqui descrevera passo a passo de como executar separadamente os conteudos desse projeto, execute tudo para ver a dash funcionando ao vivo.
+Caso queira modificar as credenciais, edite os aquivos `.env`, mas caso queira apenas rodar, utilize as credenciais de template. Aqui descreverá passo a passo de como executar separadamente os conteudos desse projeto, execute tudo para ver a dashboard funcionando ao vivo.
 
 #### Dashboard e banco de dados
 
@@ -60,34 +60,34 @@ password: SuperNicola1
 
 #### Publisher
 
-O publisher nada mais e que a simulacao do sensor solar, ele ira publicar dados simulados em um topico MQTT. Para rodar ele, e apenas necessario executar o binario, passar o path para o arquivo do `.env` e a quantidade de sensores que voce quer criar (caso voce nao passe nada, ele emulara os sensores que ja existem, caso nao exista nenhum sensor e voce nao passe nenhum valor ele nao rodara):
+O publisher nada mais e que a simulacao do sensor solar, ele ira publicar dados simulados em um topico MQTT. Para rodar ele, e apenas necessario executar o binario, passar o path para o arquivo do `.env` e a quantidade de sensores que voce quer criar (caso você não passe nada, ele emulará os sensores que já existem, caso nao exista nenhum sensor e voce não passe nenhum valor ele não rodará):
 
 ```bash
 ./build/publisher ./configs/.env.publisher <numero>
 ```
 
-Pronto! A partir de agora os dados serao publicados no topico "sensors/data".
+Pronto! A partir de agora os dados serão publicados no topico "sensors/data".
 
 #### Subscriber
 
-O subscriber nada mais e que um servidor que organizara os dados advindos do topico "sensors/data" e os armazenara no banco de dados.
+O subscriber nada mais é que um servidor que organizará os dados advindos do topico "sensors/data" e os armazenará no banco de dados.
 
-Para rodar ele, voce precisa executar o binario e passar o path para o arquivo do `.env`:
+Para rodar ele, você precisa executar o binario e passar o path para o arquivo do `.env`:
 
 ```bash
 ./build/subscriber ./configs/.env.subscriber
 ```
 
-Pronto! Agora os dados enviados serao armazenados no banco de dados!
+Pronto! Agora os dados enviados serão armazenados no banco de dados!
 
 ## 3. Estrutura do Projeto
 
-O projeto é composto por .
+O projeto é composto por:
 
-- `build`: os executaveis e o docker da aplicacao
-- `cmd`: entrypoint de todos os codigos em golang
-- `configs`: arquivos de configuracao do projeto
-- `internal`: codigos nao exportaveis do pacote golang
+- `build`: os executáveis e o docker da aplicacao
+- `cmd`: entrypoint de todos os códigos em golang
+- `configs`: arquivos de configuração do projeto
+- `internal`: codigos nao exportáveis do pacote golang
 
 ## 4. Demonstração do Funcionamento
 

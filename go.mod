@@ -1,4 +1,4 @@
-module github.com/Lemos1347/inteli-modulo-9-ponderada-4
+module github.com/Lemos1347/inteli-modulo-9-ponderada-5
 
 go 1.21.6
 

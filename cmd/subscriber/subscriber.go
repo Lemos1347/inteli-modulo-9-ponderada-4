@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/Lemos1347/inteli-modulo-9-ponderada-5/internal/adapters/primary/mqtt"
-	"github.com/Lemos1347/inteli-modulo-9-ponderada-5/internal/adapters/secondary/sensors"
-	"github.com/Lemos1347/inteli-modulo-9-ponderada-5/internal/domain/entity"
-	"github.com/Lemos1347/inteli-modulo-9-ponderada-5/internal/infra"
-	"github.com/Lemos1347/inteli-modulo-9-ponderada-5/internal/ports"
+	"github.com/Lemos1347/inteli-modulo-9-ponderada-4/internal/adapters/primary/mqtt"
+	"github.com/Lemos1347/inteli-modulo-9-ponderada-4/internal/adapters/secondary/sensors"
+	"github.com/Lemos1347/inteli-modulo-9-ponderada-4/internal/domain/entity"
+	"github.com/Lemos1347/inteli-modulo-9-ponderada-4/internal/infra"
+	"github.com/Lemos1347/inteli-modulo-9-ponderada-4/internal/ports"
 	"github.com/google/uuid"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"

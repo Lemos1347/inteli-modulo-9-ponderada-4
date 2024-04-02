@@ -3,7 +3,7 @@ package sensors
 import (
 	"fmt"
 
-	"github.com/Lemos1347/inteli-modulo-9-ponderada-5/internal/domain/entity"
+	"github.com/Lemos1347/inteli-modulo-9-ponderada-4/internal/domain/entity"
 	"gorm.io/gorm"
 )
 
